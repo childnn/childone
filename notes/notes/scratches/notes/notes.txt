@@ -1,0 +1,109 @@
+UML: unified modeling language 统一建模语言
+UML 规定的 九种图
+ 用例图(use case diagram) 表示用户使用程序的方式
+ 类图(class diagram) 表示类以及多个类之间的关系
+ 对象图(object diagram) 表示对象
+ 时序图(sequence diagram) 从时间上关注并表示多个对象的交互
+ 协作图(collaboration diagram) 从合作关系上关注并表示多个对象间的交互
+ 状态图(statechart diagram) 表示对象状态的变化
+ 活动图(activity diagram) 表示处理的流程等
+ 组件图(component diagram) 表示文件以及多个文件之间的关系
+ 配置图(deployment diagram) 表示计算机或程序的部署配置方法
+
+OOP: object oriented programming 面向对象编程
+ inheritance: 继承  通过继承已存在的类所拥有的成员而生成新的类.
+ encapsulation: 封装  在类所有拥有的成员中, 隐藏掉那些没必要展现给该类调用者的成员.
+ polymorphism: 多态  针对同一种消息, 不同的对象可以进行不同的操作.
+
+LAN: local area network 局域网
+WAN: wide area network 广域网
+TCP/IP: transmission control protocol/internet protocol 传输控制协议和网际协议
+  信息以电信号的形式在网线中传播, 为了交换信息, 必须在 发送者和接收者之间确定发送方式
+  这种对信息发送方式的规定或约束就是 "协议" protocol.
+ Hub: 集线器. 把各台计算机的网线互相连接在一起的集线设备.
+ Router: 路由器. 把公司内的网络和互联网连接起来的设备. -- 把 LAN 连接到 WAN 上.
+
+MAC 地址: media access control. 能够标识网卡的编号
+  用 MAC 地址的编号来指定电信号的接收者.
+  在每一块网卡所带有的 ROM (read only memory) 中, 都预先烧录了一个唯一的 MAC 地址.
+  网卡的制造商负责确定这个 MAC 地址是什么. 而 MAC 地址是有制造商的编号和产品编号部分组成的,
+  所以世界上的每一个 MAC 地址都是独一无二的.
+cmd 命令:
+ ipconfig /all  显示网络信息,网络连接状态
+   显示的 physical address (物理地址) 用 "-" 分隔的 6 个十六进制数(每个数占 8 bit)
+MAC 地址在硬件层面上标识网卡, 可以唯一标识各个接入互联网的计算机, 但是使用和查找 未经处理的
+  MAC 地址是很不方便的. 因此, 在 TCP/IP 网络中, 除了硬件上的 MAC 地址, 还需要为每台计算机设定一个
+  软件上的编号, 这个编号就是 IP 地址.
+  通常把设定了 IP 地址的计算机称为 "主机"(Host), 因为 路由器也算是计算机的一种,所以它们也有 IP 地址.
+  在 TCP/IP 网络中, 传输的数据都会携带 MAC 地址和 IP 地址两个地址.
+  IP 地址是一个 32 位的整数, 每 8 bit 为一组, 组间用 "." 分隔, 分成 4 段表示.
+  8 bit 所表示的整数换算成十进制后范围是 0~255, 因此可用作 IP 地址的整数时 0.0.0.0 ~ 255.255.255.255
+  共 4294967696 个.
+
+通过 IP 地址就可以轻松地对计算机进行分组管理了. 比如用 IP 地址中第一段到第三段的数值代表公司, 用第四段的数值
+代表公司内部的计算机.
+把 IP 地址中表示分组(LAN)的部分称作 "网络地址"(如 前三段), 表示各台计算机(主机)的部分成为 "主机地址"(第四段).
+
+IP address: ip 地址.  eg: 202.26.186.240
+Subnet mask: 子网掩码. 子网掩码的作用是标识出在 32 bit 的 IP 地址中, 从哪一位到哪一位是 "网络地址", 从哪一位到哪一位
+   是 "主机地址".
+   如: 255.255.255.240 -- 十进制  用二进制表示 1111111.11111111.11111111.11110000
+   子网掩码中, 值为 1 的那些位对应着 IP 地址中的 网络地址, 后面为 0 的那些位则对应着 主机地址.
+   因此, 255.255.255.240 这个子网掩码就表示, 其所对应的 IP 地址前 28 bit 是网络地址, 后 4 bit 是主机地址.
+   4 个二进制数可以表示的范围是从 0000 到 1111, 共 16 个数. 而 0000 和 1111 有特殊的用途, 且 路由器占用一个数,
+   所以, 16 个数实际可以被 13 台计算机使用. 和 MAC 地址一样, 每个 IP 地址的值都是独一无二的.
+
+NIC: network interface card. 网卡. ethernet (以太)网卡.
+
+CSMA/CD: carrier sense multiple access with collision detection. 带冲突检测的载波监听多路访问.
+  carrier sense: 载波监听. 这套机制回去监听 (sense) 表示网络是否正在使用的电信号 (carrier).
+  multiple access: 多路复用. 多个 (multiple) 设备可以同时访问 (access) 传输介质.
+  with collision detection: 带冲突检测. 这套机制会去检测 (detection) 因同一时刻的传输而导致的电信号冲突 (collision).
+
+DHCP: Dynamic Host Configuration Protocol 动态主机设置协议.
+    DHCP 服务器上记录着可以被分配到 LAN 内计算机的 IP 地址范围和子网掩码的值. 作为 DHCP 客户端的计算机在启动时,
+    就可以从中知道哪些 IP 地址还没有分配给其他计算机.
+
+DNS: Domain Name System. 域名系统
+  将 www.grapecity.com 解析成 210.160.205.80 这样的 IP 地址.
+FQDN: Fully Qualified Domain Name. 完整限定域名.
+  主机名 + LAN 域名.
+  child.yzw.co.cn.
+
+cmd 命令:
+  route print # 显示 路由表
+  hostname  # 查看主机名.
+  ipconfig /all  # 主机名 + DNS 后缀  即是 FQDN.
+  nslookup  # 查询 域名对应的 IP.
+
+类 是对象的定义
+对象 是类的实例 instance(类的副本)
+
+类的定义(创建):
+  复用性, 可维护性, 如何对现实世界建模, 易用性等
+  把相关的函数和变量汇集到类中.
+类的使用:
+  1. 仅 调用 类所持有的个别成员(函数和变量)
+  2. 在类的 定义 中包含其他的类(这种方法成为 组合) - 把类作为成员变量放在一个类中
+  3. 通过 继承 已存在的类定义出新的类
+
+API: Application Programming Interface
+  应用程序接口, 用来完成某项功能的类,接口或者方法.
+SPI: Service Provider Interface
+  服务提供接口, 提供继承或实现的类,接口,方法
+API 是有实际功能的,可以直接使用  -- 针对 程序开发人员
+SPI 是需要实现的(最经典的就是 java.sql.Driver 接口, 共数据库厂商实现具体的驱动) -- 针对 框架开发工程师
+
+CRSF: cross-site request forgery 跨站请求伪造
+   也称 one click attack/session riding, 缩写 CSRF/XSRF
+
+token:
+  Token 完全由应用管理,所以它可以避开同源策略
+  Token 可以避免 CSRF 攻击(http://dwz.cn/7joLzx)
+  Token 可以是无状态的,可以在多个服务间共享
+  Token 是在服务端产生的。如果前端使用用户名/密码向服务端请求认证,服务端认证成功,
+  那么在服务端会返回 Tok7en 给前端。前端可以在每次请求的时候带上 Token 证明自己的合法地位。
+  如果这个 Token 在服务端持久化（比如存入数据库）,那它就是一个永久的身份令牌。
+
+对称密钥加密技术: (秘密密钥加密技术)
+非对称密钥加密技术: (公开密钥加密技术)

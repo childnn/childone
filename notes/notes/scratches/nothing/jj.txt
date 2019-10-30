@@ -1,0 +1,84 @@
+J2SE:
+    堆: 新生代, 老年代, 永久代
+    栈: 先进后出
+    跨平台性: JVM 是实现跨平台性的关键(jvm 本身不具有跨平台性)
+    jvm 内存区域划分: 程序计数器, 堆, 栈, 虚拟机栈, 本地方法栈, 方法区(java8 移除), 元空间(java8 新增)
+ 集合:
+    单列集合: 顶层接口 Collection
+        list: 重复, 索引, 存储有序
+            ArrayList: 可变数组, 实现 RandomAccess 接口, 查询快, 增删慢
+            LinkedList: 链表, 查询慢, 增删快
+        set: 唯一, 无索引
+            一般的 set 集合存储无序
+            LinkedHashSet: 存储有序
+    map:  双列集合顶层接口 k-v
+        HashMap: key 是 Set 集合, value 是 Collection 集合
+
+
+1. 处理失败订单流程
+2. 分布式定时任务哪台机器执行
+3. zookeeper 和定时任务关系
+4. 分布式集群如何生成唯一自增订单号
+5. redis 有哪些数据结构
+6. redis hash 的使用
+7. map 套 map 结构如何存到 redis
+8. redis 设置失效时间
+9. redis 常用的命令
+10. mysql 优化方式
+11. 复合索引
+12. mysql 数据最大的表有多少数据
+13. kafka 的使用, 了解多少
+14. java 基础类型哪些
+15. double 和 float 精度问题. 为什么存在
+16. char 占几个字节,
+17. java拼接字符串方式
+18. +号拼接和stringBuffer拼接的区别
+19. stringBuilder和stringbuffer区别.
+20. java 集合类用过那些
+21. arrayList 数据结构
+22. hashMap key 可不可以重复,
+23. hashMap 如何保证线程安全
+24. hashMap 数据结构
+25. 什么情况下重写对象的equals
+26. 常用异常类名称
+27. 运行时异常是在编译期报错还是运行报错.
+28. SpringAop 和 IOC 特性
+29. SpringBean 是单例还是多例.
+30. Spring 事务异常会发生什么问题
+31. 分布式事务
+32. mybatis 防止 sql 注入
+33. 如何快速了解功能并上手
+34. 多线程开发了解
+35. 异步线程如何创建
+36. 用什么使得异步线程不影响主线程,
+37. dubbo 客户端如何知道请求的服务机器IP
+
+技术要求
+1. 工作年限,项目复杂度
+2. 技术框架设计,框架搭建,springboot.springCloud 的使用 消息中间件. rpc协议, 消息丢失保障. 消息持久化, 消息列队的优点(异步处理).
+3. hashmap, 线程安全(concurrenthashmap), 实现方法
+4. 高并发, forkjoin ,乐观锁, 悲观锁
+
+技术问题
+1. 服务端怎么处理密钥信息
+2. tokenID 通过request对象传递还是session
+3. redis挂了怎么办
+4. redis有没有持久化
+5. redis是线程安全的吗? 多并发情况如何
+6. redis可以多线程访问吗?
+7. redis主从同步怎么实现
+8. springBean的作用域
+9. 单例是线程安全的吗?
+10. 线程有哪些状态
+11. 线程死锁概念以及解决
+12. 生产上解决过的棘手问题,
+13. 如何避免空指针
+14. java对象值传递和引用传递的区别
+15. 用到的什么数据库,版本多少
+16. 索引底层机制
+17. 索引是否越多越好
+18. 索引创建原则
+19. spring哪几大模块
+20. springAop
+21. spring事务管理
+22. 保证缓存和数据库的一致性 

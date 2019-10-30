@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- consumer's application name, used for tracing dependency relationship (not a matching criterion),
+    don't set it same as provider -->
+    <dubbo:application name="demo-consumer"/>
+    <!-- use multicast registry center to discover service -->
+    <dubbo:registry address="multicast://224.5.6.7:1234"/>
+    <!-- generate proxy for the remote service, then demoService can be used in the same way as the
+    local regular interface -->
+    <!--
+      配置优先级:
+        1. 精确优先: 方法级别 > 接口级别 > 全局配置
+        2. 消费者优先: 相同级别, 消费者优先, 提供方次之
+
+        timeout: 超时时间, 默认 1000ms
+        retries: 重试次数(不含第一次)
+         "重试" 操作必须遵循幂等性:
+            幂等的操作可以设置 重试次数: 查询, 修改, 删除
+            非幂等的操作不可以设置 重试次数: 新增
+    -->
+    <dubbo:reference id="demoService" check="false" interface="org.apache.dubbo.demo.DemoService"
+        timeout="5000" retries="3"/>
+</beans>

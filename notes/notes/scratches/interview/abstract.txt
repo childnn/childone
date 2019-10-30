@@ -1,0 +1,140 @@
+/**
+ * 【区别抽象类和接口！！！】
+ * 抽象类与子类之间是继承关系: (描述了事物之间"是不是""is-a" 的问题)
+ *      本质上可以理解为:子类是抽象类(子类是父类的一个分支),(如: Person extends Animal, 则 Person 是 Animal)
+ * 接口与实现类之间是实现关系: (描述了实现类"有没有""like-a" 接口对应的 "功能" 的问题)
+ *      可以理解为: 实现类实现了某一个接口,则该实现类具有了接口的某些功能(实现了接口的抽象方法/某些默认方法)
+ * 二者设计层次不同:
+ *       抽象类是对类抽象,接口是对行为抽象.抽象类是对整个类整体进行抽象,包括属性、行为,但接口是对类局部（行为）进行抽象。
+ *       抽象类是自底向上抽象而来，接口是自顶向下设计而来
+ *       对抽象类而言，父类和派生类之间的概念在本质上是相同的 -- 属于同类
+ *       对接口而言，父接口与实现类在概念上不要求一致 -- 不要求同类，而只是实现功能
+ *
+ * abstract: 所谓抽象类，是相对于具体类而言，具体类是可以创建对象的类，而抽象类是无法创建对象的类，无法创建对象
+ *       (区别于 final 类：这是没有子类的类)
+ * 利用抽象类是为了更好的对类加以分类，就如同人类不但给各种具体植物命名，而且还有“植物”这个抽象的概念来描述植物这一大类事物
+ * 但是我们无法确定“植物”这个类到底有哪些具体的属性和行为，所以无法定义特定的
+ * JAVA用来模拟现实世界，所以也存在抽象类
+ *
+ * 抽象类通常用来作为一个类族的最顶层的父类，用最底层的类表示现实中的具体事物，用最顶层的类表示该类族所有事物的共性
+ * 当一个类中有 抽象方法的 时候，这个类必须是抽象类：即必须同时要被 abstract 修饰
+ * 当一个类继承于一个抽象类，则该子类 【必须为抽象类】，或者 【必须实现/重写父类中的所有抽象方法】
+ * 当同一父类的各个子类有共同的行为，但是完成方式不一，此时，父类无法统一定义该行为，因此将父类中的该行为定义为
+ * 抽象类，而具体行为方式交给各个子类去定义
+ * <p>
+ * 抽象方法一定存在于抽象类中，但是抽象类中不一定存在抽象方法(最初接触的比较经典的就是: java.util.Calendar 日历类)
+ * <p>
+ * 抽象类中可以有:
+ *      成员变量：
+ *      自定义常量：【格式】 public static final 数据类型 常量名 = 初始化值；
+ *      静态成员方法
+ *      抽象方法: 限制符 abstract 返回值类型 方法名(); 【无方法体】
+ *      构造方法：有，用来给成员变量赋值，但是抽象类【无法创建对象】，只能创建其子类对象(祥见 java.util.Calendar/GregorianCalendar ) // 接口没有构造
+ * <p>
+ * abstract 只能修饰方法, 不能和 static 同用 (静态修饰的方法可以使用类名直接访问，而调用静态的抽象方法，显然是没有意义的。)
+ *     相同的: static 与 this/super 关键字不可同用, static 成员属于 [类]本身, 而 this/super 与 类的[对象] 相关.
+ * 抽象方法：存在的意义就是为了被子类重写
+ * 权限修饰：子类大于等于父类(参见 Object 类的 clone() 方法: protected 修饰)
+ * 返回值范围：子类小于等于父类(这里说的范围，只是指 引用数据类型，不包括基本数据类型)
+ *      eg: 父类方法的返回值类型为 Object, 子类重写方法后可以手动改为 期望的类型
+ * <p>
+ * Override：子父类之间，方法同名同参同返回值(具体 权限修饰符, 返回值类型 见上述内容)
+ *  (Overload: 重载, 同类中, 不同方法直接, 同名不同参(参数类型, 顺序, 个数)
+ */
+public abstract class Animal {
+    // 自定义常量
+    public static final double OTHER_NUM = 4; // 自定义常量名全部大写，单词之间用下划线分隔
+    // 成员变量:接口中没有成员变量,对于接口的属性, 默认 被 public static final 修饰,一旦定义不可修改(就是说, 接口只有 成员常量)
+    static int age = 10;
+    String name = "小娟";
+    private byte n = 3;
+    // 构造方法: 与接口的重要区别
+    public Animal() {
+        age = 20;
+    }
+    // 静态成员方法
+    public static void getto() { // 静态方法不能被重写，属于类本身
+        System.out.println("foo");
+    }
+    // 抽象方法
+    public abstract Object eat(); // 加了 abstract 不需要写方法体/不能写方法体
+    // 普通非抽象方法
+    public void get() {
+        // statements;
+    }
+}
+
+class Dog extends Animal {
+    public static int age = 12;
+    //    @Override  // 虽然与父类方法同名同参同返回值,但不是重写
+    public static void getto() {
+        System.out.println("zi");
+    }
+    @Override
+    public Integer eat() {
+        System.out.println("吃饭");
+        return null;
+    }
+}
+
+class test {
+    public static void main(String[] args) {
+//        Abstract anAbstract = new Abstract(); // error, 抽象类无法创建对象
+        Animal f = new Dog();
+        f.getto();
+        Dog dog = new Dog();
+        dog.getto();
+        short i = 1;
+        i /= 1; // ok
+//        i = i - 1; // error,
+//        i = i - (short) 1; // error
+        i = (short) (i - 1); // ok
+        System.out.println(i);
+    }
+}
+//接口:接口中除了 private 方法以外, 其他成员默认 public(即使不写也是默认 public)
+//属性: 接口中有且只能有 public static final 属性: 或者说 接口中的属性 默认被 public static final 修饰
+//接口中可以有: private 和 private static 方法(不能修饰属性)
+//若一个方法,不想使用 private 修饰,则必须 被 default 或 abstract 修饰:
+//          或者说 private , private static, public static, public default, public abstract 五者必须选其一
+
+/**
+ * 关于 default 关键字: jdk 1.8+
+ * 接口中 默认方法(default)存在的意义:(接口与其众多实现类之间 耦合度 过高 tightly coupled)
+ *      设想一种情况:  一个接口有大量的实现类,如果接口中只允许有 public abstract 方法和 public static 修饰的方法
+ *          那么接口想要添加新的功能(方法),那么这个新的功能 要么 abstract 修饰,要么 static(jdk 1.8+) 修饰:
+ *              而 abstract 必须被重写(这也意味着所有的实现类都要重写这个新的功能,也就意味着该接口所有的实现类都要跟着变化,
+ *              后果可想而知: 这也是 代码 高耦合性 的缺点!)
+ *              另外,还有一种,如果这个新功能 static 修饰,那么意味着 该方法 不能被 重写/不能被继承!!!(静态成员属于类/接口,直接调用,不需要对象)
+ *               接口的方法不能被重写? 这也就大大降低了 代码(实现类)的 多样性
+ *           所以,就出现了 default 修饰的方法: 可以选择性重写,(介于 abstract 和 static 之间的一种属性)
+ *                  同时 default 修饰的方法 也可以被继承: 即实现了可以直接使用而不强制重写
+ *       java 8 之后,这种 default 的 "升级" 改动,为 lambda 表达式的到来提供了使用平台,
+ *              为升级旧接口且保持向下兼容(backward compatibility) 提供了途径. 同时 因为默认而不强制重写的特性,
+ *              避免了修改接口的所有实现类的麻烦: 所谓"默认default" 即 默认实现(implements)
+ *              典型例子: Iterable<T> 接口的 默认方法 forEach(Consumer<? super T> action)
+ *                  default void forEach​(Consumer<? super T> action) 对 Iterable每个元素执行给定的操作，直到所有元素都被处理或动作引发异常。
+ *                源码:
+ *                  default void forEach(Consumer<? super T> action) {
+ *                      Objects.requireNonNull(action);
+ *                      for (T t : this) {
+ *                          action.accept(t);
+ *                      }
+ *                  }
+ */
+interface A {
+    //属性:有且只能有 public static final 修饰的成员属性
+    public static final int NUM = 10; //默认public static final修饰
+//    private static final int NUMBER = 10; //ERROR
+//    public A() {} //error,不能有构造
+//    public default A() {} //error,不能有被 default 修饰的构造
+    public default void A() {} // 虽然方法名与类名相同,但不是构造,没有意义(一般不会这么定义)
+    public abstract void f(); //抽象方法默认被 public abstract 修饰
+    public default void g() {} //默认方法
+    public static void k() {} //静态方法
+//    public static default void m() {} //error, 静态和默认不能一起用(default 可以被重写, static 不能被重写), static 和 this 不能一起用
+    private void m() {} //私有
+    private static void m(int a) {} //静态私有
+//    private default void m(double a) {}  //error: private 和 default 不能同用 (与 static 相同: private 意味着不可以被重写, default 意味着可以被重写)
+//    private abstract void j(); //error 抽象必须公开: 同上
+}

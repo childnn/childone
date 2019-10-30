@@ -1,0 +1,79 @@
+全文检索: full-text search
+  对所有目标文件内容进行分词(中文使用 IK Analyzer), 创建索引, 指明每一个词再文章中出现的次数和位置,
+  将索引词汇与目标文件关联, 形成倒排索引
+  分词(term), 文档(document), 分词和文档的关系
+
+  索引库: 逻辑概念, 包括 分词列表 和 文档列表  -- 想当于 MySQL 的表, mongodb 的 集合(collection)
+  文档(document): 对应 关系型数据库中的 记录(row) -- 也可以称为 索引
+  字段(field): 对应 RDBMS 中的 column
+
+es:
+head: es 可视化管理界面
+    1. 安装 node.js
+    2. 下载 head 解压, 安装, 运行
+       下载: git clone git://github.com/mobz/elasticsearch-head.git
+       安装: cd elasticsearch-head    ->  npm install
+       运行: npm run start open
+       访问: HTTP://本地主机:9100
+
+创建索引库(相当于创建 表)
+    使用 postman,
+    put http://localhost:9200/索引库名称      # body -> row 设置为 json 数据
+    {
+    	"settings": {
+    		"index": {
+    		## 设置分片的数量, 在集群中通常设置为多个分片, 表示一个索引库将拆分成多片分别存储不同的节点
+    		## 提高了 es 的处理能力和高可用性, 入门程序使用单机环境, 这里设置为 1
+    			"number_of_shards": 1,
+    	    ## 设置副本的数量, 设置副本是为了提高 es 的高可用性, 单机环境设置为 0
+    			"number_of_replicas": 0  #
+    		}
+    	}
+    }
+
+创建映射: 指定 document 中的 字段类型 (一个 文档包含一个/多个 field)
+    post http://localhost:9200/索引库名称/类型名称/_mapping
+    注: 类型名称随便指定, 没有实际意义
+    {
+        "properties": {
+            "字段名1": {
+                "type": "text"
+                "analyzer": "ik_max_word",  # 细颗粒分词
+                "search_analyzer": "ik_smart" # 粗颗粒索引(搜索)
+            },
+            "字段名2": {
+                "type": "text"
+                "index": false  # 不参与分词搜索, 只用来展示(如 图片的 url)
+            },
+            "字段名3": {
+                "type": "keyword"
+            }
+        }
+    }
+
+创建文档: (RDBMS 中的记录)
+    put/post http://localhost:9200/索引库名/类型名/id值
+    注: 不指定 id, es 会自动生成 id
+    {
+        "字段1": "字段值",
+        "字段2": "字段值",
+        "字段3": "字段值"
+    }
+查询:
+    get http://localhost:9200/索引库名/类型名/id值                          # 查询指定 id 的文档
+    get http://localhost:9200/索引库名/类型名/_search                       # 查所有文档
+    get http://localhost:9200/索引库名/类型名/_search?q=字段名:索引参数       # 关键字搜索
+    get http://localhost:9200/_mapping                                     # 查询所有映射
+
+分词:
+    post http://localhost:9200/_analyze
+    添加 ik jar包到 plugins 目录下
+    {
+        "text": "测试分词器，后边是测试内容：spring cloud实战",
+        "analyzer": "ik_max_word",  ## 指定 ik 分词器, 固定写法   value 有两种: ik_max_word, ik_smart
+        "search_analyzer": "ik_smart" ## 粗颗粒索引(搜索)
+    }
+
+text
+keyword: 不分词, 精确搜索
+date

@@ -1,0 +1,172 @@
+马来面试题汇总
+
+如何保证消息队列的消息不被重复消费, 不丢失?
+  不被重复消费: redis 分布式锁
+
+jvm: https://blog.csdn.net/lingbo229/article/details/82586822
+
+可以在配置类 JAVA_HOME 和 path 环境变量后, 在 cmd 输入命令  java -X  查看各种配置参数
+    -Xms<size>        设置初始 Java 堆大小
+    -Xmx<size>        设置最大 Java 堆大小
+    -Xss<size>        设置 Java 线程堆栈大小
+
+JVM 内存分为 堆内存(heap 区) 和 非堆内存(非 Heap 区),
+    堆内存分为
+      年轻代(新生代)(Young Generation): 分两个区
+            Eden 区(Eden Space): 存放新 new 出的对象, 垃圾回收后, 不能被回收的对象被放入 survivor 区域.
+            Survivor 区: 分为 From Survivor Space, To Survivor Space
+         新生代 给部分比例: 8:1:1
+         新生代的垃圾回收被称为 Minor GC / Young GC   # GC: Garbage Collection
+
+      老年代(Old Generation):
+        老年代被放满之后,虚拟机会进行垃圾回收, 称为 Major GC; 由于 Major GC 除了并发 GC 外均需对整个 堆内存
+        进行扫描和回收, 因此又称为 Full GC.
+        heap区即堆内存,整个堆大小 = 年轻代大小 + 老年代大小。
+        堆内存默认为物理内存的 1/64(<1GB); 默认空余堆内存小于40%时,JVM 就会增大堆直到 -Xmx 的最大限制,可以通过 MinHeapFreeRatio 参数进行调整;
+        默认空余堆内存大于 70% 时,JVM 会减少堆直到 -Xms 的最小限制,可以通过 MaxHeapFreeRatio 参数进行调整
+       
+    非堆内存就一个 永久代(Permanent Generation). (简称 Perm Gen) 永久保存区域. 存放 Class 和 Meta 信息
+       Class 被 load 的时候, 放入此区域, 永远不会被 jvm 垃圾回收.
+       如果程序加载了过多的 Class, 可能出现 OutOfMemoryError: PermGen Space (永久代溢出)
+
+    注: 一般所说的 方法区(Method Area) 实际上就可以认为是 永久代! (但是严格意义上有区别)
+     另, 运行时常量池 (Runtime Constant Pool) 是 方法区的一部分,
+       String 类的 intern() 方法(是一个 native 方法)就是把指定的字符串放入 运行时常量池, 如果 常量池无法再申请到内存时就会
+       抛出 OOM 异常
+    jdk 1.8+ 后, 永久代被移除, 被 元空间(Metaspace) 替代,
+    也就是说, jdk 1.8+ 后, 不再会出现 [OutOfMemoryError: PermGen space] 异常了.
+
+关于 java.lang.StackOverflowError, java.lang.OutOfMemoryError
+  java 虚拟机栈 和 本地方法栈 都可能抛出 StackOverflowError, OutOfMemoryError
+    虚拟机栈: 为虚拟机执行 java 方法(字节码)服务.
+    本地方法栈: 为虚拟机使用的 native 方法服务.
+  StackOverflowError: 栈溢出.  -- 常见的就是 死递归
+     线程请求的 栈深度 大于虚拟机所允许的深度.
+  OutOfMemoryError: 内存溢出.  -- 栈 和 堆 都有可能发生
+     1. 本地方法栈可以动态扩展,但是在尝试扩展时,没有足够的内存可以分配;
+     2. 没有足够的内存供新线程建立初始化本地方法栈.
+     3. 堆内存中没有内存完成实例分配, 并且堆也无法再扩展时.
+     常见类型:
+       堆溢出: java.lang.OutOfMemoryError: Java heap space
+       永久代溢出: OutOfMemoryError: PermGen space
+       线程过多: java.lang.OutOfMemoryError: unable to create new native thread
+
+1.述JVM原理
+2.多线程synchronized用法
+   实例方法(非静态方法): 锁对象是 当前对象 (this)
+   静态方法: 锁对象是 当前方法所在的类
+   代码块:
+      this, 锁住的是该类的实例对象  -- synchronized(this) {...}
+      Class 对象, 锁住的是该类的 类对象 -- synchronized(Demo.class) {...}
+      任意实例对象, 另外定义的一个无关的对象作为 锁对象.  -- synchronized(obj) {...}
+   synchronized: https://www.bilibili.com/read/cv2609116
+   volatile: https://www.bilibili.com/read/cv2631239
+
+3.内存溢出 -- 祥见上面的笔记
+4.调优JVM相关参数
+    https://blog.csdn.net/u013030086/article/details/85068766
+    https://www.cnblogs.com/andy-zhou/p/5327288.html  -- 东西很多, 选择性看看
+5.HashMap原理,如何实现的
+    https://blog.csdn.net/qq_37113604/article/details/81353626
+    https://baijiahao.baidu.com/s?id=1618550070727689060&wfr=spider&for=pc
+    https://blog.csdn.net/v123411739/article/details/78996181
+6.如何遇防重复提交
+7.后端怎么做?
+8.分页处理上亿条数据如何提高速度
+    先快速定位需要获取的 id 段，然后再关联：
+    SELECT ... FROM table, (select id from table where condition LIMIT 100000,20 ) b where a.id=b.id;
+    SELECT ... FROM table where id > 100000 limit 20; # 这个不知道可不可以
+
+一. SpringMVC 启动加载类的方法有几种
+  1、若采用XML来配置init-method
+  2、@PostConstruct注解: 在依赖注入后自动调用(Constructor -> @Autowired -> @PostConstruct)
+    相对的 @PreDestroy, 在 对象销毁之前执行
+二、dubbo 原理
+    基于 RPC 远程过程调用的分布式服务治理框架
+三、最近的一个项目的业务流程与使用到的技术,
+四、对 SpringBoot 的了解
+五、分布式事务
+
+1.数据库量级
+2.数据结构算法
+3.多线程分布式
+
+1.Hashmap底层实现
+2.限流的做法
+3.Mq的幂等性解决方案
+4.Redis数据库缓存一致性的解决方案
+5.介绍 Equals  hashcode
+6.用户请求响应慢,你所能想到的优化方案
+7.介绍自己的项目
+
+面试的内容：
+1,自我介绍
+2,项目介绍
+3,项目难点介绍
+4,项目难点攻克方法介绍
+5,数据一致性保障
+6,悲观锁乐观锁介绍
+7,HashMap介绍
+
+1. String为什么需要hashCode和equals方法
+2. HashMap原理
+3. 先让我说下自己做的项目
+4. 让我些个DRM组件,怎么写
+5. TR服务调用出现问题,怎么排查
+
+1. jvm内存模型,hashmap
+2. 数据库优化
+3. jvm内存模型,hashmap 数据库优化 dubbo的实现机制 然后就是问你做过的工程
+4.   许硕总结
+5.工作项目介绍
+6.项目分布式怎么升级的
+7.dubbo项目简单的搭建过程
+8.springIOC
+9.事务传播性
+10.redis和数据库的数据一致性
+11.怎么做sql优化的
+12.jvm相关,杂七杂八的(volatile 原理,static属性放到哪里,垃圾回收机制,幂等性之类的)
+13.线程池
+14.spring依赖注入的方式,springIOC自动装配有那集中方法
+15.分布式事务大概思路
+16.ConcurrentHashMap如何实现高并发的
+17.开发报表系统是sql怎么优化的
+18.分布式dubbo+zookeeper+netty 常考  主要有分布式思想描述 还有dubbo实现的一些原理(比如jdk代理,反射,传输方式(netty NIO)),稍微深入一点可能考到原码级,当然还有zookeeper也很重要,比如里面的分布式锁是如何实现的,它起到的作用可能会问一些linux命令 常见的 tail grep等等,再难一点就说不知道吧 或者百度一些常见的Hadoop一套可能问得特别少 如果是生产环境下没有开发过,几乎不问.
+19.框架阶段
+Spring IOC、AOP的概念,原理   比如aop中jdk动态代理和cglib动态代理的区别,最好百度一下
+SpringMVC和struts2的区别,以及他们的原理执行流程都可以说说
+Mybatis 应该有些面试官也会问到,我没遇到,无非也是一些底层原理(反射加动态代理),还有一些常见标签,动态的,普通标签
+可能问问mvc的思想
+20.Corejava
+最喜欢问的就是 集合,线程,线程池集合分为list /set /map  其中List 常见linkedList ArrayList vectory,Set 常见 hashset sortedSet ,Map 常见hashmap hashtable 。常考  list 下面几个的区别,或者List和set的区别 及底层数据结构实现,还有hashSet底层如何实现去重(大致：比较hashcode ,如果不同,则不同,如果相同,再比较equals方法),还有就是hashmap的实现原理(经常考),底层采用数组加链表实现
+比如put一个元素,第一次取得他的hash值,作为数组下标 放入对应hash槽,如果槽里为空,直接放进去,不为空,放在槽下面的链表表头 (一个大概的情况,具体再去了解一下)
+还有可能问高并发情况下使用的集合,有了解最好！线程,
+jdk中线程有几种使用方式,Thread类,实现runable 接口,实现callable接口,线程同步的几种方式(差不多七种  ,百度一下,常见下面几种吧。。
+1) Synchronized 关键字
+2) Lock
+3) Volatile关键字 (这个用挺多的,网上看下原理,到时候主动说一下)
+
+volatile和 synchronized区别
+volatile本质是在告诉jvm当前变量在寄存器(工作内存)中的值是不确定的,需要从主存中读取; synchronized则是锁定当前变量,只有当前线程可以访问该变量,其他线程被阻塞住。
+volatile仅能使用在变量级别;synchronized则可以使用在变量、方法、和类级别的
+volatile仅能实现变量的修改可见性,不能保证原子性;而synchronized则可以保证变量的修改可见性和原子性
+volatile不会造成线程的阻塞;synchronized可能会造成线程的阻塞。
+volatile标记的变量不会被编译器优化;synchronized标记的变量可以被编译器优化
+
+线程池
+为什么要用线程池 ,池里几个参数什么意思(比如核心线程数和最大线程数的区别),线程池使用时候不同阶段是什么情况,深一点可能比较难了,为什么要用线程池,你在哪些地方用到过,常见线程模型有哪些,根据情况看看吧
+其它
+Jvm调优,主要调哪些主要参数,什么意思,有可能给你个情形问你怎么调参数,
+还有什么时候会有gc ,什么时候会fullGc   基础的记一下,不会的就说不知道,还有数据库优化 ,比如查询优化等等。还可能问道悲观锁和乐观锁,能看懂就看看,大致讲一下,不懂就说不
+
+问题1：介绍项目
+2：项目里面有哪些表
+3：项目商品表有哪些维度（字段）
+4：为什么要用单点登陆，cas的原理
+5：集合里面哪个api进行排序，采用哪种排序？介绍一下这种排序，还了解其它什么排序
+6：Arrayist和linkedList有什么区别，为什么会有这种区别
+7：二叉树了解吗，我说了解一点，说了一下二叉树的遍历，然后没有继续深问
+8：jvm分为哪些区域，静态常量放在哪个区域
+9：堆里面主要放的什么，放对象，对象什么时候会被回收，堆的划分
+10：dubbo的运行原理，底层通信协议。
+11：假如你设计一个dubbo，该怎么设计？

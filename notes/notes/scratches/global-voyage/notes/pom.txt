@@ -1,0 +1,20 @@
+ <!--经纬度距离换算-->
+        <dependency>
+            <groupId>org.gavaghan</groupId>
+            <artifactId>geodesy</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <!--计算经纬度-->
+        <dependency>
+            <groupId>com.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>0.5</version>
+        </dependency>
+
+GlobalCoordinates source = new GlobalCoordinates(command.getLatitude(), command.getLongitude());
+GlobalCoordinates target = new GlobalCoordinates(shop.getLatitude(), shop.getLongitude());
+GeodeticCurve geoCurve = new GeodeticCalculator().calculateGeodeticCurve(Ellipsoid.WGS84, source, target);
+skuLikeVo.setDistinct(geoCurve.getEllipsoidalDistance());
+SpatialContext geo = SpatialContext.GEO;
+        return geo.getDistCalc().calcBoxByDistFromPt(
+                geo.makePoint(lon, lat), radius * DistanceUtils.KM_TO_DEG, geo, null);

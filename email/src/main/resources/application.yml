@@ -1,0 +1,22 @@
+spring:
+  mail:
+    host: smtp.qq.com  #smtp.163.com
+    username:  2691330369@qq.com # # sender
+    password:  srbmefytrszddhai # 授权码
+    protocol: smtp # 协议
+    default-encoding: UTF-8 # 编码
+    port: 465 #25 # 端口
+    properties: # 其他属性
+      mail:
+        smtp:
+          timeout: 10000
+          connectiontimeout: 10000
+          writetimeout: 10000
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+  redis:
+    host: localhost

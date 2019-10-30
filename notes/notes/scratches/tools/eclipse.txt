@@ -1,0 +1,28 @@
+﻿1. 打开Eclipse，然后“window”→“Preferences”
+2. 选择“java”，展开，“Editor”，选择“Content Assist”。
+3.选择“Content Assist”，然后看到右边，右边的“Auto Activation”下面的“Auto Activation triggers for java”这个选项。
+	其实就是指触发代码提示的就是“.”这个符号。 
+4.“Auto Activation triggers for java”这个选项，在“.”后加abc字母，方便后面的查找修改。然后“apply”，点击“OK”。
+5. 然后，“File”→“Export”，在弹出的窗口中选择“General”→“Perferences”，点击“下一步”。
+6. 选择导出文件路径，本人导出到桌面，输入“abc”作为文件名，点击“保存”。
+7. 在桌面找到刚在保存的文件“abc.epf”,右键选择“用记事本打开”。 
+8. 按“ctrl + F”快捷键，输入“.abc”，点击“查找下一个”。
+9. 查找到“.abc”的配置信息如下：如下：
+10. 把“.abc”改成“.abcdefghijklmnopqrstuvwxyz(,”，保存，关闭“test.epf”。
+11. 回到MyEclipse界面，“File”→“Import”，在弹出的窗口中选择“Perferences”，点击“下一步”，选
+	择刚在已经修改的“abc.epf”文件，点击“打开”，点击“Finish”。该步骤和上面 的导出步骤类似。
+12.修改完毕，测试一下就行了。 
+
+=========================================================================
+
+好啦，接下来就是重点啦！！！按照下面的方法，就可以彻底解决eclipse帮你自动补全变量名了 ！！
+
+1,先找到相关的插件： window -> show view ->other> plug-ins 找到插件org.eclipse.jface.text,右键点击,选择import as Source  Project,导入完成后,在你的workspace就可以看到这个project了
+2.修改代码 在src/org.eclipse.jface.text.contentassist/CompletionProposalPopup.java文件中,找到这样一行代码(好像是在1335行)  
+	char[] triggers= t.getTriggerCharacters(); if (contains(triggers, key)) {
+	在那行if判断里面,eclipse会判断key(就是你按下的键)是否在triggers中,如果是,那就触发下面的第一行提示上屏的代码.
+	所以我们要做的就是把空格和=号排除就可以了:  if(key != '=' && key != 0x20 &&contains(triggers,key)){  ......... } 代码修改成这样后，提示的时候按下空格或者等号，提示就会没掉，也不会自动补全了咯！！！
+3.把修改好的org.eclipse.jface.text导出 右键点击你的workspace里的org.eclipse.jface.text,
+	选择export-->Deployable  plugins and fragments,destination 选择archive  file，然后finish.
+	你就可以在zip文件里看到生成好的jar ,用它替换掉eclipse/plugins里面的同名jar包,就可以了。
+4.重新启动eclipse即可。

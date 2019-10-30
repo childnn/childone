@@ -1,0 +1,117 @@
+/**
+ * interface：
+ *      公开（public abstract 修饰接口, 不写也默认存在）
+ *      规则（规范），所有人都遵守
+ *      方法:
+ *          public abstract
+ *          public static
+ *          public default
+ *          private
+ *          private static:抽象类没有私有静态
+ * JDK1.7
+ *  1. 成员变量： 没有成员变量
+ *  2. 【自定义常量】：【public static final】 数据类型 变量名 = 初始化值; (三个修饰符可以省略，不写也默认存在)
+ *  3. 成员方法： 有且只有【抽象方法】（即被 abstract 修饰，没有方法体，且默认 public）
+ *  4. 构造方法： 没有，不能创建对象
+ *
+ * JDK1.8
+ *  5. 【默认方法】： default
+ *      public default 返回值类型 方法名(形参列表) {}
+ *  6. 【静态方法】： static
+ *      public static 返回值类型 方法名(形参) {}
+ *
+ * JDK1.9
+ *  7. 【私有方法】： private,为默认和静态方法服务
+ *         静态私有： private static 返回值类型 方法名(形参) {}
+ *         非静态私有： private 返回值类型 方法名(形参) {}
+ *
+ * 【注意！！！！】
+ *  一个类可以有一个（父）继承，多个（父）接口
+ *  接口和接口之间是多继承！！！！
+ *      先继承  extends ，再实现接口 implements
+ *
+ *  多个父接口中的【抽象方法】如果重复，没关系
+ *  多个父接口中的【默认方法】如果重复，那么子类接口必须进行默认方法的覆盖重写，【而且必须使用 public 修饰】。
+ *
+ * 如何使用接口： 接口本质上可以认为是一个不能创建对象的类，但是它解决了类不能多继承的问题（可以多实现）（而类可以创建对象，但是不能多继承）
+ * 创建实现类，让实现类 实现 (implements) 父接口（其实实现类自己也只是一个中间站，实现类本身一般不输出内容，也就是没有main方法）
+ * 其他需要接口中功能方法的 对象 通过创建实现类对象 调用对应的方法（或者调用被实现类重写的方法11）
+ * 另：接口中的静态方法，只能通过接口名调用，而不能通过实现类【对象名.】调用 //static无法被实现类继承
+ * 另：可以通过实现类对象名调用接口中的常量，但是一般推荐通过接口名直接调用常量
+ * 实现类：
+ *    必须重写父接口中所有的抽象(abstract)方法
+ *    选择性重写父接口默认(default)方法【注意】如果实现了多个父接口，且多个父接口中有同名的默认方法，则必须要重写，以避免冲突
+ *    无法重写静态(static)
+ *    看不见私有(private)
+ *
+ *  因为接口非 private 方法 默认 public, 所以,实现接口的方法 必须使用 public 修饰
+ */
+public interface Demo01 { // class 改为 interface // 修饰符必须是 public
+    // 自定义常量
+    public static final int NUM = 10;
+    // 抽象方法
+    public abstract void method01();
+    // 默认方法
+    public default void f() { // default 必须要写
+        System.out.println("接口默认方法！");
+        w(); // 非静态调用非静态
+    }
+    // 静态方法
+    public static void g() {
+        System.out.println("接口静态方法");
+        h(); // 静态调用静态
+//        w(); // error , 静态不能调用非静态
+    }
+    // 以下为接口私有，无法通过实现类调用，只能接口自己内部使用，然后输出
+    // 静态私有
+    private static void h() {
+        System.out.println("接口静态私有");
+    }
+    // 非静态私有
+    private void w() {
+        System.out.println("接口非静态私有");
+    }
+}
+
+interface A {
+    public default void f() { //默认 public
+        System.out.println("aaaa");
+    }
+}
+
+interface B {
+    default void f() {
+        System.out.println("bbbbbbb");
+    }
+}
+//子接口
+interface C extends A, B {
+    @Override //子接口必须重写父接口 default 方法的情况
+    default void f() {
+
+    }
+}
+
+//实现类
+class Test implements A, B {
+    @Override //两个父接口的方法冲突,子类必须重写且必须 public
+    public void f() {
+
+    }
+
+    public static void main(String[] args) {
+        T t = new T();
+        t.f(); //ddddd, 子接口的方法
+    }
+}
+
+interface D extends A {
+    @Override
+    default void f() {
+        System.out.println("ddddd");
+    }
+}
+
+class T implements A, D {
+
+}

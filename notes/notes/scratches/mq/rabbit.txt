@@ -1,0 +1,18 @@
+CMD运行rabbitmqctl status检测是否安装成功
+
+3、Rabbitmq 管理插件启动，可视化界面
+rabbitmq-plugins enable rabbitmq_management 启动
+rabbitmq-plugins disable rabbitmq_management 关闭
+
+要从计算机中完全卸载RabbitMQ和Erlang，请执行以下操作：
+1、打开Windows控制面板。
+2、双击“程序和功能”。
+3、在当前安装的程序列表中，右键单击RabbitMQ Server，然后单击“卸载”。
+4、在当前安装的程序列表中，右键单击“Erlang OTP”，然后单击“卸载”。
+5、打开Windows任务管理器。
+6、在任务管理器中，查找进程 epmd.exe。 如果此进程仍在运行，请右键单击该进程，然后单击“结束进程”。
+7、删除RabbitMQ和Erlang的所有安装目录。
+8、删除文件C：\ Windows \ .erlang.cookie（如果存在）。
+9、转到用户文件夹：C：\ Users \ [username]，然后删除文件.erlang.cookie。删除
+10、同样在User文件夹中，转到AppData \ Roaming \ RabbitMQ。 输入 %appdata%\Rabbitmq找到配置文件删除
+11、将Log文件夹备份到安全位置，然后删除该文件夹。

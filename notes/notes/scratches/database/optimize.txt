@@ -1,0 +1,8 @@
+一、关于exists和in的效率问题：
+分场景：
+1.此场景适应A表数据量大于B表，且where后的字段加了索引。这种情况用in效率高的原因是利用了大表的索引。
+  select * from ecs_goods A where A.cat_id in(select cat_id from ecs_category B);
+  -------------------------------------------------------------------------------
+2.此场景适应B表数据量大于A表，且where后的字段加了索引。这种情况用exists效率高的原因是利用了大表的索引。
+  select * from ecs_goods a where EXISTS(select cat_id from ecs_category b where a.cat_id = b.cat_id);
+总结：IN适合于外表大而内表小的情况；EXISTS适合于外表小而内表大的情况。

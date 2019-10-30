@@ -1,0 +1,16 @@
+1. 解压文件,在安装目录下 定义 my.ini, 指定配置文件信息
+2. 配置环境变量 MYSQL_HOME, path 变量(同 jdk 的配置方式)
+3. 在 bin 目录下 cmd: mysqld install MySQL --defaults-file="安装目录\my.ini"
+4. 修改注册表: 计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\mysql
+	imagePath: 值改为 安装目录\bin\mysqld.exe    # 是 mysqld 不是 mysql
+5. cmd: mysqld --initialize     
+	# 如果提示没有权限: 手动创建 C:\ProgramData\MySQL\mysql-8.0.16-winx64\Data   # 再次运行 cmd
+6. 找到 C:\ProgramData\MySQL\mysql-8.0.16-winx64\Data 目录下的  "主机名.err"
+	找到: 2019-05-14T01:23:09.825409Z 5 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: __k:6C(Uo=v,
+		# 直接复制冒号后面的, 就是 mysql 自动生成的 密码
+7. 使用 初始密码即可登录 root 用户
+	使用修改密码的命令改密: 改密方式各种, 自行百度
+	ALTER USER "root"@"localhost" IDENTIFIED  BY "你的新密码";
+	注: 如果改密不成功, 推荐使用 mysql 官方的 workbench 登录(该软件在登录 mysql 时, 会自动提示修改系统生成的初始化密码)
+	
+default-time-zone="+8:00"

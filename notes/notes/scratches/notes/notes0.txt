@@ -1,0 +1,9 @@
+VO: View/Value Object. 展示数据
+DAO: Data Access Object. 数据访问对象 -- Mapper
+PO: Persistent Object. 持久对象. ORM 框架中的 Entity, 属性与表的字段一一对应
+Entity: 与数据库表一一对应.
+BO: Business Object. 业务对象
+DTO: Data Transfer Object. 数据传输对象,
+DO: Domain Object.
+POJO: Plain Ordinary Java Object.
+SAO: Service Access Object.

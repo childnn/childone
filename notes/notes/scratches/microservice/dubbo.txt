@@ -1,0 +1,145 @@
+zookeeper 宕机与 dubbo 直连
+ 现象: zookeeper 注册中心宕机, 还可以消费 dubbo 暴露服务
+ 原因:
+   健壮性:
+    1. 监控中心宕机不影响使用, 只是丢失部分采用数据
+    2. 数据库宕掉, 注册中心仍能够通过缓存提供服务列表查询, 但不能注册新服务
+    3. 注册中心对等集群, 任意一台宕掉后, 将自动切换到另一台
+    4. 注册中心全部宕掉后, 服务提供者和服务消费者仍然能够通过本地缓存通讯
+    5. 服务提供者无状态, 任意一台宕掉后, 不影响使用
+    6. 服务提供者全部宕掉后, 服务消费者应用将无法使用, 并无限次重连等待服务提供者恢复
+   高可用: 通过设计, 减少系统不能提供服务的时间
+
+Dubbo 负载均衡策略: 顶层接口 org.apache.dubbo.rpc.cluster.LoadBalance
+    RandomBalance: 随机(默认)
+    RoundRobin: 轮循
+    LeastActive: 相同活跃数的随机
+    ConsistentHash: 一致性 hash, 相同的参数总是发送到同一台机器
+
+服务降级:
+    当服务器压力剧增的情况下, 根据实际业务情况及流量, 对一些服务和页面有策略的不处理或换一种
+    简单的方式处理, 从而释放服务器资源以保证核心交易正常运行或高效运行.
+  可以通过服务降级功能临时屏蔽某个出错的非关键服务, 并定义降级后的返回策略.
+  两种方式:
+   1. 屏蔽(不调用服务): mock=force:return + null 表示消费方的方法调用都直接返回 null 值, [不发起远程调用].
+      用来屏蔽不重要服务不可用时对调用方的影响.
+   2. 容错(调用但失败): mock=fail:return + null 表示消费方对该服务的方法 [调用在失败后], 再返回 null 值,
+      不抛异常. 用来容忍不重要服务不稳定时对调用方的影响.
+
+集群容错: 配置 cluster 属性
+   在集群调用失败时, Dubbo 提供了多种容错方案, 默认为 failover 重试
+   集群容错模式
+   Failover Cluster
+    失败自动切换, 当出现失败, 重试其他服务器. 通常用于 读 操作, 但重试会带来更长延迟. 可通过 retries="2" 设置重试次数(不含第一次)
+   Failfast Cluster
+    快速失败, 只发起一次调用, 失败立即报错. 通常用于 非幂等性的写操作, 比如新增记录.
+   Failsafe Cluster
+    失败安全, 出现异常时, 直接忽略. 通常用于写入审计日志等操作.
+   Failback Cluster
+    失败自动恢复, 后台记录失败请求, 定时重发. 通常用于消息通知操作.
+   Forking Cluster
+    并行调用多个服务器, 只要一个成功即返回. 通常用于 实时性 要求较高的 读操作, 但需要浪费更多服务资源.
+    可以通过 forks="2" 设置最大并行数.
+   Broadcast Cluster
+    广播调用所有提供者, 逐个调用, 任意一台报错则报错. 通常用于通知所有提供者更新缓存或日志等本地资源信息.
+
+实际使用中, 使用 hystrix 容错:
+  @EnableHystrix
+  @HystrixCommand
+
+---------------------------------------------------------------------------------------------
+
+dubbo 相关的原理:
+RPC: remote procedure call 远程过程调用
+   一次完整的 RPC 调用流程(同步调用, 异步另说)
+   1) 服务消费方 (client) 调用以本地调用方式调用服务
+   2) client stub 接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体
+   3) client stub 找到服务地址, 并将消息发送到服务端
+   4) server stub 收到消息后进行解码
+   5) server stub 根据解码结果调用本地服务
+   6) 本地服务执行并将结果返回给 server stub
+   7) server stub 将放回结果打包成消息并发送至消费方
+   8) client stub 接收到消息, 并进行解码
+   9) 服务消费方得到最终结果
+   RPC 框架的目标就是要 2~8 这些步骤都封装起来, 这些细节对用户来说时透明的, 不可见的
+netty 通信原理: 基于 nio
+  netty 是一个异步事件驱动的网络应用程序框架, 用于快速开发可维护的高性能协议服务和客户端.
+  它极大地简化了 TCP 和 UDP 套接字服务器等网络编程.
+
+dubbo 框架设计
+dubbo 启动解析,加载配置信息
+    org.apache.dubbo.config.spring.schema.DubboNamespaceHandler
+    org.apache.dubbo.config.spring.schema.DubboBeanDefinitionParser
+    org.apache.dubbo.config.spring.ServiceBean
+    实现的接口
+    ServiceBean<T> extends ServiceConfig<T> implements InitializingBean, ApplicationListener<ContextRefreshedEvent>, BeanNameAware,
+   两个重要方法:
+    org.apache.dubbo.config.spring.ServiceBean.onApplicationEvent: ioc 启动完成时执行
+        其中调用了一个重要的方法: export()  # 暴露服务
+           -> org.apache.dubbo.config.ServiceConfig.export
+                -> org.apache.dubbo.config.ServiceConfig.doExport
+                    -> org.apache.dubbo.config.ServiceConfig.doExportUrls  # 暴露 url 地址
+                        -> org.apache.dubbo.registry.integration.RegistryProtocol.export  # 注册中心
+                           # final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker, providerUrl);
+                           # org.apache.dubbo.registry.integration.RegistryProtocol.doLocalExport
+                         org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol.export  # dubbo 协议
+                           # org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol.openServer # 打开服务器: 调用 netty
+                           # org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol.createServer
+                           # org.apache.dubbo.remoting.exchange.Exchangers.bind(org.apache.dubbo.common.URL, org.apache.dubbo.remoting.exchange.ExchangeHandler)
+    org.apache.dubbo.config.spring.ServiceBean.afterPropertiesSet: Invoked by the containing {@code BeanFactory} after it has set all bean properties
+
+dubbo 服务暴露
+  容器启动 -> 加载配置文件 (xml) -> 创建标签解析器 (DubboNamespaceHandler)
+    -> 解析 dubbo 标签(org.apache.dubbo.config.spring.schema.DubboBeanDefinitionParser.parse(org.w3c.dom.Element, org.springframework.beans.factory.xml.ParserContext, java.lang.Class<?>, boolean))
+    (解析 org.apache.dubbo.config.ApplicationConfig/org.apache.dubbo.config.ProviderConfig/org.apache.dubbo.config.ConsumerConfig...)
+    -> org.apache.dubbo.config.spring.ServiceBean 解析 -> ioc 容器创建完成, 触发 onApplicationEvent 方法
+    -> export() 方法 暴露服务 -> doExportUrls() (ServiceConfig) -> doExportUrlsFor1Protocol() -> org.apache.dubbo.rpc.ProxyFactory.getInvoker
+    -> org.apache.dubbo.rpc.Protocol.export -> 开启服务器 -> openServer()
+    -> 注册服务到注册中心 -> org.apache.dubbo.registry.support.ProviderConsumerRegTable.registerProvider (注册表)
+
+dubbo 服务引用
+    org.apache.dubbo.config.spring.ReferenceBean.getObject  (实现自 org.springframework.beans.factory.FactoryBean)
+     -> org.apache.dubbo.config.ReferenceConfig.get
+     -> init -> createProxy
+     -> org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol.refer
+        org.apache.dubbo.registry.integration.RegistryProtocol.refer
+     ....> org.apache.dubbo.registry.support.ProviderConsumerRegTable.registerConsumer
+
+dubbo 服务调用
+
+----------------------------------------------------------------------------------------------------------------------
+
+序列化方式: hessian2 协议(默认, 二进制序列化, 更快) (java 使用的是 Serializable)
+RPC: remote procedure call 远程过程调用协议
+dubbo: 基于 java 高性能 RPC 分布式服务框架, 分布式服务治理, 满足 高并发,小数据量(大数据量不推荐)
+spring-cloud: 采用 HTTP RESTFUL
+netty: 网络传输
+hessian2: 序列化
+长连接: 3 次握手, 4 次挥手
+rmi: remote method invoke
+BIO: blocking I/O, 同步阻塞
+NIO: non-blocking I/O, 同步非阻塞, ByteBuffer, Channel
+AIO: asynchronous I/O, 异步非阻塞,
+
+zookeeper 集群: 服务器数量为 奇数, 更节省资源
+    与 zookeeper 选举规则有关: 可用节点数 > 总节点数 / 2
+zookeeper 与 eureka 区别
+    CAP:
+        Consistency: 一致性
+        Availability: 可用性
+        Partition tolerance: 分区容错性
+    CAP 原则(principle): 在一个分布式系统中, CAP 三者不可兼得
+                  eureka                     zookeeper
+    CAP         保证高可用性(AP)              保证数据一致性(CP)
+    持久化       不持久化,节点信息放内存        持久化到磁盘
+    更新通知     通过增量更细注册信息           通过 watch 事件来监控节点变化
+    缓存         提供客户端缓存                无缓存
+    适用场景      适合作为服务注册中心          适合做分布式协调服务
+
+注册中心:
+    zookeeper
+    multicast
+    redis
+
+JUC: java util concurrent 包, 并发相关
+jdk.jfr.internal.ShutdownHook

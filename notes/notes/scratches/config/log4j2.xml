@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--status = off 表示不记录 log4j 本身的日志-->
+<Configuration status="OFF" monitorInterval="1800">
+    <properties>
+        <property name="LOG_HOME">d:</property>
+        <property name="FILE_NAME">log4j2</property>
+    </properties>
+
+
+    <Appenders>
+        <!--输出控制台-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--ThresholdFilter: info 以上的命令不会被拦截-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n" />
+        </Console>
+        <!--输出到文件-->
+        <File name="Error" fileName="${LOG_HOME}/error.log">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <RollingFile  name="RollingFile " fileName="${LOG_HOME}/${FILE_NAME}.log"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.gz"
+                     immediateFlush="true">
+            <PatternLayout
+                    pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />
+            <!--<PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>-->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingFile >
+    </Appenders>
+
+    <Loggers>
+        <!-- <Logger name="com.cssweb.test.app" level="trace" additivity="true">
+            <AppenderRef ref="running-log" /> </Logger> -->
+
+        <Root level="info">
+            <!-- 这里是输入到文件，很重要-->
+            <AppenderRef ref="RollingFile" />
+            <!--<AppenderRef ref="running-log" />-->
+            <!-- 这里是输入到控制台-->
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="Error" />
+            <!--<Logger name="com.mengdee.dao" level="${log.sql.level}" additivity="false">
+                <AppenderRef ref="Console" />
+            </Logger>-->
+        </Root>
+
+        <!--<Logger name="com.hlhdidi.servlet" additivity="false">
+            <appender-ref ref="RollingRandomAccessFile"/>
+            <appender-ref ref="Console"/>
+        </Logger>-->
+        <Logger name="com.hlhdidi.service" level="error" additivity="true">
+            <appender-ref ref="Console"/>
+        </Logger>
+
+    </Loggers>
+</Configuration>

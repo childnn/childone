@@ -1,0 +1,15 @@
+﻿mysql 修改时区问题
+查看：show variables like '%time_zone%';
+修改： set global time_zone='+8:00';
+或设置 url： "jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8"
+
+mysql 编码
+ show variables like "%char%"
+show variables where variable_name like 'character\_set\_%' or variable_name like "collation%";
+
+show full columns from 表明： 查看表的完整信息（比 desc 详细）
+ 
+cmd：修改编码
+	chcp 65001  就是换成UTF-8代码页
+	chcp 936 可以换回默认的GBK
+	chcp 437 是美国英语 

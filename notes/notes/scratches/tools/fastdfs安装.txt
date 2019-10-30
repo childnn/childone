@@ -1,0 +1,108 @@
+fastdfs安装：分为 tracker 和 storage
+1.准备
+  1.1  c 语言环境
+		# yum install -y gcc gcc-c++
+  1.2  安装 libevent
+        # yum -y install libevent
+2. 安装 libfastcommon: fastdfs 的依赖
+   上传/解压：# tar -zxvf libfastcommonV1.0.7.tar.gz -C /usr/local/
+   切换目录：# cd/usr/lcoal/libfastcommon-1.0.7/ 
+      编译：# ./make.sh
+	  安装: # ./make.sh install
+   安装完毕后, 会在 /usr/lib64 目录下生成 libfastcommon.so 库文件
+     # cd /usr/lib64/
+	 # ls | grep libfastcommon.so 
+	将上述文件 拷贝至 /usr/lib/ 目录下, 供 fastdfs 引用
+	 # cp libfastcommon.so /usr/lib
+3. 安装 tracker
+   3.1 上传/解压: # tar -zxvf FastDFS_v5.05.tar.gz -C /usr/local
+        切换目录: # cd /usr/local/FastDFS/
+        编译/安装: # ./make.sh && ./make.sh install
+        将 /usr/local/FastDFS/conf/ 目录下的文件拷贝至 /etc/fdfs/ 目录下
+	     # cp mime.types http.conf /etc/fdfs/    # 整合 nginx 使用
+	3.2 切换目录 # cd /etc/fdfs/
+	   # cp tracker.conf.sample tracker.conf
+	   # vim tracker.conf
+	    修改文件: 
+		   base_path=/home/fastdfs  # 需要在 /home 目录下新建 fastdfs 目录(mkdir)
+	       http.server_port=80  #配置http端口- nginx 默认端口
+    3.3 启动 tracker: 
+	     # /usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart
+		运行完毕, 会在 /home/fastdfs/ 目录下生成两个目录(数据和日志) : data, logs - 可以查看启动日志
+4. 安装 storage
+     切换目录:  # cd /etc/fdfs/
+	 拷贝文件:  # cp storage.conf.sample storage.conf
+	 修改文件: 
+          group_name=group1 #配置组名
+		  base_path=/home/yuqing/fastdfs    改为:  base_path=/home/fastdfs
+		  #store存放文件的位置(store_path)
+		   store_path0=/home/yuqing/fastdfs  改为： store_path0=/home/fdfs_storage  # 需要新建目录 # mkdir /home/fdfs_storage
+		  #如果有多个挂载磁盘则定义多个store_path，如下
+		#store_path1=.....
+		#store_path2=......
+		#配置tracker服务器:IP
+		tracker_server=192.168.xx.xx:22122
+		#如果有多个则配置多个tracker
+		#tracker_server=192.168.xx.xx:22122
+		#配置http端口
+		http.server_port=80
+	启动 storage: # /usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart
+	运行完毕: 在 /home/fdfs_storage/ 目录下生成 data 目录, 就是 文件存储目录
+5. tracker 和 storage 开启完毕, 可以验证 二者是否连接成功
+   # /usr/bin/fdfs_monitor /etc/fdfs/storage.conf        ## monitor
+
+6. 整合 nginx  -- 准备工作
+   上传/解压: # tar -zxvf fastdfs-nginx-module_v1.16.tar.gz -C /usr/local
+   切换目录: # cd /usr/local/fastdfs-nginx-module/src/
+   修改文件: # vi config   ## 将所有 /usr/local/ 改为 /usr/    (好像有 3 处)
+   将 改目录下的文件拷贝至 /etc/fdfs/ 目录下: # cp mod_fastdfs.conf /etc/fdfs/
+   修改文件: # vi /etc/fdfs/mod_fastdfs.conf
+		base_path=/home/fastdfs
+		tracker_server=192.168.172.20:22122 
+		#tracker_server=192.168.172.20:22122 #(多个tracker配置多行)
+		url_have_group_name=true        #url中包含group名称
+		store_path0=/home/fdfs_storage  #指定文件存储路径（上面配置的store路径
+   拷贝文件: # cp /usr/lib64/libfdfsclient.so /usr/lib/
+   创建目录: # mkdir -p /var/temp/nginx/client  -- nginx 临时文件需要的目录(为第七步准备)
+7. 安装 nginx(上传/解压)
+   7.1 环境安装:
+		yum install pcre
+		yum install pcre-devel
+		yum install zlib
+		yum install zlib-devel
+		yum install openssl
+		yum install openssl-devel
+	7.2 cd /usr/local/nginx-1.8.0/
+	   # ./configure --prefix=/usr/local/nginx --add-module=/usr/local/fastdfs-nginx-module/src    #解压后fastdfs-nginx-module所在的位置
+	7.3 在当前目录下执行命令: 编译/安装
+		# make && make install    (注意上述 3.1, 复制文件是这里需要用的: # cp /usr/local/FastDFS/conf http.conf mime.types /etc/fdfs/ )
+	7.4 修改配置文件
+	   # vi /usr/local/nginx/conf/nginx.conf
+	     pid  /usr/local/nginx/logs/nginx.pid;
+		 location /group1/M00 {
+            root /home/fdfs_storage/data; # 图片上传目录
+            ngx_fastdfs_module;  #固定写法
+		}
+	7.5 启动 nginx
+	   # /usr/local/nginx/sbin/nginx
+	   查看 nginx 进程
+	   # ps -ef | grep nginx
+	   注: 必须看到 master 和 worker 两个进程, 才算是启动成功
+	   如果没有启动成功: 可以查看 nginx 启动日志
+        # cat /usr/local/nginx/logs/error.log
+
+fastdfs
+日志： /home/fastdfs/logs
+tracker：/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart
+storage：/usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart
+monitor: /usr/bin/fdfs_monitor /etc/fdfs/storage.conf   # 查看 storage 是否成功绑定 tracker
+test_upload：/usr/bin/fdfs_test /etc/fdfs/client.conf upload /测试上传文件在linux中的路径
+nginx 整合：
+./configure --prefix=/usr/local/nginx --add-module=/usr/local/fastdfs-nginx-module/src    #解压后fastdfs-nginx-module所在的位置
+# 这里的路径也有这样表示的： ~/M00
+location /group1/M00 {
+            root /home/fdfs_storage/data; # 图片上传目录
+            ngx_fastdfs_module;  #固定写法
+}
+
+ip修改: storage.conf, mod_fastdfs.conf  (目录 cd /etc/fdfs/)

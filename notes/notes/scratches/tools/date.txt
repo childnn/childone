@@ -1,0 +1,8 @@
+/*这里是Springboot 中的配置方式*/
+spring.jackson.time-zone=GMT+8  //设置为东八区
+spring.jackson.time-zone=yyyy-MM-dd HH:mm:ss
+/*注解的方式*/
+ @JsonFormat(pattern="yyyy-MM-dd HH:mm", timezone="GMT+8")
+
+ database:
+ url: jdbc:mysql://数据库url:3306/数据库名字?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false
