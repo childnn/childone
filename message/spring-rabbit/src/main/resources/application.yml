@@ -1,0 +1,9 @@
+spring:
+  rabbitmq:
+    addresses: amqp://guest:guest@localhost:5672
+    virtual-host: /
+# 等价
+#    host:
+#    username:
+#    password:
+#    port:

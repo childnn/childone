@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:component-scan base-package="org.anonymous.jms.producer"/>
+
+    <!--连接工厂: 指定连接 ip //可以指定需要使用的真正的 连接工厂-->
+    <bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
+          p:brokerURL="tcp://192.168.32.28:61616"/>
+
+    <!--spring-jms: 管理连接工厂的一个 "入口"-->
+    <bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory"
+          p:targetConnectionFactory-ref="targetConnectionFactory"/>
+
+    <!--jmsTemplate-->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate"
+          p:connectionFactory-ref="connectionFactory"/>
+
+
+    <!--队列目的地, 按需使用: 点对点或订阅模式-->
+
+    <!--点对点的文本信息: 指定队列名-->
+    <bean id="queueTextDestination" class="org.apache.activemq.command.ActiveMQQueue"
+          c:name="textQueue"/>
+
+    <!--订阅模式, 文本信息-->
+    <bean id="topicTextDestination" class="org.apache.activemq.command.ActiveMQTopic"
+          c:name="topicQueue"/>
+
+</beans>

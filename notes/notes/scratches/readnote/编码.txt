@@ -1,0 +1,4 @@
+MB: megabyte, 希腊文 megas 意为 "大"
+GB: gigabyte, 希腊文 gigas 意为 "巨大"
+TB: terabyte, 希腊文 teras 意为 "庞然大物"
+PB: petabyte

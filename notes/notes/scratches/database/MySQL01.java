@@ -117,8 +117,8 @@ package cn.itheima.mysql;
  *              double : 小数
  *                     double(5, 2): 长度为5 保留2位小数
  *              date: 年月日 yyyy-MM-dd
- *              datetime: 年与日时分秒 yyyy-MM-dd HH-mm-ss --- 若不赋值则为 NULL
- *              timestamp: 时间戳类型 年月日时分秒 ----- 若不给这个数据类型对应的字段赋值,则默认为系统当前时间
+ *              datetime: 年与日时分秒 yyyy-MM-dd HH-mm-ss --- 若不赋值则为 NULL    8 字节
+ *              timestamp: 时间戳类型 年月日时分秒 ----- 若不给这个数据类型对应的字段赋值,则默认为系统当前时间。 4 字节 可以表示 1970-2038
  *              varchar: 字符串 --- 数据库中没有字符的概念,都是字符串
  *              char: 字符串 --- 也是字符串
  *                  varchar(长度) : 可变长度 --- 长度范围内,用多少算多少 (节省资源)
@@ -146,6 +146,8 @@ package cn.itheima.mysql;
  *              ALTER TABLE 表明 DROP 列名;
  *              删除到最后一列时,不能使用该sql语句:  (You can't delete all columns with ALTER TABLE; use DROP TABLE instead)
  *              只能直接删除表(删除最后一个字段,就是删除表)
+ *          大表ALTER TABLE非常耗时，MySQL执行大部分修改表结果操作的方法是用新的结构创建一个张空表，从旧表中查出所有的数据插入新表，然后再删除旧表。
+ *
  *      D: DELETE
  *          DROP TABLE 表名称; 有则删,没有则 error
  *          DROP TABLE IF EXISTS 表名称; 有则删,没有无 error

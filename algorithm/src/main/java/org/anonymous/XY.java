@@ -6,10 +6,9 @@ import org.junit.Test;
  * @author child
  * 2019/7/15 9:18
  * 鸡兔同笼问题
- *
+ * <p>
  * x + y = 10    鸡兔共 10 只
  * 2x + 4y = 32  脚共计 32 只
- *
  */
 public class XY {
 

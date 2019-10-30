@@ -5,12 +5,11 @@ import org.junit.Test;
 /**
  * @author child
  * 2019/7/15 8:36
- *
+ * <p>
  * common divisor/measure: 公约数
  * common multiple: 公倍数
- *
+ * <p>
  * 最大公约数: 两个整数的公共约数是指两个整数的公共约数(能整除被除数的数) 中最大的数.
- *
  */
 public class CommonDivisor {
 

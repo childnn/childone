@@ -1,0 +1,8 @@
+Gradle 可以运行在大多数的操作系统中，但是需要JDK 或者JRE 8 以上版本
+Gradle 附带了自己的Groovy库，因此不需要安装Groovy。 Gradle会忽略任何现有的Groovy安装。
+Gradle 会在path环境变量中找 JDK 安装路径，我们可以设置JAVA_HOME 环境变量指向所需JDK的安装目录
+环境变量配置: 同 jdk.
+验证版本: $ gradle -v
+-------------------------------
+hello-world
+$ gradle init   # 初始化

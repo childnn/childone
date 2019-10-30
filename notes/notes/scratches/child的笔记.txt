@@ -1,0 +1,15 @@
+Oracle 账户:
+274979673
+Child123
+
+
+
+1. NPE 的避免
+  1.1. 时刻注意分析各个对象是否可能为空, 尤其数据库获取的集合;
+  1.2. @SuppressWarnings("UnusedParameters")
+
+  org.springframework.web.reactive.result.method.AbstractHandlerMethodMapping.MappingRegistry.register
+
+
+http://39.100.255.114:8080/xqlive/api-auth/oauth/token?
+auth_type=GLOBAL_SHOP_SMS&client_secret=webApp&client_id=webApp&grant_type=password&username=13163249276&password=780983

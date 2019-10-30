@@ -1,13 +1,21 @@
-netstat -ano | findstr 80 //列出进程极其占用的端口，且包含 80
+netstat -ano | findstr 80 //列出进程及其占用的端口，且包含 80
 tasklist | findstr 2000
 taskkill -PID <进程号> -F //强制关闭某个进程
 taskkill /f /t /im java.exe
 taskkill /im QQ.exe /f
 
-*****************************************
+***************************************************************************
 获取最高管理员权限
 1. win+r：gpedit.msc
 2. 计算机配置 --> windows 设置 --> 安全设置 --> 本地策略 --> 安全选项 -->
     2.1. 用户账户控制: 以管理员批准模式运行所有管理员
     2.2. 用户账户控制: 用于内置管理员账户的管理员批准模式
     以上两项设置为禁用
+
+***************************************************************************
+添加服务
+sc create 服务名称 binpath="服务EXE文件所在的目录"
+删除服务
+sc delete 服务名称
+添加 redis 服务
+redis-server.exe --service-install redis.windows.conf --loglevel verbose

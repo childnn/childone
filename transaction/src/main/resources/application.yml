@@ -1,0 +1,39 @@
+
+debug: true
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test
+    username: root
+    password: root
+  main:
+    banner-mode: console
+
+
+#  banner:
+#    image:
+#      width:
+
+server:
+  servlet:
+    application-display-name: myapp
+#   项目的根路径.
+    context-path: /app
+
+# log 级别.
+logging:
+  level:
+    root:
+      trace
+#    - trace
+#    - debug
+#    - info
+#    - warn
+#    - error
+#    - fatal
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

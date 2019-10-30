@@ -1,0 +1,32 @@
+# 1. \u6DFB\u52A0\u4F9D\u8D56 添加依赖
+# 2. \u5F00\u653E\u8282\u70B9 开放节点
+
+
+
+management:
+  endpoint:
+    env:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'  # 默认只开放, info 节点, "*"
+
+spring:
+  security:
+    user:
+      name: child # 默认 user.
+      password: child  # 不设值就自动生成 UUID.
+
+server:
+  port: 9000
+
+logging:
+  level:
+    root: info
+
+

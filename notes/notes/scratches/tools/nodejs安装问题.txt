@@ -66,6 +66,33 @@ nodejs:
 	
 	
 5、通过脚手架工具（vue-cli）,创建前端 vue 工程
+
+
+----------------------------------------------------------------
+vue.js: MVVM 框架 (读作: view.js)
+    M: model: 负责数据存储
+    V: view: 负责页面展示
+    VM: View Model: 负责业务逻辑处理(比如 ajax 请求等), 对数据进行加工后交给视图展示 -- 连接 model 和 view (DOM Listeners/Directives)
+    将业务逻辑代码与视图代码完全分离, 使各自的职责更加清晰, 后期代码更加简单.
+指令:
+  v-model="变量名" # 绑定变量: <input type="text" v-model="num1"/>
+      只能在 input, select, textarea, components(vue组件中) 使用
+  v-text="变量名" # 弥补 {{变量名}} 插值表达式 直接展示结果的 "闪烁" 问题: <span v-text="result"></span>
+  v-on:click="方法名" # 调用方法: <button v-on:click="method">点我</button>
+      # 简写形式  @click="方法名"   用 @ 替代 v-on:
+  v-bind:属性名="属性值" # <img v-bind:src="imageSrc"/> <div v-bind:style="{fontSize: size + 'px'}"></div>
+      # 缩写形式: <img :src="imageSrc"/> <div :style="{fontSize: size + 'px'}"></div>
+      # a 标签: <a v-bind:href="url"/>
+  v-for/v-if
+     # 只显示偶数行
+    <li v-for="(item, index) in list" :key="index" v-if="index % 2 == 0">
+
+webpack:
+  1. 安装 node.js
+  2. 安装 npm: node package manager,  node.js 使用 npm 安装所依赖的 js 包
+  3. 通过 npm 安装 webpack
+    npm 工作原理: 去远程下载所依赖的包
+  4. cnpm 替代 npm, 可以从国内镜像下载 js 包
 	
 	
 	

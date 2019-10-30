@@ -66,7 +66,7 @@ package org.anonymous.cookie_session;
  *              session 的活化: 再次启动服务器,浏览器访问时, tomcat 会自动加载 session 的数据到内存
  *      session 的销毁:
  *          1.服务器非正常关闭: session 来不及序列化  -- 正常关闭服务器(撤销项目部署) session 不会销毁 -- 可以使用 HttpSessionListener 监听 session 的生命周期
- *              -- 可以尝试 重启服务器,浏览器不关闭,等待浏览器重启完成,再次访问 服务器, session 并没有销毁,还会得到之前 session 域中 的数据
+ *              -- 可以尝试 重启服务器,浏览器不关闭,等待浏览器重启完成,再次访问 服务器, session 并没有销毁, 还会得到之前 session 域中 的数据
  *          2.session对象调用 invalidate() 方法
  *          3.session 默认失效时间 30 分钟
  *              可以配置 tomcat 的文件: conf/web.xml  文件中的 session-config 标签设置时间

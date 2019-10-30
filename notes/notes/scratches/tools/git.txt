@@ -7,6 +7,25 @@
  *    2. 修改完代码之后, 必须及时 add -> commit -> push 最新修改的代码
  *    3. 各自开发各自的模块, 如果需要修改公共代码, 必须事先确认有没有人正在修改
  *    4. 不要擅自修改同事的代码.
+
+ * !$    # 该命令自动补全上一次执行命令的余下部分
+ -----------------------------------------------------------------------------
+ * git 中的一些选项
+     -d
+     --delete   # 删除
+     -D
+     --delete --force
+     -f
+     --force
+     -m
+     --move  # 移动或重命名
+     -M
+     --move --force
+     -r
+     --remote
+     -a
+     --all
+ ------------------------------------------------------------------------------
  *
  * git： 分布式版本控制工具
  *  一般工作流程：
@@ -150,6 +169,8 @@
  *     $ git push -u origin master   # 第一次 push 之后, 该命令可以简化为 git push origin master
  *  注: 分布式版本控制系统的最大好处之一,就是本地工作不需要考虑远程库的存在,也就是没有联网也可以正常工作,
  *    而 SVN 在没有联网的时候是拒绝使用的.
+   修改 remote 地址
+    $ git remote set-url <remote_name> <remote_url>
  *
  *  克隆远程库到本地库:
  *   $ git clone git@github.com:childnn/child1.git
@@ -161,17 +182,33 @@
  *    相当于以下两条命令:
  *     $ git branch dev   # 创建分支
  *     $ git checkout dev # 切换分支
+      $ git checkout -b <new_branch> [<start_point>]
+       # 从指定提交点切换分支
+      $ git checkout --orphan <new_branch>
+       # 切换到新分支,此分支没有任何 commit, 需要手动执行 commit, 可以消除原始分支上的 commit log.
  *  2. $ git branch    # 查看当前分支
+       $ git branch -r    # 查看远程所有分支
+       $ git branch -a    # 查看本地和远程的所有分支
  *  3. 在当前分支上修改, 提交
  *  4. 切换到 master 分支
  *     $ git checkout master
  *   查看文件, 发现没有任何修改, 因为 那个修改的提交在 dev 分支上, 而 master 分支此刻的提交点并没有变
  *  5. 合并 dev 到 master 分支
- *    $ git merge dev    # 合并指定分支到当前分支
+ *    $ git merge dev    # 合并指定分支(dev)到当前分支
  *     合并后,再查看修改内容,现在 master 分支的内容就是最新的了
  *  6. 删除 dev 分支
  *    $ git branch -d dev
  *     删除后, 查看当前分支 git branch, 就只有 master 分支了
+    7. 关联本地分支与远程分支.
+      $ git branch --set-upstream-to=<name>/<remote_branch> <your_branch>
+      <name>: 名称 eg, origin 或者自定义的名称(id).
+      <remote_branch>: 远程分支.
+      <your_branch>: 需要关联远程的本地分支
+    8. push 本地分支到远程指定的分支(远程分支可以不存在, 该命令可以在远程创建新分支)
+     $ git push <remote_name> localBranchName:remoteBranchName
+     $  push <remote name,一般就是 origin> <本地分支名>:<远程分支名>
+     删除远程分支: 向远程推送空分支:
+     $ git push <remote_name> :<remote_branch>
  *
  *  当 不同的分支对同一文件做了修改,且都 commit 到本地库后
  *  再执行 $ git merge 分支名 命令时, 会出现 合并冲突
@@ -180,6 +217,38 @@
  *    $ git log --graph --pretty=oneline --abbrev-commit
  *  注: 当分支无法合并时,就表示存在 commit 冲突, 解决冲突之后, 再 merge, 再 add/commit
  *    解决冲突就是把 git 合并失败的文件手动编辑后,再提交.
+-------------------------------------------------------------------------------------------
+    如果希望关联远程仓库指定分支, 由于
+    $ git checkout -b <branch_name>
+    命令会将当前本地分支的内容切换至新的分支
+    需要先使用
+    $ git fetch <remote_name> <remote_branch>
+    再使用
+    $ git checkout -b <new_local_branch> <remote_name>/<remote_branch>
+    从远程分支 checkout 出来的本地分支, 称为 跟踪分支(tracking branch). 跟踪分支是一种和某个远程分支
+    有直接关联的本地分支. 在跟踪分支里输入 git push, git 会自行推断应该向哪个服务器的哪个分支推送数据.
+    同样, 在这些分支里运行 git pull 会获取所有远程索引, 并把它们的数据都合并到本地分支中来.
+    -------------------------------------
+    fetch & pull
+    $ git fetch <remote_name>   # 将某个远程主机的更新全部取回本地
+    $ git fetch <remote_name> <remote_branch_name>  # 指定分支, eg: git fetch origin master
+    更新后,会返回一个 FETCH_HEAD, 指 fetch 指定分支在服务器上的最新状态
+    $ git log -p FETCH_HEAD  # 查看刚取回的更新信息.
+    $ git pull <remote_name> <remote_branch_name>:<local_branch_name>
+    等价于以下两条命令
+    $ git fetch <remote_name> <remote_branch_name>   # 从远程主机的 remote_branch 拉取最新内容
+    $ git merge FETCH_HEAD      # 将拉取下来的最新内容合并到当前所在的分支中
+    如果远程分支是与当前分支合并,可以省略本地当前分支:
+    $ git pull <remote_name> <remote_branch_name>
+    ==============================
+    在新的 workspace 使用 fetch
+    $ git init
+    $ git fetch <git 地址>
+    $ git checkout -b <local_branch_name>
+    $ git merge FETCH_HEAD
+    ## 以上操作可以把远程指定地址的文件 down 到本地
+
+-------------------------------------------------------------------------------------------
  *
  * 分支的管理策略
  *  通常合并分支时,如果可能, git 会用 fast format 模式, 这种模式下, 分支删除后, 会丢掉分支信息
@@ -279,8 +348,19 @@
  *    推送远程库:
  *     $ git push github master
  *     $ git push gitee master
-     4. 重命名:
+     4. 重命名远程地址名称(就是和远程 git 地址关联的唯一名称): -- 一个 git 本地仓库可以关联多个远程库
         $ git remote rename <old> <new>
+        重命名本地分支
+        $ git branch -m <old-branch> <new-branch>
+        重命名远程分支: 先删除远程分支, 再新建分支.
+        $ git push --delete <remote_name> <remote_branch_name>      # 删除远程分支.
+        $ git branch -m <old_local_branch> <new_local_branch>       # 重命名本地分支.
+        重命名本地当前分支可以省略旧名称
+        $ git branch -m <new_local_branch>   # 重命名本地当前分支
+        $ git push <remote_name>:<branch_name>
+     5. $ git remote           # 类似 $ git branch 命令, 查看当前关联的远程地址名称.
+       # 也是类似 $ git remote -v 命令.
+
  *
  * ---------------------------------------------------------------------------------------------------------------------
  *
@@ -296,9 +376,9 @@
  *       # 也可以对某个仓库指定不同的用户名和 email 地址.
  *  2. 关于忽略文件
  *    忽略原则:
- *    1) 忽略操作系统自动生成的文件，比如缩略图等；
- *    2) 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件；
- *    3) 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。
+ *    1) 忽略操作系统自动生成的文件,比如缩略图等；
+ *    2) 忽略编译生成的中间文件、可执行文件等,也就是如果一个文件是通过另一个文件自动生成的,那自动生成的文件就没必要放进版本库,比如Java编译产生的.class文件；
+ *    3) 忽略你自己的带有敏感信息的配置文件,比如存放口令的配置文件。
  *   使用:
  *     定义文件, 文件名为 .gitignore, 把所有要忽略的文件的文件名写入
  *     再把 .gitignore 提交到 git.
@@ -309,23 +389,24 @@
  *       $ git check-ignore -v 文件名
 
  -------------------------------------------------------------------------------------
-     .gitignore 文件中，每一行的忽略规则的语法如下：
+     .gitignore 文件中,每一行的忽略规则的语法如下：
 
-     空格不匹配任意文件，可作为分隔符，可用反斜杠转义
-     # 开头的文件标识注释，可以使用反斜杠进行转义
-     ! 开头的模式标识否定，该文件将会再次被包含，如果排除了该文件的父级目录，则使用 ! 也不会再次被包含。可以使用反斜杠进行转义
-     / 结束的模式只匹配文件夹以及在该文件夹路径下的内容，但是不匹配该文件
+     空格不匹配任意文件,可作为分隔符,可用反斜杠转义
+     # 开头的文件标识注释,可以使用反斜杠进行转义
+     ! 开头的模式标识否定,该文件将会再次被包含,如果排除了该文件的父级目录,则使用 ! 也不会再次被包含。可以使用反斜杠进行转义
+     / 结束的模式只匹配文件夹以及在该文件夹路径下的内容,但是不匹配该文件
      / 开始的模式匹配项目跟目录
-     如果一个模式不包含斜杠，则它匹配相对于当前 .gitignore 文件路径的内容，如果该模式不在 .gitignore 文件中，则相对于项目根目录
-     ** 匹配多级目录，可在开始，中间，结束
+     如果一个模式不包含斜杠,则它匹配相对于当前 .gitignore 文件路径的内容,如果该模式不在 .gitignore 文件中,则相对于项目根目录
+     ** 匹配多级目录,可在开始,中间,结束
      ? 通用匹配单个字符
      [] 通用匹配单个字符列表
 
  -------------------------------------------------------------------------------------
-    bin/: 忽略当前路径下的bin文件夹，该文件夹下的所有内容都会被忽略，不忽略 bin 文件
+ .gitignore
+    bin/: 忽略当前路径下的bin文件夹,该文件夹下的所有内容都会被忽略,不忽略 bin 文件
     /bin: 忽略根目录下的bin文件
-    /*.c: 忽略 cat.c，不忽略 build/cat.c
-    debug/*.obj: 忽略 debug/io.obj，不忽略 debug/common/io.obj 和 tools/debug/io.obj
+    /*.c: 忽略 cat.c,不忽略 build/cat.c
+    debug/*.obj: 忽略 debug/io.obj,不忽略 debug/common/io.obj 和 tools/debug/io.obj
     **/foo: 忽略/foo, a/foo, a/b/foo等
     a/**/b: 忽略a/b, a/x/b, a/x/y/b等
     !/bin/run.sh: 不忽略 bin 目录下的 run.sh 文件
@@ -335,9 +416,9 @@
 
  -------------------------------------------------------------------------------------
 
-     .gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。
+     .gitignore只能忽略那些原来没有被track的文件,如果某些文件已经被纳入了版本管理中,则修改.gitignore是无效的。
 
-     解决方法就是先把本地缓存删除（改变成未track状态），然后再提交:
+     解决方法就是先把本地缓存删除(改变成未track状态),然后再提交:
 
      git rm -r --cached .
      git add .
@@ -353,7 +434,7 @@
 	git rm -r --cached .
 	# 讲本地代码重新加入
 	git add .
-	# 并让 .gitignore 文件夹生效，读取我配置的过滤规则
+	# 并让 .gitignore 文件夹生效,读取我配置的过滤规则
 	git commit -m "update .gitignore"
     
 	git push origin 分支名 –-force, 强制提交当前版本号。
@@ -461,6 +542,98 @@
  *      3) 基于 ~ 操作: 只能后退
  *          $ git reset --hard HEAD~n   # 后退 n 个版本
  *      注: 与 --hard 相对应的
+
+ --------------------------------------------------------------------
+  Rebase 用法一:
+  使用 rebase 合并本地多个 commit 为一个完整的 commit
+  $ git rebase -i [start_point] [end_point]
+   # -i 指 --interactive, 即弹出交互式界面让用户编辑完成合并操作
+   # start_point 和 end_point 指定一个编辑区间,如果不指定 end_point, 则该区间的终点默认是当前分支 HEAD 所指向的 commit
+   # 注: 该区间指定的是一个前开后闭的区间.
+ 执行命令后, 会出现如下交互界面
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Rebase 7c3f5f1..a5b9510 onto 7c3f5f1 (1 command)
+  pick b4d476 add b.txt
+  s ssasss add c.txt
+  s ssdfss add d.txt
+ # 这里把需要合并的 pick 改为 s 即表示将当前提交合并到上一个, 第一个不能改(其前面没有可合并的提交)
+ #
+ # Commands:
+ # p, pick <commit> = use commit
+ # r, reword <commit> = use commit, but edit the commit message
+ # e, edit <commit> = use commit, but stop for amending
+ # s, squash <commit> = use commit, but meld into previous commit   # 将该 commit 和前一个 commit 合并成一个
+ # f, fixup <commit> = like "squash", but discard this commit's log message
+ # x, exec <command> = run command (the rest of the line) using shell
+ # b, break = stop here (continue rebase later with 'git rebase --continue')
+ # d, drop <commit> = remove commit
+ # l, label <label> = label current HEAD with a name
+ # t, reset <label> = reset HEAD to a label
+ # m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
+ # .       create a merge commit using the original merge commit's
+ # .       message (or the oneline, if no original merge commit was
+ # .       specified). Use -c <commit> to reword the commit message.
+ #
+ # These lines can be re-ordered; they are executed from top to bottom.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 编辑保存后出现注释界面,根据需要修改.
+ 提交后,即完成了 多个本地 commit 的合并
+注:
+ eg1: $ git rebase -i 36334db    # 将指定提交下一个提交开始(前开区间: start point^),直到 HEAD 为止合并
+ eg2: $ git rebase -i HEAD~3     # 将包括 HEAD 在内的之前 3 个提交合并为一个.
+ eg3: $ git rebase -i 3333fdf  222sdf   # 将 3333fdf + 1 到  222sdf 的 commit 合并.
+ ====================
+ rebase 用法二:
+ 将某一段 commit 粘贴到另一个分支上(如果只是某一两个分支,使用 cherry-pick)
+ $ git rebase [start_point] [end_point] --onto [branch_name]
+    # 将当前分支的 指定提交合并到 branch_name 分支
+ $ git checkout [branch_name]
+    # 切换到指定分支(目的分支)
+    # 此时, HEAD 指针还没有移动, 在原始位置.
+ $ git reset --hard <commit_id>
+    # commit_id 指 rebase 后的提交点(窗口会有提示).
+
+
+
+
+   merge 与 rebase.
+    rebase:
+     $ git checkout experiment   # 切换分支.
+     $ git rebase master         # 变基当前分支到指定分支.
+     它的原理是回到两个分支最近的共同祖先,根据当前分支(也就是要进行变基的分支 experiment)后续的历次提交对象
+     (这里只有一个 C3),生成一系列文件补丁,然后以基底分支(也就是主干分支 master)最后一个提交对象(C4)为新的出发点,
+     逐个应用之前准备好的补丁文件,最后会生成一个新的合并提交对象(C3'),从而改写 experiment 的提交历史,使它成为 master 分支的直接下游
+     再快进 master 分支:
+     $ git checkout master
+     $ git merge experiment
+     关于 git rebase --onto 操作.
+     例, 为了给服务器端添加一些功能而创建了特性分支 server, 然后提交 C3 和 C4. 然后又从 C3 的地方再增加一个 Client 分支来对客户端代码
+     进行一些相应修改, 所以提交了 C8 和 C9. 最后又回到 server 分支提交 C10.
+     此即 从一个特性分支里再分出一个特性分支的历史. 假设在接下来的一次软件发布中, 我们决定把客户端的修改并到主线中, 而暂缓并入服务端软件的修改/
+     此时, 就可以把基于 client 分支而非 server 分支的改变(即 C8 和 C9), 跳过 server 直接放到 master 分支中重演一遍, 但这需要用 git rebase
+     的 --onto 选项指定新的基地分支 master.
+     $ git rebase --onto master server client
+     解释: 取出 client 分支, 找出 client 分支和 server 分支的共同祖先之后(C3 以后, 不包括 C3, 即 C8 和 C9)的变化, 然后把它们在 master 上重演一遍.
+     之后再快进 master 分支.
+     $ git checkout master  # 切换到 master.
+     $ git merge client     # 将 client 合并到 当前分支(master).
+     现在, 决定把 server 分支的变化也包含进来. 可以直接把 server 分支变基到 master, 而不用切换到 server 分支之后再执行变基操作 --
+     $ git rebase [主分支] [特性分支] 分支会先取出特性分支 server, 然后在主分支 master 上重演.
+     $ git rebase master server
+     之后再快进主干分支 master.
+     $ git checkout master
+     $ git merge server
+     注: 变基的风险.
+     一旦分支中的提交对象发布到公共仓库, 就千万不要对该分支进行变基操作.
+     如果把变基当成一种在推送之前清理提交历史的手段，而且仅仅变基那些尚未公开的提交对象，就没问题。
+     如果变基那些已经公开的提交对象，并且已经有人基于这些提交对象开展了后续开发工作的话，就会出现叫人沮丧的麻烦。
+
+    merge:
+     $ git
+
+   查看指定文件每一行的修改历史.
+   $ git blame [文件名]
+
  *
  *
  */

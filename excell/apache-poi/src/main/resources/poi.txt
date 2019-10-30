@@ -1,0 +1,7 @@
+poi: Poor Obfuscation Implementation
+
+HSSF － 提供读写Microsoft Excel格式档案的功能。 用来操作 office 2007 版本以前的 excel.xls 文件
+XSSF － 提供读写Microsoft Excel OOXML格式档案的功能。 用来操作 office 2007 版本以后的 excel.xlsx 文件
+HWPF － 提供读写Microsoft Word格式档案的功能。
+HSLF － 提供读写Microsoft PowerPoint格式档案的功能。
+HDGF － 提供读写Microsoft Visio格式档案的功能。

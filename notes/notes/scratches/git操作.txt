@@ -1,0 +1,13 @@
+1. 新建文件夹.
+2. 在文件夹下执行 $ git init    # 会生成 .git 目录.
+3. 再执行 $ git remote add <自定的远程仓库 id, 一般就是 origin, 也可以是其他的任意 id> 远程仓库 url
+   eg: $ git remote add origin http://git.xiang7.net/java/global-voyage-center.git
+4. 接着执行 $ git pull <远程仓库 id, 如上述 origin> master
+5. pull 完毕, 用 idea--open, 此时就是 master 分支的代码.
+6. idea 右下角, 新建分支: New Branch -- 命名: eg: dev
+7. pull dev 的代码, 得到了 dev 的代码 -- 没有提交到 master 的代码都在 Default Changelist 里面.
+   接着指定你需要提交到 master 的文件, 执行 commit --> push 操作.
+   注: 最好新建一个 changelist(可以命名 commit, 把此 changelist 设置为 active 状态: 右键设置 "Set Active Changelist"),
+       把 需要提交到 master 的文件拖到(直接鼠标左键按住就可以拖动) commit-changelist 中, 然后再执行 commit-push 操作.
+
+git pull = fetch + merge

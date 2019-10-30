@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>java.math.BigDecimal/java.math.RoundingMode</title>
+</head>
+<body>
+
+Specifies a <i>rounding behavior</i> for numerical operations
+capable of discarding precision. Each rounding mode indicates how
+the least significant returned digit of a rounded result is to be
+calculated. If fewer digits are returned than the digits needed to
+represent the exact numerical result, the discarded digits will be
+referred to as the <i>discarded fraction</i> regardless the digits'
+contribution to the value of the number. In other words,
+considered as a numerical value, the discarded fraction could have
+an absolute value greater than one.
+<hr/>
+为数值操作的精度指定一种取舍行为. 每个取舍行为表明了结果的最后以位该如何计算.
+如果返回的位数少于需要表示精确结果的位数, 被舍弃的数字代表舍弃分数, 无论被舍弃的数字
+对原数字的贡献如何.
+<hr/>
+
+<p>
+    Each rounding mode description includes a table listing how
+    different two-digit decimal values would round to a one digit
+    decimal value under the rounding mode in question. The result
+    column in the tables could be gotten by creating a
+    {@code BigDecimal} number with the specified value, forming a
+    {@link MathContext} object with the proper settings
+    ({@code precision} set to {@code 1}, and the
+    {@code roundingMode} set to the rounding mode in question), and
+    calling {@link BigDecimal#round round} on this number with the
+    proper {@code MathContext}. A summary table showing the results
+    of these rounding operations for all rounding modes appears below.
+<hr/>
+<!--表格中描述了每种取舍模式对不同的十进制两位数如何取舍为一位数. 结果列可以通过
+指定值构建 BigDecimal, 使用恰当的精度形成一个 MathContext 对象-->
+
+
+<table border>
+    <caption><b>Summary of Rounding Operations Under Different Rounding Modes</b></caption>
+    <tr>
+        <th></th>
+        <th colspan=8>Result of rounding input to one digit with the given
+            rounding mode
+        </th>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>{@code UP} round away from zero</th>
+        <th>{@code DOWN} round towards zero</th>
+        <th>{@code CEILING} round towards positive infinity</th>
+        <th>{@code FLOOR} round towards negative infinity</th>
+        <th>{@code HALF_UP} round towards {@literal "nearest neighbor"}
+            unless both neighbors are equidistant, in which case round up.
+        </th>
+        <th>{@code HALF_DOWN} round towards {@literal "nearest neighbor"}
+            unless both neighbors are equidistant, in which case round
+            down
+        </th>
+        <th>{@code HALF_EVEN} round towards the {@literal "nearest neighbor"}
+            unless both neighbors are equidistant, in which case, round
+            towards the even neighbor
+        </th>
+        <th>{@code UNNECESSARY}</th>
+
+    <tr align=center>
+        <td>5.5</td>
+        <td>6</td>
+        <td>5</td>
+        <td>6</td>
+        <td>5</td>
+        <td>6</td>
+        <td>5</td>
+        <td>6</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>3</td>
+        <td>2</td>
+        <td>3</td>
+        <td>2</td>
+        <td>3</td>
+        <td>2</td>
+        <td>2</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>2</td>
+        <td>1</td>
+        <td>2</td>
+        <td>1</td>
+        <td>2</td>
+        <td>2</td>
+        <td>2</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>2</td>
+        <td>1</td>
+        <td>2</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-2</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-2</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-2</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-2</td>
+        <td>-2</td>
+        <td>-2</td>
+        <td>-2</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-3</td>
+        <td>-2</td>
+        <td>-2</td>
+        <td>-3</td>
+        <td>-3</td>
+        <td>-2</td>
+        <td>-2</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-6</td>
+        <td>-5</td>
+        <td>-5</td>
+        <td>-6</td>
+        <td>-6</td>
+        <td>-5</td>
+        <td>-6</td>
+        <td>throw {@code ArithmeticException}</td>
+</table>
+
+<hr/>
+
+<p>
+    Rounding mode to round away from zero. Always increments the
+    digit prior to a non-zero discarded fraction. Note that this
+    rounding mode never decreases the magnitude of the calculated
+    value.
+    "远离零" 的取舍模式. 总是增加非零舍弃分数之前的数字.
+    注意, 该取舍模式不会减小被计算数字的数量级.
+
+    <br/><br/>
+<table border>
+    <caption><b>Rounding mode UP(进位) Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code UP} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>6</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>3</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-3</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-6</td>
+</table>
+
+<hr/>
+
+Rounding mode to round towards zero. Never increments the digit
+prior to a discarded fraction (i.e., truncates). Note that this
+rounding mode never increases the magnitude of the calculated value.
+<br/>
+"靠近零" 的取舍模式. 从不增加被舍弃分数之前的数字(也即, 截取).
+注意, 该取舍模式从不增加被计算数字的数量级.
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode DOWN(截取/舍弃) Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code DOWN} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>5</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-5</td>
+</table>
+
+<hr/>
+
+Rounding mode to round towards positive infinity. If the
+result is positive, behaves as for {@code RoundingMode.UP};
+if negative, behaves as for {@code RoundingMode.DOWN}. Note
+that this rounding mode never decreases the calculated value.
+<br>
+"朝向正无穷" 的取舍模式. 如果结果是 正数, 则等价于 UP 模式;
+如果结果是 负数, 则等价于 DOWN 模式. 注意, 该取舍模式从不减小被计算数字.
+
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode CEILING(正无穷方向) Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code CEILING} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>6</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>3</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-5</td>
+</table>
+
+<hr/>
+
+Rounding mode to round towards negative infinity. If the
+result is positive, behave as for {@code RoundingMode.DOWN};
+if negative, behave as for {@code RoundingMode.UP}. Note that
+this rounding mode never increases the calculated value.
+<br/>
+"朝向负无穷" 的取舍模式. 如果结果是正数, 等价于 DOWN 模式; 如果结果是负数,
+等价于 UP 模式. 注意, 该模式从不增加被计算的数字.
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode FLOOR(负无穷方向) Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code FLOOR} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>5</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-3</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-6</td>
+</table>
+
+<hr/>
+
+Rounding mode to round towards {@literal "nearest neighbor"}
+unless both neighbors are equidistant, in which case round up.
+Behaves as for {@code RoundingMode.UP} if the discarded
+fraction is &ge; 0.5; otherwise, behaves as for
+{@code RoundingMode.DOWN}. Note that this is the rounding
+mode commonly taught at school.
+
+<br/>
+"朝向最近邻居" 的取舍模式, 除非两边等距 -- 此时则使用 UP 模式.
+如果被舍弃的分数 大于等于 0.5, 等价于 UP 模式; 否则, 等价于 DOWN 模式.
+注意, 该模式即通常在学校讲授的模式.
+
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode HALF_UP(经典的四舍五入) Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code HALF_UP} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>6</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>3</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-3</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-6</td>
+</table>
+
+<hr/>
+Rounding mode to round towards {@literal "nearest neighbor"}
+unless both neighbors are equidistant, in which case round
+down. Behaves as for {@code RoundingMode.UP} if the discarded
+fraction is &gt; 0.5; otherwise, behaves as for
+{@code RoundingMode.DOWN}.
+<br/>
+"朝向最近邻居" 的取舍模式, 除非两边等距 -- 此时使用 DOWN 模式.
+如果被舍弃分数 大于 0.5, 则使用 UP 模式; 否则使用 DOWN 模式.
+
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode HALF_DOWN(五舍六入) Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code HALF_DOWN} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>5</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-5</td>
+</table>
+
+<hr/>
+
+Rounding mode to round towards the {@literal "nearest neighbor"}
+unless both neighbors are equidistant, in which case, round
+towards the even neighbor. Behaves as for
+{@code RoundingMode.HALF_UP} if the digit to the left of the
+discarded fraction is odd; behaves as for
+{@code RoundingMode.HALF_DOWN} if it's even. Note that this
+is the rounding mode that statistically minimizes cumulative
+error when applied repeatedly over a sequence of calculations.
+It is sometimes known as {@literal "Banker's rounding,"} and is
+chiefly used in the USA. This rounding mode is analogous to
+the rounding policy used for {@code float} and {@code double}
+arithmetic in Java.
+<br/>
+"朝向最近邻居" 的取舍模式, 除非两边等距 -- 此时, 取值朝向 偶数 方向.
+如果被舍弃的分数 左侧数字 是 奇数, 则等价于 HALF_UP 模式; 反之, 如果被舍弃的
+分数 左侧数字 是 偶数, 则等价于 HALF_DOWN 模式.
+<br/>
+注意, 当重复应用于一系列计算时, 该取舍模式会引起 统计学最小化积累错误.
+该模式也被称为 "银行家的取舍模式", 主要在美国使用. 该模式类似 java 中的 单/双精度
+浮点数(float/double)的取舍策略.
+
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode HALF_EVEN Examples(四舍六入, 五向偶数)</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code HALF_EVEN} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>6</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>2</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>1</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>-2</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>-6</td>
+</table>
+
+<hr/>
+
+Rounding mode to assert that the requested operation has an exact
+result, hence no rounding is necessary. If this rounding mode is
+specified on an operation that yields an inexact result, an
+{@code ArithmeticException} is thrown.
+<br/>
+该模式用来断言请求操作有一个精确的结果, 因此, 不必取舍.
+如果该取舍模式被指定了一个提供非精确结果的操作, 将会抛出 ArithmeticException.
+
+
+<br/><br/>
+<table border>
+    <caption><b>Rounding mode UNNECESSARY Examples</b></caption>
+    <tr valign=top>
+        <th>Input Number</th>
+        <th>Input rounded to one digit<br> with {@code UNNECESSARY} rounding
+    <tr align=center>
+        <td>5.5</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>2.5</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>1.6</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>1.1</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>1.0</td>
+        <td>1</td>
+    <tr align=center>
+        <td>-1.0</td>
+        <td>-1</td>
+    <tr align=center>
+        <td>-1.1</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>-1.6</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>-2.5</td>
+        <td>throw {@code ArithmeticException}</td>
+    <tr align=center>
+        <td>-5.5</td>
+        <td>throw {@code ArithmeticException}</td>
+</table>
+
+</body>
+</html>

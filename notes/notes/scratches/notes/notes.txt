@@ -107,3 +107,7 @@ token:
 
 对称密钥加密技术: (秘密密钥加密技术)
 非对称密钥加密技术: (公开密钥加密技术)
+
+CGI: Common Gateway Interface. 通用网关接口.
+CDN: Content Distribution/Delivery Network // CDS: Content Delivery Service. 内容分发服务.
+CDSP: Content Delivery Service Provider. 内容分发服务运营商.

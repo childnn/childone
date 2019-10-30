@@ -1,3 +1,10 @@
+QPS: Queries Per Second 每秒查询率.
+    一台服务器每秒能够响应的查询次数, 是对一个特定的查询服务器在规定时间内所处理流量多少的衡量标准.
+TPS: TransactionsPerSecond 每秒事务数.
+    它是软件测试结果的测量单位. 客户机在发送请求时开始计时, 收到服务器响应后结束计时, 以此来计算使用的时间
+    和完成的事务个数.
+
+
 一、关于exists和in的效率问题：
 分场景：
 1.此场景适应A表数据量大于B表，且where后的字段加了索引。这种情况用in效率高的原因是利用了大表的索引。
@@ -6,3 +13,4 @@
 2.此场景适应B表数据量大于A表，且where后的字段加了索引。这种情况用exists效率高的原因是利用了大表的索引。
   select * from ecs_goods a where EXISTS(select cat_id from ecs_category b where a.cat_id = b.cat_id);
 总结：IN适合于外表大而内表小的情况；EXISTS适合于外表小而内表大的情况。
+

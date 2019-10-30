@@ -1,0 +1,8 @@
+### org.springframework.boot.autoconfigure.amqp.RabbitProperties
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=admin
+spring.rabbitmq.password=secret
+---
+Alternatively, you could configure the same connection using the addresses attributes:
+spring.rabbitmq.addresses=amqp://admin:secret@localhost

@@ -1,3 +1,195 @@
+优化：
+在一张电影演员表中，在actor_id和film_id两个列上都建立了独立的索引，然后有如下查询：
+select film_id,actor_id from film_actor where actor_id = 1 or film_id = 1
+===> 编译器的优化
+select film_id,actor_id from film_actor where actor_id = 1
+union all
+select film_id,actor_id from film_actor where film_id = 1 and actor_id <> 1
+-------------------------------------------------------------------------------------
+SELECT film_id,description FROM film ORDER BY title LIMIT 50,5;
+==> 大数据量
+SELECT film.film_id,film.description
+FROM film INNER JOIN (
+    SELECT film_id FROM film ORDER BY title LIMIT 50,5
+) AS tmp USING(film_id);
+--------------------------------------
+SELECT id FROM t LIMIT 10000, 10;
+==>
+SELECT id FROM t WHERE id > 10000 LIMIT 10;
+-------------------------------------------------------
+UPDATE operation o
+SET    status = 'applying'
+WHERE  o.id IN (SELECT id
+                FROM   (SELECT o.id,
+                               o.status
+                        FROM   operation o
+                        WHERE  o.group = 123
+                               AND o.status NOT IN ( 'done' )
+                        ORDER  BY o.parent,
+                                  o.id
+                        LIMIT  1) t);
+==>
+UPDATE operation o
+       JOIN  (SELECT o.id,
+                            o.status
+                     FROM   operation o
+                     WHERE  o.group = 123
+                            AND o.status NOT IN ( 'done' )
+                     ORDER  BY o.parent,
+                               o.id
+                     LIMIT  1) t
+         ON o.id = t.id
+SET    status = 'applying';
+-------------------------------------------------------------------
+SELECT *
+FROM   my_order o
+       INNER JOIN my_appraise a ON a.orderid = o.id
+ORDER  BY a.is_reply ASC,
+          a.appraise_time DESC
+LIMIT  0, 20
+==>  is_reply 只有0和1两种状态
+SELECT *
+FROM ((SELECT *
+         FROM   my_order o
+                INNER JOIN my_appraise a
+                        ON a.orderid = o.id
+                           AND is_reply = 0
+         ORDER  BY appraise_time DESC
+         LIMIT  0, 20)
+        UNION ALL
+        (SELECT *
+         FROM   my_order o
+                INNER JOIN my_appraise a
+                        ON a.orderid = o.id
+                           AND is_reply = 1
+         ORDER  BY appraise_time DESC
+         LIMIT  0, 20)) t
+ORDER  BY  is_reply ASC,
+          appraisetime DESC
+LIMIT  20;
+------------------------------------------------------------------------------
+SELECT *
+FROM   my_neighbor n
+       LEFT JOIN my_neighbor_apply sra
+              ON n.id = sra.neighbor_id
+                 AND sra.user_id = 'xxx'
+WHERE  n.topic_status < 4
+       AND EXISTS(SELECT 1
+                  FROM   message_info m
+                  WHERE  n.id = m.neighbor_id
+                         AND m.inuser = 'xxx')
+       AND n.topic_type <> 5
+==>
+ELECT *
+FROM   my_neighbor n
+       INNER JOIN message_info m
+               ON n.id = m.neighbor_id
+                  AND m.inuser = 'xxx'
+       LEFT JOIN my_neighbor_apply sra
+              ON n.id = sra.neighbor_id
+                 AND sra.user_id = 'xxx'
+WHERE  n.topic_status < 4
+       AND n.topic_type <> 5
+-----------------------------------------------------------------
+SELECT *
+FROM   (SELECT target,
+               Count(*)
+        FROM   operation
+        GROUP  BY target) t
+WHERE  target = 'rm-xxxx';
+==>
+SELECT target,
+       Count(*)
+FROM   operation
+WHERE  target = 'rm-xxxx'
+GROUP  BY target;
+----------------------------------------------------------------------
+SELECT *
+FROM   my_order o
+       LEFT JOIN my_userinfo u
+              ON o.uid = u.uid
+       LEFT JOIN my_productinfo p
+              ON o.pid = p.pid
+WHERE  ( o.display = 0 )
+       AND ( o.ostaus = 1 )
+ORDER  BY o.selltime DESC
+LIMIT  0, 15;
+==> 提前缩小范围
+SELECT *
+FROM (
+SELECT *
+FROM   my_order o
+WHERE  ( o.display = 0 )
+       AND ( o.ostaus = 1 )
+ORDER  BY o.selltime DESC
+LIMIT  0, 15
+) o
+     LEFT JOIN my_userinfo u
+              ON o.uid = u.uid
+     LEFT JOIN my_productinfo p
+              ON o.pid = p.pid
+ORDER BY  o.selltime DESC
+limit 0, 15;
+---------------------------------------------------------------
+SELECT    a.*,
+          c.allocated
+FROM      (
+              SELECT   resourceid
+              FROM     my_distribute d
+                   WHERE    isdelete = 0
+                   AND      cusmanagercode = '1234567'
+                   ORDER BY salecode limit 20) a
+LEFT JOIN
+          (
+              SELECT   resourcesid， sum(ifnull(allocation, 0) * 12345) allocated
+              FROM     my_resources
+                   GROUP BY resourcesid) c
+ON        a.resourceid = c.resourcesid
+==> 其实对于子查询 c，左连接最后结果集只关心能和主表 resourceid 能匹配的数据
+SELECT    a.*,
+          c.allocated
+FROM      (
+                   SELECT   resourceid
+                   FROM     my_distribute d
+                   WHERE    isdelete = 0
+                   AND      cusmanagercode = '1234567'
+                   ORDER BY salecode limit 20) a
+LEFT JOIN
+          (
+                   SELECT   resourcesid， sum(ifnull(allocation, 0) * 12345) allocated
+                   FROM     my_resources r,
+                            (
+                                     SELECT   resourceid
+                                     FROM     my_distribute d
+                                     WHERE    isdelete = 0
+                                     AND      cusmanagercode = '1234567'
+                                     ORDER BY salecode limit 20) a
+                   WHERE    r.resourcesid = a.resourcesid
+                   GROUP BY resourcesid) c
+ON        a.resourceid = c.resourcesid
+==> 但是子查询 a 在我们的SQL语句中出现了多次。这种写法不仅存在额外的开销，还使得整个语句显的繁杂。使用 WITH 语句再次重写
+WITH a AS
+(
+         SELECT   resourceid
+         FROM     my_distribute d
+         WHERE    isdelete = 0
+         AND      cusmanagercode = '1234567'
+         ORDER BY salecode limit 20)
+SELECT    a.*,
+          c.allocated
+FROM      a
+LEFT JOIN
+          (
+                   SELECT   resourcesid， sum(ifnull(allocation, 0) * 12345) allocated
+                   FROM     my_resources r,
+                            a
+                   WHERE    r.resourcesid = a.resourcesid
+                   GROUP BY resourcesid) c
+ON        a.resourceid = c.resourcesid
+
+
+
+
 数据库索引的作用和优点缺点以及索引的11中用法
 为什么要创建索引呢？这是因为，创建索引可以大大提高系统的性能。
 第一，通过创建唯一性索引，可以保证数据库表中每一行数据的唯一性。
@@ -5,135 +197,80 @@
 第三，可以加速表和表之间的连接，特别是在实现数据的参考完整性方面特别有意义。
 第四，在使用分组和排序 子句进行数据检索时，同样可以显著减少查询中分组和排序的时间。
 第五，通过使用索引，可以在查询的过程中，使用优化隐藏器，提高系统的性能。
-
 也许会有人要问：增加索引有如此多的优点，为什么不对表中的每一个列创建一个索引呢？这种想法固然有其合理性，然而也有其片面性。虽然，索引有许多优点， 但是，为表中的每一个列都增加索引，是非常不明智的。这是因为，增加索引也有许多不利的一个方面。
-
 第一，创建索引和维护索引要耗费时间，这种时间随着数据 量的增加而增加。
 第二，索引需要占物理空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果要建立聚簇索引，那么需要的空间就会更大。
 第三，当对表中的数据进行增加、删除和修改的时候，索引也要动态的维护，这样就降低了数据的维护速度。
-
 索引是建立在数据库表中的某些列的上面。因此，在创建索引的时候，应该仔细考虑在哪些列上可以创建索引，在哪些列上不能创建索引。一般来说，应该在这些列 上创建索引，例如：
-
 在经常需要搜索的列上，可以加快搜索的速度；
 在作为主键的列上，强制该列的唯一性和组织表中数据的排列结构；
 在经常用在连接的列上，这 些列主要是一些外键，可以加快连接的速度；
 在经常需要根据范围进行搜索的列上创建索引，因为索引已经排序，其指定的范围是连续的；
 在经常需要排序的列上创 建索引，因为索引已经排序，这样查询可以利用索引的排序，加快排序查询时间；
 在经常使用在WHERE子句中的列上面创建索引，加快条件的判断速度。
-
 同样，对于有些列不应该创建索引。一般来说，不应该创建索引的的这些列具有下列特点：
-
 第一，对于那些在查询中很少使用或者参考的列不应该创建索引。这是因 为，既然这些列很少使用到，因此有索引或者无索引，并不能提高查询速度。相反，由于增加了索引，反而降低了系统的维护速度和增大了空间需求。
 第二，对于那 些只有很少数据值的列也不应该增加索引。这是因为，由于这些列的取值很少，例如人事表的性别列，在查询的结果中，结果集的数据行占了表中数据行的很大比 例，即需要在表中搜索的数据行的比例很大。增加索引，并不能明显加快检索速度。
 第三，对于那些定义为text, image和bit数据类型的列不应该增加索引。这是因为，这些列的数据量要么相当大，要么取值很少。
 第四，当修改性能远远大于检索性能时，不应该创建索 引。这是因为，修改性能和检索性能是互相矛盾的。当增加索引时，会提高检索性能，但是会降低修改性能。当减少索引时，会提高修改性能，降低检索性能。因 此，当修改性能远远大于检索性能时，不应该创建索引。
-
 创建索引的方法和索引的特征
 创建索引的方法
 创建索引有多种方法，这些方法包括直接创建索引的方法和间接创建索引的方法。直接创建索引，例如使用CREATE INDEX语句或者使用创建索引向导，间接创建索引，例如在表中定义主键约束或者唯一性键约束时，同时也创建了索引。虽然，这两种方法都可以创建索引，但 是，它们创建索引的具体内容是有区别的。
 使用CREATE INDEX语句或者使用创建索引向导来创建索引，这是最基本的索引创建方式，并且这种方法最具有柔性，可以定制创建出符合自己需要的索引。在使用这种方式 创建索引时，可以使用许多选项，例如指定数据页的充满度、进行排序、整理统计信息等，这样可以优化索引。使用这种方法，可以指定索引的类型、唯一性和复合 性，也就是说，既可以创建聚簇索引，也可以创建非聚簇索引，既可以在一个列上创建索引，也可以在两个或者两个以上的列上创建索引。
-
 通过定义主键约束或者唯一性键约束，也可以间接创建索引。主键约束是一种保持数据完整性的逻辑，它限制表中的记录有相同的主键记录。在创建主键约束 时，系 统自动创建了一个唯一性的聚簇索引。虽然，在逻辑上，主键约束是一种重要的结构，但是，在物理结构上，与主键约束相对应的结构是唯一性的聚簇索引。换句话 说，在物理实现上，不存在主键约束，而只存在唯一性的聚簇索引。同样，在创建唯一性键约束时，也同时创建了索引，这种索引则是唯一性的非聚簇索引。因此， 当使用约束创建索引时，索引的类型和特征基本上都已经确定了，由用户定制的余地比较小。
-
 当在表上定义主键或者唯一性键约束时，如果表中已经有了使用CREATE INDEX语句创建的标准索引时，那么主键约束或者唯一性键约束创建的索引覆盖以前创建的标准索引。也就是说，主键约束或者唯一性键约束创建的索引的优先 级高于使用CREATE INDEX语句创建的索引。
-
 索引的特征
 索引有两个特征，即唯一性索引和复合索引。
 唯一性索引保证在索引列中的全部数据是唯一的，不会包含冗余数据。如果表中已经有一个主键约束或者唯一性键约束，那么当创建表或者修改表时，SQL Server自动创建一个唯一性索引。然而，如果必须保证唯一性，那么应该创建主键约束或者唯一性键约束，而不是创建一个唯一性索引。当创建唯一性索引 时，应该认真考虑这些规则：当在表中创建主键约束或者唯一性键约束时，SQL Server自动创建一个唯一性索引；如果表中已经包含有数据，那么当创建索引时，SQL Server检查表中已有数据的冗余性；每当使用插入语句插入数据或者使用修改语句修改数据时，SQL Server检查数据的冗余性：如果有冗余值，那么SQL Server取消该语句的执行，并且返回一个错误消息；确保表中的每一行数据都有一个唯一值，这样可以确保每一个实体都可以唯一确认；只能在可以保证实体 完整性的列上创建唯一性索引，例如，不能在人事表中的姓名列上创建唯一性索引，因为人们可以有相同的姓名。
-
 复合索引就是一个索引创建在两个列或者多个列上。在搜索时，当两个或者多个列作为一个关键值时，最好在这些列上创建复合索引。当创建复合索引时，应 该考虑 这些规则：最多可以把16个列合并成一个单独的复合索引，构成复合索引的列的总长度不能超过900字节，也就是说复合列的长度不能太长；在复合索引中，所 有的列必须来自同一个表中，不能跨表建立复合列；在复合索引中，列的排列顺序是非常重要的，因此要认真排列列的顺序，原则上，应该首先定义最唯一的列，例 如在（COL1，COL2）上的索引与在（COL2，COL1）上的索引是不相同的，因为两个索引的列的顺序不同；为了使查询优化器使用复合索引，查询语 句中的WHERE子句必须参考复合索引中第一个列；当表中有多个关键列时，复合索引是非常有用的；使用复合索引可以提高查询性能，减少在一个表中所创建的 索引数量。
-
 索引是个既稳定又开放的信息结构，它有十一种功能。
-
 1 分解功能
-
 把文献中的资料单元(如篇名、机构、短语、概念、物名、地名、书名、人名、字词、符号等)一一分解，这就是索引的分解功能。它是索引工作的起跑线和索引编纂的基础，没有对文献内容的这种分解功能，就没有索引。
-
 过去有些反对索引的人说，索引是把古人的著书“凌迟碎割”。他们对索引法的反对，实出于对流传已久的那种落后的皓首穷经的陋习的偏爱和对新的治学方 法的无知，洪业曾鄙视他们为卧于涸辙的鲋鱼，以升斗之水济命，而不知西江水之可羡。虽然如此，但他们所谓的索引是把古人著书“凌迟碎割”的形象说法，却从 反面十分正确地道破了索引的分解功能。
-
 分解功能是索引作用于文献的特殊功能，是它和其他检索工作不同之处。
-
 2 梳理功能
-
 每种文献都包容着许多不同性质的资料单元，它们在文献中基本呈无序的状态。把这些无序状态的资料单元按外表特征或内容性质进行各归其类的整理，这就 是索引的梳理功能。章学诚早就发现了这种功能，他在给《族孙守一论史表》信中要求其在治二十四史年表时一并把廿二史列传中的人名编成索引，两者互为经纬， 这样便可使考古之士，于纷如乱丝之资料中，忽得梳通栉理。
-
 梳理功能是索引分解的后继。如果只有分解功能而没有梳理的功能，那么分解功能就没有价值。
-
 梳理是对资料单元的初分。如是字序，只要按笔划或音序归类即可；如是类序只要按大类归纳即可。就像小姑娘梳头，先把长发梳顺，而编什么辫子或梳什么发型则是下一步的要求了。
-
 3 组合功能
-
 把梳理后的资料单元按照分类的要求，严密地组织它们的类别层次以及类目下的专题和同类目下款目的序列关系；或按字序的要求，严密地把标目的结构正装 或倒装、考虑限定词对标目的限定和修饰的级数、或考虑字序和类序相结合的可能。此外，不论是类序或字序都要考虑参照系统的建立方案，使相关款目形成网络， 使用户检索的眼界得以拓宽。这些，都是索引的组合功能。
-
 过去，国外的同行曾把圣经的页边索引以“串珠”命名；我国有人曾把本草的方剂编成索引，以“针线”命名，“串珠”和“针线”是索引组合功能很形象的描绘。它使文献资料单元成为一串串的明珠，成为被针线贯穿起来的资料单元的珍品。
-
 4 结网功能
-
 对某个领域的文献进行有计划的索引编纂，利用类型的结构从各种不同的角度和层次对这些文献的内容进行纵横交错和多维的揭示和组合，使之形成一个检索这些文献中的各种不同性质的资料单元的网络。这就是索引的结网功能。
-
 由“主表”和“词族索引”、“范畴索引”、“英汉对照索引”等所组成的《汉语主题词表》是由几种不同性质的索引构建的一个主题词间的联系、辨析主题 词词义和被标引的文献主题概念是否精确的一个隐含的语义网络，它对文献中的资料单元产生族性检索和扩大检索途径的作用。这个网络的结构和作用就是运用索引 结网功能的一个范例。
-
 《古今图书集成》囊括了清初以前绝大部分的文献，是我国现存最大的一部类书，广西大学林仲湘等根据它的特点，分别编了经线索引、纬线索引、图表索 引、人物传记索引、职方典汇考引和禽虫草木三典释名索引，从该书的各级类目和内容等不同角度交叉编结了一个严密的揭示网络，这又是索引结网功能的具体运用 的例证。
-
 5 揭示功能
-
 分解功能只是客观地对文献进行解剖，而揭示功能有较强的目的性，它最常出现的是按专业的需要挑选某些资料单元。
-
 在主题索引的编制中，主题概念的分析和主题词的选用，包括对隐性主题的析出是这种功能的体现。
-
 各种专题索引或各种专业的文摘索引也是索引揭示功能的运用。清朝徐克祺称赞蔡烈先的《本草万方针线》为镜考、为烛照，这是对索引揭示功能很生动的形容。
-
 6 鉴别功能
-
 文献是作者思维的物化，包含了作者用以施展其聪明才智的特有的言语轨迹及其思想气质。在文献的出版史中，出于各种不同的动机和原因，真伪之作叠出， 为杜伪辨真，不少人引经据典，注疏考证，一字之微，动千万言，甚至引发了校勘学的出现。近年来又产生了利用索引进行鉴别的方法，通过逐字索引分解被鉴别的 文献，即同时从两种版本中分析作者用字(词)的规律和频率以甄别其真伪。
-
 英国的女研究学家凯洛莱因·斯彼琴曾对莎士比亚的剧作进行过有趣的用词统计和分析，她发现，莎氏使用的许多诗意的语言都和大自然以及乡村生活有关。 又有人在研究司马迁的《史记·货殖列传》时，发现这篇不到5000字的文章竟使用49次“富”字，由此得出，致“富”是这篇论文的主题。这些事例证明通过 对文献中用词的解剖可以发现作者的特有气质和语言习惯，索引可利用这种潜在的规律辨析文献的真伪。
-
 7 追踪功能
-
 索引像只嗅觉灵敏的警犬一样能追踪各种领域的事物在文献中留下来的痕迹。
-
 一部旧时代报纸的索引，能追踪那个时代的重大历史事件，并清晰地再现这些重大的历史事件脉络；一部类书的索引，能追踪许多名人的各方面的成就和言行；一种专业期刊的刊后索引，能追踪当年该专业学科研究的动态；一部跨多年度的报刊回溯索引，就是一部多功能的追踪记录。
-
 追踪，是索引的功能之一。
-
 8 导航功能
-
 导航就是指引，它带有较强的评价取向，索引具有这种功能。
-
 过去，我国有一些所谓新产品，在技术人员的积极努力下问市了，但到国际市场上却被打回票，因为这种新产品在别的国家已成老产品。技术人员的情报鼻子不灵，其中原因之一是不查阅有关的索引，不依靠这个情报导航工具，以致迷失了生产的方向。
-
 在哲学社会科学的领域中，索引经常能提供在某个时期某个专业的理论动向和水平的第一手材料，许多科研工作者就依靠索引的导航，找到自己出发的港湾和要达到的彼岸。
-
 洪业在《引得说》中指出：“引得者，予学者以游翔于载籍之舟车也。舟车愈善，则其所游愈广，所入愈深。”这就是索引的导航功能。
-
 9 执简功能
-
 您感到在信息爆炸的文献环境中很难伸展自己的科研手脚吧?那么，请您先为自己的研究对象编编索引，那就可以执简御繁了。我国的史学家顾颉刚曾说： “我常想暂不办学术研究所而先办材料整理所。”“索引，也是研究的基础的一种，它能给您一个钥匙，使您在许多头绪不清的材料中找出头绪，而得到你所需要的 东西。”
-
 国外盛行的那种快速反映科研情报的KWIC、KWOC，就是发挥索引执简功能的工具，把众多科研期刊中的关键词以最简要的格式显现，使用户能享受 “索引在手，千刊掌握”的好处，而避免花去一半的科研时间在众多的资料堆中苦苦求索。因而，不少科研工作者赞誉索引有“天增岁月人增寿”的妙用。
-
 10 检索功能
-
 索引诞生在文献检索困难的历史背景里，它的检索功能随索引的诞生同步而生。在近二千年的索引发展史中，检索功能的变化和发展就是它的主要内容。所以，检索功能是索引最基本的功能。
-
 任何文献记录或工作记录一旦和索引方法挂上钩，它就会从山穷水尽疑无路的困境中解脱出来，很快得到检索方便的好处，机关或企业中人事档案和工资单的 人员的索引就是如此。又如，最令旅游者头疼的是，到了一个旅游点，买了地图，但要寻找一个地区、一条街道或里弄，那真像大海捞针一样的困难。当这幅地图加 上了地名索引后，所要之地名便一检即得了。
-
 11 预测功能
-
 索引中有不少数学现象，如从引文索引中统计到被引作者的论文频率，便基本上能预测到这个专业的学术带头人的出现；从题录索引中统计的课题内容，便可 预测到学术界未来研究的动向；从统计索引中出现的各种产品名称的频率，便能预测到市场将出现的热门商品。这些都是索引的预测功能。
-
 索引的创建及使用(sqlserver 2000)
-
 为给定表或视图创建索引。
 只有表或视图的所有者才能为表创建索引。表或视图的所有者可以随时创建索引，无论表中是否有数据。可以通过指定限定的数据库名称，为另一个数据库中的表或视图创建索引。
-
 语法
 CREATE [ UNIQUE ] [ CLUSTERED | NONCLUSTERED ] INDEX index_name
 ON { table | view } ( column [ ASC | DESC ] [ ,…n ] )
 [ WITH < index_option > [ ,…n] ]
 [ ON filegroup ]
-
 < index_option > ::=
 { PAD_INDEX |
 FILLFACTOR = fillfactor |
@@ -142,242 +279,136 @@ DROP_EXISTING |
 STATISTICS_NORECOMPUTE |
 SORT_IN_TEMPDB
 }
-
 参数
 UNIQUE
-
 为表或视图创建唯一索引（不允许存在索引值相同的两行）。视图上的聚集索引必须是 UNIQUE 索引。
-
 在创建索引时，如果数据已存在，Microsoft? SQL Server? 会检查是否有重复值，并在每次使用 INSERT 或 UPDATE 语句添加数据时进行这种检查。如果存在重复的键值，将取消 CREATE INDEX 语句，并返回错误信息，给出第一个重复值。当创建 UNIQUE 索引时，有多个 NULL 值被看作副本。
-
 如果存在唯一索引，那么会产生重复键值的 UPDATE 或 INSERT 语句将回滚，SQL Server 将显示错误信息。即使 UPDATE 或 INSERT 语句更改了许多行但只产生了一个重复值，也会出现这种情况。如果在有唯一索引并且指定了 IGNORE_DUP_KEY 子句情况下输入数据，则只有违反 UNIQUE 索引的行才会失败。在处理 UPDATE 语句时，IGNORE_DUP_KEY 不起作用。
-
 SQL Server 不允许为已经包含重复值的列创建唯一索引，无论是否设置了 IGNORE_DUP_KEY。如果尝试这样做，SQL Server 会显示错误信息；重复值必须先删除，才能为这些列创建唯一索引。
-
 CLUSTERED
-
 创建一个对象，其中行的物理排序与索引排序相同，并且聚集索引的最低一级（叶级）包含实际的数据行。一个表或视图只允许同时有一个聚集索引。
-
 具有聚集索引的视图称为索引视图。必须先为视图创建唯一聚集索引，然后才能为该视图定义其它索引。
-
 在创建任何非聚集索引之前创建聚集索引。创建聚集索引时重建表上现有的非聚集索引。
-
 如果没有指定 CLUSTERED，则创建非聚集索引。
-
 说明 因为按照定义，聚集索引的叶级与其数据页相同，所以创建聚集索引时使用 ON filegroup 子句实际上会将表从创建该表时所用的文件移到新的文件组中。在特定的文件组上创建表或索引之前，应确认哪些文件组可用并且有足够的空间供索引使用。文件组 的大小必须至少是整个表所需空间的 1.2 倍，这一点很重要。
-
 NONCLUSTERED
-
 创建一个指定表的逻辑排序的对象。对于非聚集索引，行的物理排序独立于索引排序。非聚集索引的叶级包含索引行。每个索引行均包含非聚集键值和一个或 多个行定位器（指向包含该值的行）。如果表没有聚集索引，行定位器就是行的磁盘地址。如果表有聚集索引，行定位器就是该行的聚集索引键。
-
 每个表最多可以有 249 个非聚集索引（无论这些非聚集索引的创建方式如何：是使用 PRIMARY KEY 和 UNIQUE 约束隐式创建，还是使用 CREATE INDEX 显式创建）。每个索引均可以提供对数据的不同排序次序的访问。
-
 对于索引视图，只能为已经定义了聚集索引的视图创建非聚集索引。因此，索引视图中非聚集索引的行定位器一定是行的聚集键。
-
 index_name
-
 是索引名。索引名在表或视图中必须唯一，但在数据库中不必唯一。索引名必须遵循标识符规则。
-
 table
-
 包含要创建索引的列的表。可以选择指定数据库和表所有者。
-
 view
-
 要建立索引的视图的名称。必须使用 SCHEMABINDING 定义视图才能在视图上创建索引。视图定义也必须具有确定性。如果选择列表中的所有表达式、WHERE 和 GROUP BY 子句都具有确定性，则视图也具有确定性。而且，所有键列必须是精确的。只有视图的非键列可能包含浮点表达式（使用 float 数据类型的表达式），而且 float 表达式不能在视图定义的其它任何位置使用。
-
 若要在确定性视图中查找列，请使用 COLUMNPROPERTY 函数（IsDeterministic 属性）。该函数的 IsPrecise 属性可用来确定键列是否精确。
-
 必须先为视图创建唯一的聚集索引，才能为该视图创建非聚集索引。
-
 在 SQL Server 企业版或开发版中，查询优化器可使用索引视图加快查询的执行速度。要使优化程序考虑将该视图作为替换，并不需要在查询中引用该视图。
-
 在创建索引视图或对参与索引视图的表中的行进行操作时，有 7 个 SET 选项必须指派特定的值。SET 选项 ARITHABORT、CONCAT_NULL_YIELDS_NULL、QUOTED_IDENTIFIER、ANSI_NULLS、 ANSI_PADDING 和 ANSI_WARNING 必须为 ON。SET 选项 NUMERIC_ROUNDABORT 必须为 OFF。
-
 如果与上述设置有所不同，对索引视图所引用的任何表执行的数据修改语句 (INSERT、UPDATE、DELETE) 都将失败，SQL Server 会显示一条错误信息，列出所有违反设置要求的 SET 选项。此外，对于涉及索引视图的 SELECT 语句，如果任何 SET 选项的值不是所需的值，则 SQL Server 在处理该 SELECT 语句时不考虑索引视图替换。在受上述 SET 选项影响的情况中，这将确保查询结果的正确性。
-
 如果应用程序使用 DB-Library 连接，则必须为服务器上的所有 7 个 SET 选项指派所需的值。（默认情况下，OLE DB 和 ODBC 连接已经正确设置了除 ARITHABORT 外所有需要的 SET 选项。）
-
 如果并非所有上述 SET 选项均有所需的值，则某些操作（例如 BCP、复制或分布式查询）可能无法对参与索引视图的表执行更新。在大多数情况下，将 ARITHABORT 设置为 ON（通过服务器配置选项中的 user options）可以避免这一问题。
-
 强烈建议在服务器的任一数据库中创建计算列上的第一个索引视图或索引后，尽早在服务器范围内将 ARITHABORT 用户选项设置为 ON。
-
 有关索引视图注意事项和限制的更多信息，请参见注释部分。
-
 column
-
 应用索引的列。指定两个或多个列名，可为指定列的组合值创建组合索引。在 table 后的圆括号中列出组合索引中要包括的列（按排序优先级排列）。
-
 说明 由 ntext、text 或 image 数据类型组成的列不能指定为索引列。另外，视图不能包括任何 text、ntext 或 image 列，即使在 CREATE INDEX 语句中没有引用这些列。
-
 当两列或多列作为一个单位搜索最好，或者许多查询只引用索引中指定的列时，应使用组合索引。最多可以有 16 个列组合到一个组合索引中。组合索引中的所有列必须在同一个表中。组合索引值允许的最大大小为 900 字节。也就是说，组成组合索引的固定大小列的总长度不得超过 900 字节。有关组合索引中可变类型列的更多信息，请参见注释部分。
-
 [ASC | DESC]
-
 确定具体某个索引列的升序或降序排序方向。默认设置为 ASC。
-
 n
-
 表示可以为特定索引指定多个 columns 的占位符。
-
 PAD_INDEX
-
 指定索引中间级中每个页（节点）上保持开放的空间。PAD_INDEX 选项只有在指定了 FILLFACTOR 时才有用，因为 PAD_INDEX 使用由 FILLFACTOR 所指定的百分比。默认情况下，给定中间级页上的键集，SQL Server 将确保每个索引页上的可用空间至少可以容纳一个索引允许的最大行。如果为 FILLFACTOR 指定的百分比不够大，无法容纳一行，SQL Server 将在内部使用允许的最小值替代该百分比。
-
 说明 中间级索引页上的行数永远都不会小于两行，无论 FILLFACTOR 的值有多小。
-
 FILLFACTOR = fillfactor
-
 指定在 SQL Server 创建索引的过程中，各索引页叶级的填满程度。如果某个索引页填满，SQL Server 就必须花时间拆分该索引页，以便为新行腾出空间，这需要很大的开销。对于更新频繁的表，选择合适的 FILLFACTOR 值将比选择不合适的 FILLFACTOR 值获得更好的更新性能。FILLFACTOR 的原始值将在 sysindexes 中与索引一起存储。
-
 如果指定了 FILLFACTOR，SQL Server 会向上舍入每页要放置的行数。例如，发出 CREATE CLUSTERED INDEX …FILLFACTOR = 33 将创建一个 FILLFACTOR 为 33% 的聚集索引。假设 SQL Server 计算出每页空间的 33% 为 5.2 行。SQL Server 将其向上舍入，这样，每页就放置 6 行。
-
 说明 显式的 FILLFACTOR 设置只是在索引首次创建时应用。SQL Server 并不会动态保持页上可用空间的指定百分比。
-
 用户指定的 FILLFACTOR 值可以从 1 到 100。如果没有指定值，默认值为 0。如果 FILLFACTOR 设置为 0，则只填满叶级页。可以通过执行 sp_configure 更改默认的 FILLFACTOR 设置。
-
 只有不会出现 INSERT 或 UPDATE 语句时（例如对只读表），才可以使用 FILLFACTOR 100。如果 FILLFACTOR 为 100，SQL Server 将创建叶级页 100% 填满的索引。如果在创建 FILLFACTOR 为 100% 的索引之后执行 INSERT 或 UPDATE，会对每次 INSERT 操作以及有可能每次 UPDATE 操作进行页拆分。
-
 如果 FILLFACTOR 值较小（0 除外），就会使 SQL Server 创建叶级页不完全填充的新索引。例如，如果已知某个表包含的数据只是该表最终要包含的数据的一小部分，那么为该表创建索引时，FILLFACTOR 为 10 会是合理的选择。FILLFACTOR 值较小还会使索引占用较多的存储空间。
-
 下表说明如何在已指定 FILLFACTOR 的情况下填充索引页。
-
 FILLFACTOR 中间级页 叶级页
 0 一个可用项 100% 填满
 1% -99 一个可用项 <= FILLFACTOR% 填满
 100% 一个可用项 100% 填满
-
 一个可用项是指页上可以容纳另一个索引项的空间。
-
 重要 用某个 FILLFACTOR 值创建聚集索引会影响数据占用存储空间的数量，因为 SQL Server 在创建聚集索引时会重新分布数据。
-
 IGNORE_DUP_KEY
-
 控制当尝试向属于唯一聚集索引的列插入重复的键值时所发生的情况。如果为索引指定了 IGNORE_DUP_KEY，并且执行了创建重复键的 INSERT 语句，SQL Server 将发出警告消息并忽略重复的行。
-
 如果没有为索引指定 IGNORE_DUP_KEY，SQL Server 会发出一条警告消息，并回滚整个 INSERT 语句。
-
 下表显示何时可使用 IGNORE_DUP_KEY。
-
 索引类型 选项
 聚集 不允许
 唯一聚集 允许使用 IGNORE_DUP_KEY
 非聚集 不允许
 唯一非聚集 允许使用 IGNORE_DUP_KEY
-
 DROP_EXISTING
-
 指定应除去并重建已命名的先前存在的聚集索引或非聚集索引。指定的索引名必须与现有的索引名相同。因为非聚集索引包含聚集键，所以在除去聚集索引时，必须重建非聚集索引。如果重建聚集索引，则必须重建非聚集索引，以便使用新的键集。
-
 为已经具有非聚集索引的表重建聚集索引时（使用相同或不同的键集）， DROP_EXISTING 子句可以提高性能。DROP_EXISTING 子句代替了先对旧的聚集索引执行 DROP INDEX 语句，然后再对新的聚集索引执行 CREATE INDEX 语句的过程。非聚集索引只需重建一次，而且还只是在键不同的情况下才需要。
-
 如果键没有改变（提供的索引名和列与原索引相同），则 DROP_EXISTING 子句不会重新对数据进行排序。在必须压缩索引时，这样做会很有用。
-
 无法使用 DROP_EXISTING 子句将聚集索引转换成非聚集索引；不过，可以将唯一聚集索引更改为非唯一索引，反之亦然。
-
 说明 当执行带 DROP_EXISTING 子句的 CREATE INDEX 语句时，SQL Server 假定索引是一致的（即索引没有损坏）。指定索引中的行应按 CREATE INDEX 语句中引用的指定键排序。
-
 STATISTICS_NORECOMPUTE
-
 指定过期的索引统计不会自动重新计算。若要恢复自动更新统计，可执行没有 NORECOMPUTE 子句的 UPDATE STATISTICS。
-
 重要 如果禁用分布统计的自动重新计算，可能会妨碍 SQL Server 查询优化器为涉及该表的查询选取最佳执行计划。
-
 SORT_IN_TEMPDB
-
 指定用于生成索引的中间排序结果将存储在 tempdb 数据库中。如果 tempdb 与用户数据库不在同一磁盘集，则此选项可能减少创建索引所需的时间，但会增加创建索引时使用的磁盘空间。
-
 有关更多信息，请参见 tempdb 和索引创建。
-
 ON filegroup
-
 在给定的 filegroup 上创建指定的索引。该文件组必须已经通过执行 CREATE DATABASE 或 ALTER DATABASE 创建。
-
 注释
 为表或索引分配空间时，每次递增一个扩展盘区（8 个 8 KB 的页）。每填满一个扩展盘区，就会再分配一个。如果表非常小或是空表，其索引将使用单页分配，直到向索引添加了 8 页后，再转而进行扩展盘区分配。若要获得有关索引已分配和占用的空间数量的报表，请使用 sp_spaceused。
-
 创建聚集索引要求数据库中的可用空间大约为数据大小的 1.2 倍。该空间不包括现有表占用的空间；将对数据进行复制以创建聚集索引，旧的无索引数据将在索引创建完成后删除。使用 DROP_EXISTING 子句时，聚集索引所需的空间数量与现有索引的空间要求相同。所需的额外空间可能还受指定的 FILLFACTOR 的影响。
-
 在 SQL Server 2000 中创建索引时，可以使用 SORT_IN_TEMPDB 选项指示数据库引擎在 tempdb 中存储中间索引排序结果。如果 tempdb 在不同于用户数据库所在的磁盘集上，则此选项可能减少创建索引所需的时间，但会增加用于创建索引的磁盘空间。除在用户数据库中创建索引所需的空间外， tempdb 还必须有大约相同的额外空间来存储中间排序结果。有关更多信息，请参见 tempdb 和索引创建。
-
 CREATE INDEX 语句同其它查询一样优化。SQL Server 查询处理器可以选择扫描另一个索引，而不是执行表扫描，以节省 I/O 操作。在某些情况下，可以不必排序。
-
 在运行 SQL Server 企业管理器和程序员版的多处理器计算机上，CREATE INDEX 自动使用多个处理器执行扫描和排序，与其它查询的操作方式相同。执行一条 CREATE INDEX 语句所使用的处理器数由配置选项 max degree of parallelism 和当前的工作负荷决定。如果 SQL Server 检测到系统正忙，则在开始执行语句之前，CREATE INDEX 操作的并发程度会自动降低。
-
 自上一次文件组备份以来受 CREATE INDEX 语句影响的全部文件组必须作为一个单位备份。有关文件和文件组备份的更多信息，请参见 BACKUP。
-
 备份和 CREATE INDEX 操作不相互防碍。如果正在进行备份，则在完整日志记录模式中创建索引，而这可能需要额外的日志空间。
-
 若要显示有关对象索引的报表，请执行 sp_helpindex。
-
 可以为临时表创建索引。在除去表或终止会话时，所有索引和触发器都将被除去。
-
 索引中的可变类型列
 索引键允许的最大大小为 900 字节，不过 SQL Server 2000 允许在可能包含大量可变类型列的列上创建索引，而这些列的最大大小超过 900 字节。
-
 在创建索引时，SQL Server 检查下列条件：
-
 所有参与索引定义的固定数据列的总长度必须小于或等于 900 字节。当所要创建的索引只由固定数据列构成时，固定数据列的总计大小必须小于或等于 900 字节。否则将不能创建索引，且 SQL Server 将返回错误。
-
 如果索引定义由固定类型列和可变类型列组成，且固定数据列满足前面的条件（小于或等于 900 字节），则 SQL Server 仍要检查可变类型列的总大小。如果可变类型列的最大大小与固定数据列大小的和大于 900 字节，则 SQL Server 将创建索引，不过将给用户返回警告消息以提醒用户：如果随后在可变类型列上的插入或更新操作导致总大小超过 900 字节，则操作将失败且用户将收到运行时错误。同样，如果索引定义只由可变类型列组成，且这些列的最大总大小大于 900 字节，则 SQL Server 将创建索引，不过将返回警告消息。
 有关更多信息，请参见索引键的最大值。
-
 在计算列和视图上创建索引时的考虑
 在 SQL Server 2000 中，还可以在计算列和视图上创建索引。在视图上创建唯一聚集索引可以提高查询性能，因为视图存储在数据库中的方式与具有聚集索引的表的存储方式相同。
-
 UNIQUE 或 PRIMARY KEY 只要满足所有索引条件，就可以包含计算列。具体说来就是，计算列必须具有确定性、必须精确，且不能包含 text、ntext 或 image 列。有关确定性的更多信息，请参见确定性函数和非确定性函数。
-
 在计算列或视图上创建索引可能导致前面产生的 INSERT 或 UPDATE 操作失败。当计算列导致算术错误时可能产生这样的失败。例如，虽然下表中的计算列 c 将导致算术错误，但是 INSERT 语句仍有效：
-
 CREATE TABLE t1 (a int, b int, c AS a/b)
 GO
 INSERT INTO t1 VALUES (‘1’, ‘0’)
 GO
-
 相反，如果创建表之后在计算列 c 上创建索引，则上述 INSERT 语句将失败。
-
 CREATE TABLE t1 (a int, b int, c AS a/b)
 GO
 CREATE UNIQUE CLUSTERED INDEX Idx1 ON t1.c
 GO
 INSERT INTO t1 VALUES (‘1’, ‘0’)
 GO
-
 在通过数字或 float 表达式定义的视图上使用索引所得到的查询结果，可能不同于不在视图上使用索引的类似查询所得到的结果。这种差异可能是由对基础表进行 INSERT、DELETE 或 UPDATE 操作时的舍入错误引起的。
-
 若要防止 SQL Server 使用索引视图，请在查询中包含 OPTION (EXPAND VIEWS) 提示。此外，任何所列选项设置不正确均会阻止优化程序使用视图上的索引。有关 OPTION (EXPAND VIEWS) 提示的更多信息，请参见 SELECT。
-
 对索引视图的限制
 定义索引视图的 SELECT 语句不得包含 TOP、DISTINCT、COMPUTE、HAVING 和 UNION 关键字。也不能包含子查询。
-
 SELECT 列表中不得包含星号 ()、’table.’ 通配符列表、DISTINCT、COUNT(*)、COUNT()、基表中的计算列和标量聚合。
-
 非聚合 SELECT 列表中不能包含表达式。聚合 SELECT 列表（包含 GROUP BY 的查询）中可能包含 SUM 和 COUNT_BIG()；它一定包含 COUNT_BIG(*)。不允许有其它聚合函数（MIN、MAX、STDEV，…）。
-
 使用 AVG 的复杂聚合无法参与索引视图的 SELECT 列表。不过，如果查询使用这样的聚合，则优化程序将能使用该索引视图，用 SUM 和 COUNT_BIG 的简单聚合组合代替 AVG。
-
 若某列是从取值为 float 数据类型或使用 float 表达式进行取值的表达式得到的，则不能作为索引视图或表中计算列的索引键。这样的列被视为是不精确的。使用 COLUMNPROPERTY 函数决定特定计算列或视图中的列是否精确。
-
 索引视图受限于以下的附加限制：
-
 索引的创建者必须拥有表。所有表、视图和索引必须在同一数据库中创建。
-
 定义索引视图的 SELECT 语句不得包含视图、行集函数、行内函数或派生表。同一物理表在该语句中只能出现一次。
-
 在任何联接表中，均不允许进行 OUTER JOIN 操作。
-
 搜索条件中不允许使用子查询或者 CONTAINS 或 FREETEXT 谓词。
-
 如果视图定义包含 GROUP BY 子句，则视图的 SELECT 列表中必须包含所有分组依据列及 COUNT_BIG(*) 表达式。此外，CREATE UNIQUE CLUSTERED INDEX 子句中必须只包含这些列。
 可以创建索引的视图的定义主体必须具有确定性且必须精确，这类似于计算列上的索引要求。请参见在计算列上创建索引。
-
 权限
 CREATE INDEX 的权限默认授予 sysadmin 固定服务器角色、db_ddladmin 和 db_owner 固定数据库角色和表所有者且不能转让。
-
 示例
 A. 使用简单索引
 下面的示例为 authors 表的 au_id 列创建索引。
-
 SET NOCOUNT OFF
 USE pubs
 IF EXISTS (SELECT name FROM sysindexes
@@ -388,10 +419,8 @@ USE pubs
 CREATE INDEX au_id_ind
 ON authors (au_id)
 GO
-
 B. 使用唯一聚集索引
 下面的示例为 emp_pay 表的 employeeID 列创建索引，并且强制唯一性。因为指定了 CLUSTERED 子句，所以该索引将对磁盘上的数据进行物理排序。
-
 SET NOCOUNT ON
 USE pubs
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
@@ -426,10 +455,8 @@ SET NOCOUNT OFF
 CREATE UNIQUE CLUSTERED INDEX employeeID_ind
 ON emp_pay (employeeID)
 GO
-
 C. 使用简单组合索引
 下面的示例为 order_emp 表的 orderID 列和 employeeID 列创建索引。
-
 SET NOCOUNT ON
 USE pubs
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
@@ -450,7 +477,6 @@ employeeID int NOT NULL,
 orderdate datetime NOT NULL DEFAULT GETDATE(),
 orderamount money NOT NULL
 )
-
 INSERT order_emp (employeeID, orderdate, orderamount)
 VALUES (5, ‘4/12/98’, 315.19)
 INSERT order_emp (employeeID, orderdate, orderamount)
@@ -471,10 +497,8 @@ GO
 SET NOCOUNT OFF
 CREATE INDEX emp_order_ind
 ON order_emp (orderID, employeeID)
-
 D. 使用 FILLFACTOR 选项
 下面的示例使用 FILLFACTOR 子句，将其设置为 100。FILLFACTOR 为 100 将完全填满每一页，只有确定表中的索引值永远不会更改时，该选项才有用。
-
 SET NOCOUNT OFF
 USE pubs
 IF EXISTS (SELECT name FROM sysindexes
@@ -486,10 +510,8 @@ GO
 CREATE NONCLUSTERED INDEX zip_ind
 ON authors (zip)
 WITH FILLFACTOR = 100
-
 E. 使用 IGNORE_DUP_KEY
 下面的示例为 emp_pay 表创建唯一聚集索引。如果输入了重复的键，将忽略该 INSERT 或 UPDATE 语句。
-
 SET NOCOUNT ON
 USE pubs
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
@@ -525,12 +547,9 @@ GO
 CREATE UNIQUE CLUSTERED INDEX employeeID_ind
 ON emp_pay(employeeID)
 WITH IGNORE_DUP_KEY
-
 F. 使用 PAD_INDEX 创建索引
 下面的示例为 authors 表中的作者标识号创建索引。没有 PAD_INDEX 子句，SQL Server 将创建填充 10% 的叶级页，但是叶级之上的页几乎被完全填满。使用 PAD_INDEX 时，中间级页也填满 10%。
-
 说明 如果没有指定 PAD_INDEX，唯一聚集索引的索引页上至少会出现两项。
-
 SET NOCOUNT OFF
 USE pubs
 IF EXISTS (SELECT name FROM sysindexes
@@ -541,19 +560,15 @@ USE pubs
 CREATE INDEX au_id_ind
 ON authors (au_id)
 WITH PAD_INDEX, FILLFACTOR = 10
-
 G. 为视图创建索引
 下面的示例将创建一个视图，并为该视图创建索引。然后，引入两个使用该索引视图的查询。
-
 USE Northwind
 GO
-
 –Set the options to support indexed views.
 SET NUMERIC_ROUNDABORT OFF
 GO
 SET ANSI_PADDING,ANSI_WARNINGS,CONCAT_NULL_YIELDS_NULL,ARITHABORT,QUOTED_IDENTIFIER,ANSI_NULLS ON
 GO
-
 –Create view.
 CREATE VIEW V1
 WITH SCHEMABINDING
@@ -563,11 +578,9 @@ FROM dbo.[Order Details] od, dbo.Orders o
 WHERE od.OrderID=o.OrderID
 GROUP BY OrderDate, ProductID
 GO
-
 –Create index on the view.
 CREATE UNIQUE CLUSTERED INDEX IV1 ON V1 (OrderDate, ProductID)
 GO
-
 –This query will use the above indexed view.
 SELECT SUM(UnitPrice*Quantity*(1.00-Discount)) AS Rev, OrderDate, ProductID
 FROM dbo.[Order Details] od, dbo.Orders o
@@ -575,7 +588,6 @@ WHERE od.OrderID=o.OrderID AND ProductID in (2, 4, 25, 13, 7, 89, 22, 34)
 AND OrderDate >= ‘05/01/1998’
 GROUP BY OrderDate, ProductID
 ORDER BY Rev DESC
-
 –This query will use the above indexed view.
 SELECT OrderDate, SUM(UnitPrice*Quantity*(1.00-Discount)) AS Rev
 FROM dbo.[Order Details] od, dbo.Orders o

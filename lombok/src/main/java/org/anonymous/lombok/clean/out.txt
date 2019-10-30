@@ -1,0 +1,32 @@
+package org.anonymous.lombok.clean;
+
+import lombok.Cleanup;
+import lombok.SneakyThrows;
+
+import java.io.*;
+
+/**
+ * ~~ Talk is cheap. Show me the code. ~~ :-)
+ *
+ * @author MiaoOne
+ * @since 2019/11/11 16:29
+ * @see Cleanup#value() 释放资源的方法名; 方法不能又参数.
+ */
+public class CleanDemo {
+    @SneakyThrows
+    public static void main(String[] args) {
+        @Cleanup
+        // FileInputStream in = new FileInputStream("E:\\dev-code\\generator\\lombok\\src\\main\\java\\org\\anonymous\\lombok\\clean\\CleanDemo.java");
+        BufferedReader reader = new BufferedReader(new FileReader("lombok\\src\\main\\java\\org\\anonymous\\lombok\\clean\\CleanDemo.java"));
+        @Cleanup
+        // FileOutputStream out = new FileOutputStream("E:\\dev-code\\generator\\lombok\\src\\main\\java\\org\\anonymous\\lombok\\clean\\out.txt");
+        BufferedWriter writer = new BufferedWriter(new FileWriter("lombok\\\\src\\\\main\\\\java\\\\org\\\\anonymous\\\\lombok\\\\clean\\\\out.txt"));
+        String read;
+        while (null != (read = reader.readLine())) {
+            writer.write(read);
+            writer.newLine();
+        }
+        writer.flush();
+
+    }
+}

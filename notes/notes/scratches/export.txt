@@ -1,0 +1,6 @@
+### file name 可以为中文.
+response.setContentType("application/octet-stream");
+response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+response.flushBuffer();
+workbook.write(response.getOutputStream());
+workbook.close();

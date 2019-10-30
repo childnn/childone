@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--目标工厂: 可以是 ActiveMQ 或其他 消息队列-->
+    <bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
+          p:brokerURL="tcp://192.168.32.28:61616"/>
+
+    <!--中间工厂: spring-jms-connectionFactory-->
+    <bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory"
+          p:targetConnectionFactory-ref="targetConnectionFactory"/>
+
+    <!--队列目的: 点对点 文本信息-->
+    <bean id="queueTextDestination" class="org.apache.activemq.command.ActiveMQQueue"
+          c:name="textQueue"/>
+
+    <!--ioc-->
+    <context:component-scan base-package="org.anonymous.jms.consumer"/>
+
+    <!--监听容器: 引入自定义的 监听器-->
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer"
+          p:connectionFactory-ref="connectionFactory"
+          p:destination-ref="queueTextDestination"
+          p:messageListener-ref="queueConsumer"/>
+
+
+</beans>

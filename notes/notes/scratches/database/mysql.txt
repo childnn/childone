@@ -12,4 +12,25 @@ show full columns from 表明： 查看表的完整信息（比 desc 详细）
 cmd：修改编码
 	chcp 65001  就是换成UTF-8代码页
 	chcp 936 可以换回默认的GBK
-	chcp 437 是美国英语 
+	chcp 437 是美国英语
+
+
+MySql url 连接参数
+    注: 在 xml 中, & 符号需要转义成 &amp;
+    jdbc:mysql://localhost:3306/dbName?....
+        user                                            数据库用户名(用于连接数据库)
+        password                                        用户密码(用户连接数据库)
+        useUnicode=true                                 是否使用 unicode 字符集, 如果参数 characterEncoding 设置为 gb2312 或 gbk, 本参数必须设置为 true
+        useSSL=true
+        characterEncoding=utf-8
+        allowMultiQueries=true
+        autoReconnect=true                              当数据库连接异常中断时, 是否自动重新连接
+        autoReconnectForPools                           是否使用针对数据库连接池的重连策略
+        maxReconnects                                   autoReconnect 设置为 true 时, 重试连接的次数
+        failOverReadOnly=false                          自动重连成功后, 连接是否设置为只读
+        rewriteBatchedStatements=true
+        zeroDateTimeBehavior=convertToNull
+        serverTimezone=GMT+8 (Asia/Shanghai)
+        createDatabaseIfNotExist=true
+        useServerPrepStmts=true&cachePrepStmts=true 设置参数useServerPrepStmts=true，这个参数的作用是让MySQL服务进行prepare。没有这个参数就是让JDBC进行prepare，MySQL完全感知不到，是没有什么意义的。
+                                                    cachePrepStmts=true这个参数的意思是告诉JDBC缓存需要prepare的SQL

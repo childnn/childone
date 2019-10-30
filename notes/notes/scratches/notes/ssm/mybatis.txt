@@ -1,0 +1,393 @@
+choose/when --------------------------------
+--- 本身存在 where 条件的情况.
+<select id="findActiveBlogLike"
+     resultType="Blog">
+  SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+  <choose>
+    <when test="title != null">
+      AND title like #{title}
+    </when>
+    <when test="author != null and author.name != null">
+      AND author_name like #{author.name}
+    </when>
+    <otherwise>
+      AND featured = 1
+    </otherwise>
+  </choose>
+</select>
+
+--- 不确定是否有 where 的情况.
+<select id="findActiveBlogLike"
+     resultType="Blog">
+  SELECT * FROM BLOG
+  <where>
+    <if test="state != null">
+         state = #{state}
+    </if>
+    <if test="title != null">
+        AND title like #{title}
+    </if>
+    <if test="author != null and author.name != null">
+        AND author_name like #{author.name}
+    </if>
+  </where>
+</select>
+where 元素只会在至少有一个子元素的条件返回 SQL 子句的情况下才去插入“WHERE”子句。而且，若语句的开头为“AND”或“OR”，where 元素也会将它们去除。
+
+ trim 等价于 where --------------------------------
+<trim prefix="WHERE" prefixOverrides="AND |OR ">
+  ...
+</trim>
+
+------------------------
+update --------------------------------
+
+这里，set 元素会动态前置 SET 关键字，同时也会删掉无关的逗号，因为用了条件语句之后很可能就会在生成的 SQL 语句的后面留下这些逗号
+<update id="updateAuthorIfNecessary">
+  update Author
+    <set>
+      <if test="username != null">username=#{username},</if>
+      <if test="password != null">password=#{password},</if>
+      <if test="email != null">email=#{email},</if>
+      <if test="bio != null">bio=#{bio}</if>
+    </set>
+  where id=#{id}
+</update>
+--
+<trim prefix="SET" suffixOverrides=",">
+  ...
+</trim>
+
+foreach --------------------------------
+
+动态 SQL 的另外一个常用的操作需求是对一个集合进行遍历，通常是在构建 IN 条件语句的时候。比如：
+当使用 Map 对象（或者 Map.Entry 对象的集合）时，index 是键，item 是值。
+<select id="selectPostIn" resultType="domain.blog.Post">
+  SELECT *
+  FROM POST P
+  WHERE ID in
+  <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+        #{item}
+  </foreach>
+</select>
+
+
+script --------------------------------------
+要在带注解的映射器接口类中使用动态 SQL，可以使用 script 元素。比如:
+
+    @Update({"<script>",
+      "update Author",
+      "  <set>",
+      "    <if test='username != null'>username=#{username},</if>",
+      "    <if test='password != null'>password=#{password},</if>",
+      "    <if test='email != null'>email=#{email},</if>",
+      "    <if test='bio != null'>bio=#{bio}</if>",
+      "  </set>",
+      "where id=#{id}",
+      "</script>"})
+    void updateAuthorValues(Author author);
+
+
+bind -------------------------------------------------
+
+bind 元素可以从 OGNL 表达式中创建一个变量并将其绑定到上下文。比如：
+
+<select id="selectBlogsLike" resultType="Blog">
+  <bind name="pattern" value="'%' + _parameter.getTitle() + '%'" />
+  SELECT * FROM BLOG
+  WHERE title LIKE #{pattern}
+</select>
+
+----------------------------------------------------------------------------
+
+@SelectProvider(type = UserSqlBuilder.class, method = "buildGetUsersByName")
+List<User> getUsersByName(String name);
+
+class UserSqlBuilder {
+  public static String buildGetUsersByName(final String name) {
+    return new SQL(){{
+      SELECT("*");
+      FROM("users");
+      if (name != null) {
+        WHERE("name like #{value} || '%'");
+      }
+      ORDER_BY("id");
+    }}.toString();
+  }
+}
+----------------------------
+@Results(id = "userResult", value = {
+  @Result(property = "id", column = "uid", id = true),
+  @Result(property = "firstName", column = "first_name"),
+  @Result(property = "lastName", column = "last_name")
+})
+@Select("select * from users where id = #{id}")
+User getUserById(Integer id);
+
+------------------------------
+
+@Results(id = "companyResults")
+@ConstructorArgs({
+  @Arg(column = "cid", javaType = Integer.class, id = true),
+  @Arg(column = "name", javaType = String.class)
+})
+@Select("select * from company where id = #{id}")
+Company getCompanyById(Integer id);
+
+-------------------------------
+
+
+@SelectProvider(type = UserSqlBuilder.class, method = "buildGetUsersByName")
+List<User> getUsersByName(
+    @Param("name") String name, @Param("orderByColumn") String orderByColumn);
+
+class UserSqlBuilder {
+
+  // If not use @Param, you should be define same arguments with mapper method
+  public static String buildGetUsersByName(
+      final String name, final String orderByColumn) {
+    return new SQL(){{
+      SELECT("*");
+      FROM("users");
+      WHERE("name like #{name} || '%'");
+      ORDER_BY(orderByColumn);
+    }}.toString();
+  }
+
+  // If use @Param, you can define only arguments to be used
+  public static String buildGetUsersByName(@Param("orderByColumn") final String orderByColumn) {
+    return new SQL(){{
+      SELECT("*");
+      FROM("users");
+      WHERE("name like #{name} || '%'");
+      ORDER_BY(orderByColumn);
+    }}.toString();
+  }
+}
+-------------------------------------------
+
+@SelectProvider(UserSqlProvider.class)
+List<User> getUsersByName(String name);
+
+// Implements the ProviderMethodResolver on your provider class
+class UserSqlProvider implements ProviderMethodResolver {
+  // In default implementation, it will resolve a method that method name is matched with mapper method
+  public static String getUsersByName(final String name) {
+    return new SQL(){{
+      SELECT("*");
+      FROM("users");
+      if (name != null) {
+        WHERE("name like #{value} || '%'");
+      }
+      ORDER_BY("id");
+    }}.toString();
+  }
+}
+------------------------------------------------
+
+private String selectPersonSql() {
+  return new SQL() {{
+    SELECT("P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME");
+    SELECT("P.LAST_NAME, P.CREATED_ON, P.UPDATED_ON");
+    FROM("PERSON P");
+    FROM("ACCOUNT A");
+    INNER_JOIN("DEPARTMENT D on D.ID = P.DEPARTMENT_ID");
+    INNER_JOIN("COMPANY C on D.COMPANY_ID = C.ID");
+    WHERE("P.ID = A.ID");
+    WHERE("P.FIRST_NAME like ?");
+    OR();
+    WHERE("P.LAST_NAME like ?");
+    GROUP_BY("P.ID");
+    HAVING("P.LAST_NAME like ?");
+    OR();
+    HAVING("P.FIRST_NAME like ?");
+    ORDER_BY("P.ID");
+    ORDER_BY("P.FULL_NAME");
+  }}.toString();
+}
+---------------------------------------------------
+// Anonymous inner class
+public String deletePersonSql() {
+  return new SQL() {{
+    DELETE_FROM("PERSON");
+    WHERE("ID = #{id}");
+  }}.toString();
+}
+
+// Builder / Fluent style
+public String insertPersonSql() {
+  String sql = new SQL()
+    .INSERT_INTO("PERSON")
+    .VALUES("ID, FIRST_NAME", "#{id}, #{firstName}")
+    .VALUES("LAST_NAME", "#{lastName}")
+    .toString();
+  return sql;
+}
+
+// With conditionals (note the final parameters, required for the anonymous inner class to access them)
+public String selectPersonLike(final String id, final String firstName, final String lastName) {
+  return new SQL() {{
+    SELECT("P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME");
+    FROM("PERSON P");
+    if (id != null) {
+      WHERE("P.ID like #{id}");
+    }
+    if (firstName != null) {
+      WHERE("P.FIRST_NAME like #{firstName}");
+    }
+    if (lastName != null) {
+      WHERE("P.LAST_NAME like #{lastName}");
+    }
+    ORDER_BY("P.LAST_NAME");
+  }}.toString();
+}
+
+public String deletePersonSql() {
+  return new SQL() {{
+    DELETE_FROM("PERSON");
+    WHERE("ID = #{id}");
+  }}.toString();
+}
+
+public String insertPersonSql() {
+  return new SQL() {{
+    INSERT_INTO("PERSON");
+    VALUES("ID, FIRST_NAME", "#{id}, #{firstName}");
+    VALUES("LAST_NAME", "#{lastName}");
+  }}.toString();
+}
+
+public String updatePersonSql() {
+  return new SQL() {{
+    UPDATE("PERSON");
+    SET("FIRST_NAME = #{firstName}");
+    WHERE("ID = #{id}");
+  }}.toString();
+}
+
+---------------------------------------------------------------
+
+方法	描述
+SELECT(String)
+SELECT(String...)
+开始或插入到 SELECT子句。 可以被多次调用，参数也会添加到 SELECT子句。 参数通常使用逗号分隔的列名和别名列表，但也可以是数据库驱动程序接受的任意类型。
+SELECT_DISTINCT(String)
+SELECT_DISTINCT(String...)
+开始或插入到 SELECT子句， 也可以插入 DISTINCT关键字到生成的查询语句中。 可以被多次调用，参数也会添加到 SELECT子句。 参数通常使用逗号分隔的列名和别名列表，但也可以是数据库驱动程序接受的任意类型。
+FROM(String)
+FROM(String...)
+开始或插入到 FROM子句。 可以被多次调用，参数也会添加到 FROM子句。 参数通常是表名或别名，也可以是数据库驱动程序接受的任意类型。
+JOIN(String)
+JOIN(String...)
+INNER_JOIN(String)
+INNER_JOIN(String...)
+LEFT_OUTER_JOIN(String)
+LEFT_OUTER_JOIN(String...)
+RIGHT_OUTER_JOIN(String)
+RIGHT_OUTER_JOIN(String...)
+基于调用的方法，添加新的合适类型的 JOIN子句。 参数可以包含由列命和join on条件组合成标准的join。
+WHERE(String)
+WHERE(String...)
+插入新的 WHERE子句条件， 由AND链接。可以多次被调用，每次都由AND来链接新条件。使用 OR() 来分隔OR。
+OR()	使用OR来分隔当前的 WHERE子句条件。 可以被多次调用，但在一行中多次调用或生成不稳定的SQL。
+AND()	使用AND来分隔当前的 WHERE子句条件。 可以被多次调用，但在一行中多次调用或生成不稳定的SQL。因为 WHERE 和 HAVING 二者都会自动链接 AND, 这是非常罕见的方法，只是为了完整性才被使用。
+GROUP_BY(String)
+GROUP_BY(String...)
+插入新的 GROUP BY子句元素，由逗号连接。 可以被多次调用，每次都由逗号连接新的条件。
+HAVING(String)
+HAVING(String...)
+插入新的 HAVING子句条件。 由AND连接。可以被多次调用，每次都由AND来连接新的条件。使用 OR() 来分隔OR.
+ORDER_BY(String)
+ORDER_BY(String...)
+插入新的 ORDER BY子句元素， 由逗号连接。可以多次被调用，每次由逗号连接新的条件。
+LIMIT(String)
+LIMIT(int)
+Appends a LIMIT clause. This method valid when use together with SELECT(), UPDATE() and DELETE(). And this method is designed to use together with OFFSET() when use SELECT(). (Available since 3.5.2)
+OFFSET(String)
+OFFSET(long)
+Appends a OFFSET clause. This method valid when use together with SELECT(). And this method is designed to use together with LIMIT(). (Available since 3.5.2)
+OFFSET_ROWS(String)
+OFFSET_ROWS(long)
+Appends a OFFSET n ROWS clause. This method valid when use together with SELECT(). And this method is designed to use together with FETCH_FIRST_ROWS_ONLY(). (Available since 3.5.2)
+FETCH_FIRST_ROWS_ONLY(String)
+FETCH_FIRST_ROWS_ONLY(int)
+Appends a FETCH FIRST n ROWS ONLY clause. This method valid when use together with SELECT(). And this method is designed to use together with OFFSET_ROWS(). (Available since 3.5.2)
+DELETE_FROM(String)	开始一个delete语句并指定需要从哪个表删除的表名。通常它后面都会跟着WHERE语句！
+INSERT_INTO(String)	开始一个insert语句并指定需要插入数据的表名。后面都会跟着一个或者多个VALUES() or INTO_COLUMNS() and INTO_VALUES()。
+SET(String)
+SET(String...)
+针对update语句，插入到"set"列表中
+UPDATE(String)	开始一个update语句并指定需要更新的表明。后面都会跟着一个或者多个SET()，通常也会有一个WHERE()。
+VALUES(String, String)	插入到insert语句中。第一个参数是要插入的列名，第二个参数则是该列的值。
+INTO_COLUMNS(String...)	Appends columns phrase to an insert statement. This should be call INTO_VALUES() with together.
+INTO_VALUES(String...)	Appends values phrase to an insert statement. This should be call INTO_COLUMNS() with together.
+ADD_ROW()	Add new row for bulk insert. (Available since 3.5.2)
+
+--------------------------------------------------------------------
+
+NOTE It is important to note that SQL class writes LIMIT, OFFSET, OFFSET n ROWS and FETCH FIRST n ROWS ONLY clauses into the generated statement as is. In other words, the library does not attempt to normalize those values for databases that don’t support these clauses directly. Therefore, it is very important for users to understand whether or not the target database supports these clauses. If the target database does not support these clauses, then it is likely that using this support will create SQL that has runtime errors.
+
+Since version 3.4.2, you can use variable-length arguments as follows:
+
+public String selectPersonSql() {
+  return new SQL()
+    .SELECT("P.ID", "A.USERNAME", "A.PASSWORD", "P.FULL_NAME", "D.DEPARTMENT_NAME", "C.COMPANY_NAME")
+    .FROM("PERSON P", "ACCOUNT A")
+    .INNER_JOIN("DEPARTMENT D on D.ID = P.DEPARTMENT_ID", "COMPANY C on D.COMPANY_ID = C.ID")
+    .WHERE("P.ID = A.ID", "P.FULL_NAME like #{name}")
+    .ORDER_BY("P.ID", "P.FULL_NAME")
+    .toString();
+}
+
+public String insertPersonSql() {
+  return new SQL()
+    .INSERT_INTO("PERSON")
+    .INTO_COLUMNS("ID", "FULL_NAME")
+    .INTO_VALUES("#{id}", "#{fullName}")
+    .toString();
+}
+
+public String updatePersonSql() {
+  return new SQL()
+    .UPDATE("PERSON")
+    .SET("FULL_NAME = #{fullName}", "DATE_OF_BIRTH = #{dateOfBirth}")
+    .WHERE("ID = #{id}")
+    .toString();
+}
+Since version 3.5.2, you can create insert statement for bulk insert as follow:
+
+public String insertPersonsSql() {
+  // INSERT INTO PERSON (ID, FULL_NAME)
+  //     VALUES (#{mainPerson.id}, #{mainPerson.fullName}) , (#{subPerson.id}, #{subPerson.fullName})
+  return new SQL()
+    .INSERT_INTO("PERSON")
+    .INTO_COLUMNS("ID", "FULL_NAME")
+    .INTO_VALUES("#{mainPerson.id}", "#{mainPerson.fullName}")
+    .ADD_ROW()
+    .INTO_VALUES("#{subPerson.id}", "#{subPerson.fullName}")
+    .toString();
+}
+Since version 3.5.2, you can create select statement for limiting search result rows clause as follow:
+
+public String selectPersonsWithOffsetLimitSql() {
+  // SELECT id, name FROM PERSON
+  //     LIMIT #{limit} OFFSET #{offset}
+  return new SQL()
+    .SELECT("id", "name")
+    .FROM("PERSON")
+    .LIMIT("#{limit}")
+    .OFFSET("#{offset}")
+    .toString();
+}
+
+public String selectPersonsWithFetchFirstSql() {
+  // SELECT id, name FROM PERSON
+  //     OFFSET #{offset} ROWS FETCH FIRST #{limit} ROWS ONLY
+  return new SQL()
+    .SELECT("id", "name")
+    .FROM("PERSON")
+    .OFFSET_ROWS("#{offset}")
+    .FETCH_FIRST_ROWS_ONLY("#{limit}")
+    .toString();
+}

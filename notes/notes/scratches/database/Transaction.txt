@@ -1,0 +1,20 @@
+PROPAGATION_REQUIRED ： 支持当前事务，如果当前没有事务，就新建一个事务，这也是最常见的
+PROPAGATION_SUPPORTS ： 支持当前事务，如果当前没有事务，就以非事务的方式执行
+PROPAGATION_MANDATORY： 支持当前事务，如果当前没有事务，就抛异常
+PROPAGATION_REQUIRES_NEW：新建事务，如果当前事务存在，就把当前事务挂起
+PROPAGATION_NOT_SUPPORTED：以非事务的方式执行，如果存在当前事务，就把当前事务挂起
+PROPAGATION_NEVER： 以非事务的方式执行，如果当前存在事务，就抛异常
+PROPAGATION_NESTED：如果存在当前事务，则在嵌套事务内执行，如果当前没有事务，则新建一个事务
+
+在 @Transactional的方法里面捕获了异常，必须要手动回滚，
+TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+AbstractFallbackTransactionAttributeSource#computeTransactionAttribute
+protected TransactionAttribute computeTransactionAttribute(Method method, Class<?> targetClass) {
+   // Don't allow no-public methods as required.
+   //非public 方法，返回@Transactional信息一律是null
+   if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
+      return null;
+   }
+   //.......
+ }

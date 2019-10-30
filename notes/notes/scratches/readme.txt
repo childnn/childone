@@ -1,3 +1,6 @@
+Don't Repeat Yourself. DRY 原则, 避免出现重复的代码.
+
+
 URL: uniform resources locator
 URI: uniform resources identifier
 IP: internet protocol
@@ -23,3 +26,6 @@ DNS: domain name system
   用途:
     1. 保证内网的安全, 通常将反向代理作为公网访问地址, web 服务器是内网
     2. 负载均衡, 通过反向代理服务器来优化网站的负载
+
+
+idempotent: 幂等性

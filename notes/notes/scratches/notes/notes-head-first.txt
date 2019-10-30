@@ -99,6 +99,6 @@ File 可以创建、浏览和删除目录.
   也要确保以另一个对象为参数的 equals() 调用会返回 true.
 
 进入 .java 文件所在的顶层目录下(eg: src 目录)
-%javac -d ../classes *.java
+% javac -d ../classes *.java
 
 

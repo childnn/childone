@@ -11,8 +11,10 @@ import java.util.TreeSet;
  *          两大接口的根本区别在于可否【重复】, 次要区别是 [索引], 非必要区别是 [存储有序]
  *          List<E>(interface): 可重复, 有索引
  *                ArrayList: 动态数组(连续内存), 主查询
+ *                  查询 O(1) -- java.util.ArrayList#get(int), 增删 O(n)
  *                  源码: ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, java.io.Serializable
  *                LinkedList：链表(非连续内存), 主增删
+ *                  查询 O(n), 增删 O(1)
  *                  源码: LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, java.io.Serializable
  *             关键点: ArrayList 实现 java.util.RandomAccess 接口(标记接口: 空接口)
  *               实现了 RandomAccess 接口的集合, 在执行遍历操作时, 使用 索引 访问, 比 迭代器 访问的方式要快
@@ -75,6 +77,7 @@ import java.util.TreeSet;
  * -----------------------------------------------------------------------------------------------------------
  *
  * 关于 HashMap 的 key 的去重基本原理: (与 hashCode() 与 equals() 方法 相关)
+ *  根据 key 的 hash 值确定 Node 数组的索引.
  *    基本结论:
  *      hashCode() 方法返回 true 的两个对象, equals() 方法【不一定】返回 true
  *      equals() 方法返回 true 的两个对象， hashCode() 方法【一定】 返回 true
@@ -84,11 +87,13 @@ import java.util.TreeSet;
  *     HashMap 的 put() 方法去重的 关键判断:
  *       if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k))))
  *    即: 先判断 当前 put 的 key 是否与原 map 中的 key 同 hash 值,
- *      如果 hash 值 相同, 则 equals 一定相同(就不用 判断 equals 了)
- *      如果 hash 值 不同, 再判断 equals, 如果 equals 也相同, 则说明 两个对象全等(去重); 否则就是不同的对象
+ *      如果 hash 值 相同, 再判断 equals, 防止 hash 冲突的出现
+ *      如果 hash 值 不同, 就不用判断 equals 了.
  *  注: 以上的结论, 必须基于按规范重写的 hashCode() 和 equals() 方法.
  *   如果需要重写 hashCode() 方法, 则必须同时重写 equals() 方法
- *
+ *---------------------------------------------------------------
+ * java.util.ArrayList#remove(java.lang.Object)
+ * remove 方法会依据 equals 判断是否为同一个元素, 进而执行删除.
  *
  */
 public class Collection$ {

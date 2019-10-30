@@ -1,7 +1,8 @@
 Cache: 缓存接口, 定义缓存操作. 实现有: RedisCache, EhCacheCache, ConcurrentMapCache etc.
 CacheManager: 缓存管理器, 管理各种缓存(Cache) 组件.
 @Cacheable: 主要针对方法配置, 能够根据方法的请求参数对其结果进行缓存.
-@CacheEvict: 清空缓存.
+@CacheEvict: 清空缓存. org.springframework.cache.annotation.CacheEvict.beforeInvocation 无论方法是否执行成功, 缓存都将优先清除 -- 避免方法异常而导致缓存无法清除的情况.
+         org.springframework.cache.annotation.CacheEvict.allEntries 是否清除该缓存名(value/cacheNames)下的所有缓存, 不区分 key, 与 key 不可共用.
 @CachePut: 保证方法被调用, 又希望结果被缓存.
 @EnableCaching: 开启基于注解的缓存.
 keyGenerator: 缓存数据时 key 生成策略.

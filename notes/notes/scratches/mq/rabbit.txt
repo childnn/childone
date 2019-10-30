@@ -4,6 +4,66 @@ CMD运行rabbitmqctl status检测是否安装成功
 rabbitmq-plugins enable rabbitmq_management 启动
 rabbitmq-plugins disable rabbitmq_management 关闭
 
+延时插件: 把插件放在 plugins 目录.
+rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+停用插件
+rabbitmq-plugins disable rabbitmq_delayed_message_exchange
+
+创建用户:
+  $ ./rabbitmqctl add_user [username] [password]
+删除用户:
+  $ ./rabbitmqctl delete_user [username]
+查看当前 Rabbit 服务器上存在哪些用户:
+  $ ./rabbitmqctl list_users
+改密:
+  $ ./rabbitmqctl change_password [username] [new_pwd]
+
+权限:
+   读: 有关消费消息的任何操作, 包括 "清除" 整个队列(同样需要绑定操作的成功);
+   写: 发布消息(同样需要绑定操作的成功);
+   配置: 队列和交换器的创建和删除.
+设置/修改:
+ $ ./rabbitmqctl set_permissions -p [vhost_name] \ [username] ".*" ".*" ".*"
+   第一个参数(".*"): 读权限 (所有队列/交换器可执行读操作);
+   第二个参数(".*"): 写权限 (所有队列/交换器可执行写操作);
+   第三个参数(".*"): 配置权限 (所有权限).
+
+查看指定 vhost 上的各个用户权限:
+   $ ./rabbitmqctl list_permissions -p [vhost_name]
+
+查看指定用户在当前 Rabbit 服务器所有 vhost 上的权限:
+   $ ./rabbitmqctl list_user_permissions [username]
+
+移除指定 vhost 上指定用户的权限(该用户在该 vhost 上的所有权限):
+   $ ./rabbitmqctl clear_permissions -p [vhost_name] [username]
+
+列出队列和消息数目(默认的 vhost /):
+   $ ./rabbitmqctl list_queues
+   指定 vhost
+   $ ./rabbitmqctl list_queues -p [vhost_name]
+其后还可以连接其他参数:
+   name: 队列名称
+   durable: 是否持久化
+   auto_delete: 是否自动删除
+   messages: 消息数
+   consumers: 消费者数
+   memory: 内存使用
+   ....
+
+查看装状态:
+   $ sbin>rabbitmqctl status
+
+查看交换器和绑定:
+   $ ./rabbitmqctl list_exchanges
+     发现只有一个 direct 类型(type) 而没有交换器名称. -- 此即默认的 匿名交换器.
+     该命令后也可以跟上述的各种参数.
+   $ ./rabbitmqctl list_bindings
+     该命令不接收除了 -p(指明 vhost 路径) 以外的参数.
+     每行数据包含 交换器名称, 队列名称, 路由键, 参数.
+
+
+
+
 要从计算机中完全卸载RabbitMQ和Erlang，请执行以下操作：
 1、打开Windows控制面板。
 2、双击“程序和功能”。

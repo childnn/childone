@@ -1,0 +1,67 @@
+SELECT CURDATE();
+SELECT CURRENT_DATE();
+SELECT CURRENT_TIME();
+select CURRENT_TIMESTAMP();
+select DATE('2019-10-1');
+select DAY('2019-11-1');
+SELECT DAYNAME('2019-11-1'); # 星期 Friday.
+SELECT MONTHNAME('2019-11-1'); # November.
+
+SELECT DAYOFWEEK('2019-11-1'); # 周天开始算起.
+SELECT DAYOFMONTH('2019-11-1');
+SELECT DAYOFYEAR('2019-11-1');
+SELECT LAST_DAY('2019-11-1'); # 返回给给定日期的那一月份的最后一天.
+SELECT HOUR('2019-11-1 12:13:14'); # 小时值.
+SELECT MINUTE('12:13:14'); # 分钟数.
+SELECT MAKEDATE('2019', 300); # 基于给定参数年份 year 和所在年中的天数序号 day-of-year 返回一个日期.
+SELECT MAKETIME('1', 2, 3); # 组合时间，参数分别为小时、分钟、秒.
+
+
+SELECT EXTRACT(MONTH FROM '2019-11-1');
+/*EXTRACT(type FROM d)	从日期 d 中获取指定的值，type 指定返回的值。
+type可取值为：
+MICROSECOND
+SECOND
+MINUTE
+HOUR
+DAY
+WEEK
+MONTH
+QUARTER
+YEAR
+SECOND_MICROSECOND
+MINUTE_MICROSECOND
+MINUTE_SECOND
+HOUR_MICROSECOND
+HOUR_SECOND
+HOUR_MINUTE
+DAY_MICROSECOND
+DAY_SECOND
+DAY_MINUTE
+DAY_HOUR
+YEAR_MONTH*/
+
+str_to_date('2018-05-06','%Y-%m-%d')
+date_format(order_time, '%Y-%m-%d')
+%Y：代表4位的年份
+%y：代表2为的年份
+
+%m：代表月, 格式为(01……12)
+%c：代表月, 格式为(1……12)
+
+%d：代表月份中的天数,格式为(00……31)
+%e：代表月份中的天数, 格式为(0……31)
+
+%H：代表小时,格式为(00……23)
+%k：代表 小时,格式为(0……23)
+%h： 代表小时,格式为(01……12)
+%I： 代表小时,格式为(01……12)
+%l ：代表小时,格式为(1……12)
+
+%i： 代表分钟, 格式为(00……59)
+
+%r：代表 时间,格式为12 小时(hh:mm:ss [AP]M)
+%T：代表 时间,格式为24 小时(hh:mm:ss)
+
+%S：代表 秒,格式为(00……59)
+%s：代表 秒,格式为(00……59)
