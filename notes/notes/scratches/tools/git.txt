@@ -200,7 +200,7 @@
  *    $ git branch -d dev
  *     删除后, 查看当前分支 git branch, 就只有 master 分支了
     7. 关联本地分支与远程分支.
-      $ git branch --set-upstream-to=<name>/<remote_branch> <your_branch>
+      $ git branch --set-upstream-to=<name>/<remote_branch>  <your_branch>
       <name>: 名称 eg, origin 或者自定义的名称(id).
       <remote_branch>: 远程分支.
       <your_branch>: 需要关联远程的本地分支
@@ -542,99 +542,99 @@
  *      3) 基于 ~ 操作: 只能后退
  *          $ git reset --hard HEAD~n   # 后退 n 个版本
  *      注: 与 --hard 相对应的
+ *
 
  --------------------------------------------------------------------
-  Rebase 用法一:
-  使用 rebase 合并本地多个 commit 为一个完整的 commit
-  $ git rebase -i [start_point] [end_point]
-   # -i 指 --interactive, 即弹出交互式界面让用户编辑完成合并操作
-   # start_point 和 end_point 指定一个编辑区间,如果不指定 end_point, 则该区间的终点默认是当前分支 HEAD 所指向的 commit
-   # 注: 该区间指定的是一个前开后闭的区间.
- 执行命令后, 会出现如下交互界面
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Rebase 7c3f5f1..a5b9510 onto 7c3f5f1 (1 command)
-  pick b4d476 add b.txt
-  s ssasss add c.txt
-  s ssdfss add d.txt
- # 这里把需要合并的 pick 改为 s 即表示将当前提交合并到上一个, 第一个不能改(其前面没有可合并的提交)
- #
- # Commands:
- # p, pick <commit> = use commit
- # r, reword <commit> = use commit, but edit the commit message
- # e, edit <commit> = use commit, but stop for amending
- # s, squash <commit> = use commit, but meld into previous commit   # 将该 commit 和前一个 commit 合并成一个
- # f, fixup <commit> = like "squash", but discard this commit's log message
- # x, exec <command> = run command (the rest of the line) using shell
- # b, break = stop here (continue rebase later with 'git rebase --continue')
- # d, drop <commit> = remove commit
- # l, label <label> = label current HEAD with a name
- # t, reset <label> = reset HEAD to a label
- # m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
- # .       create a merge commit using the original merge commit's
- # .       message (or the oneline, if no original merge commit was
- # .       specified). Use -c <commit> to reword the commit message.
- #
- # These lines can be re-ordered; they are executed from top to bottom.
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 编辑保存后出现注释界面,根据需要修改.
- 提交后,即完成了 多个本地 commit 的合并
-注:
- eg1: $ git rebase -i 36334db    # 将指定提交下一个提交开始(前开区间: start point^),直到 HEAD 为止合并
- eg2: $ git rebase -i HEAD~3     # 将包括 HEAD 在内的之前 3 个提交合并为一个.
- eg3: $ git rebase -i 3333fdf  222sdf   # 将 3333fdf + 1 到  222sdf 的 commit 合并.
- ====================
- rebase 用法二:
- 将某一段 commit 粘贴到另一个分支上(如果只是某一两个分支,使用 cherry-pick)
- $ git rebase [start_point] [end_point] --onto [branch_name]
-    # 将当前分支的 指定提交合并到 branch_name 分支
- $ git checkout [branch_name]
-    # 切换到指定分支(目的分支)
-    # 此时, HEAD 指针还没有移动, 在原始位置.
- $ git reset --hard <commit_id>
-    # commit_id 指 rebase 后的提交点(窗口会有提示).
+   Rebase 用法一:
+   使用 rebase 合并本地多个 commit 为一个完整的 commit
+   $ git rebase -i [start_point] [end_point]
+    # -i 指 --interactive, 即弹出交互式界面让用户编辑完成合并操作
+    # start_point 和 end_point 指定一个编辑区间,如果不指定 end_point, 则该区间的终点默认是当前分支 HEAD 所指向的 commit
+    # 注: 该区间指定的是一个前开后闭的区间.
+  执行命令后, 会出现如下交互界面
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   Rebase 7c3f5f1..a5b9510 onto 7c3f5f1 (1 command)
+   pick b4d476 add b.txt
+   s ssasss add c.txt
+   s ssdfss add d.txt
+  # 这里把需要合并的 pick 改为 s 即表示将当前提交合并到上一个, 第一个不能改(其前面没有可合并的提交)
+  #
+  # Commands:
+  # p, pick <commit> = use commit
+  # r, reword <commit> = use commit, but edit the commit message
+  # e, edit <commit> = use commit, but stop for amending
+  # s, squash <commit> = use commit, but meld into previous commit   # 将该 commit 和前一个 commit 合并成一个
+  # f, fixup <commit> = like "squash", but discard this commit's log message
+  # x, exec <command> = run command (the rest of the line) using shell
+  # b, break = stop here (continue rebase later with 'git rebase --continue')
+  # d, drop <commit> = remove commit
+  # l, label <label> = label current HEAD with a name
+  # t, reset <label> = reset HEAD to a label
+  # m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
+  # .       create a merge commit using the original merge commit's
+  # .       message (or the oneline, if no original merge commit was
+  # .       specified). Use -c <commit> to reword the commit message.
+  #
+  # These lines can be re-ordered; they are executed from top to bottom.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  编辑保存后出现注释界面,根据需要修改.
+  提交后,即完成了 多个本地 commit 的合并
+ 注:
+  eg1: $ git rebase -i 36334db    # 将指定提交下一个提交开始(前开区间: start point^),直到 HEAD 为止合并
+  eg2: $ git rebase -i HEAD~3     # 将包括 HEAD 在内的之前 3 个提交合并为一个.
+  eg3: $ git rebase -i 3333fdf  222sdf   # 将 3333fdf + 1 到  222sdf 的 commit 合并.
+  ====================
+  rebase 用法二:
+  将某一段 commit 粘贴到另一个分支上(如果只是某一两个分支,使用 cherry-pick)
+  $ git rebase [start_point] [end_point] --onto [branch_name]
+     # 将当前分支的 指定提交合并到 branch_name 分支
+  $ git checkout [branch_name]
+     # 切换到指定分支(目的分支)
+     # 此时, HEAD 指针还没有移动, 在原始位置.
+  $ git reset --hard <commit_id>
+     # commit_id 指 rebase 后的提交点(窗口会有提示).
 
 
 
 
-   merge 与 rebase.
-    rebase:
-     $ git checkout experiment   # 切换分支.
-     $ git rebase master         # 变基当前分支到指定分支.
-     它的原理是回到两个分支最近的共同祖先,根据当前分支(也就是要进行变基的分支 experiment)后续的历次提交对象
-     (这里只有一个 C3),生成一系列文件补丁,然后以基底分支(也就是主干分支 master)最后一个提交对象(C4)为新的出发点,
-     逐个应用之前准备好的补丁文件,最后会生成一个新的合并提交对象(C3'),从而改写 experiment 的提交历史,使它成为 master 分支的直接下游
-     再快进 master 分支:
-     $ git checkout master
-     $ git merge experiment
-     关于 git rebase --onto 操作.
-     例, 为了给服务器端添加一些功能而创建了特性分支 server, 然后提交 C3 和 C4. 然后又从 C3 的地方再增加一个 Client 分支来对客户端代码
-     进行一些相应修改, 所以提交了 C8 和 C9. 最后又回到 server 分支提交 C10.
-     此即 从一个特性分支里再分出一个特性分支的历史. 假设在接下来的一次软件发布中, 我们决定把客户端的修改并到主线中, 而暂缓并入服务端软件的修改/
-     此时, 就可以把基于 client 分支而非 server 分支的改变(即 C8 和 C9), 跳过 server 直接放到 master 分支中重演一遍, 但这需要用 git rebase
-     的 --onto 选项指定新的基地分支 master.
-     $ git rebase --onto master server client
-     解释: 取出 client 分支, 找出 client 分支和 server 分支的共同祖先之后(C3 以后, 不包括 C3, 即 C8 和 C9)的变化, 然后把它们在 master 上重演一遍.
-     之后再快进 master 分支.
-     $ git checkout master  # 切换到 master.
-     $ git merge client     # 将 client 合并到 当前分支(master).
-     现在, 决定把 server 分支的变化也包含进来. 可以直接把 server 分支变基到 master, 而不用切换到 server 分支之后再执行变基操作 --
-     $ git rebase [主分支] [特性分支] 分支会先取出特性分支 server, 然后在主分支 master 上重演.
-     $ git rebase master server
-     之后再快进主干分支 master.
-     $ git checkout master
-     $ git merge server
-     注: 变基的风险.
-     一旦分支中的提交对象发布到公共仓库, 就千万不要对该分支进行变基操作.
-     如果把变基当成一种在推送之前清理提交历史的手段，而且仅仅变基那些尚未公开的提交对象，就没问题。
-     如果变基那些已经公开的提交对象，并且已经有人基于这些提交对象开展了后续开发工作的话，就会出现叫人沮丧的麻烦。
+    merge 与 rebase.
+     rebase:
+      $ git checkout experiment   # 切换分支.
+      $ git rebase master         # 变基当前分支到指定分支.
+      它的原理是回到两个分支最近的共同祖先,根据当前分支(也就是要进行变基的分支 experiment)后续的历次提交对象
+      (这里只有一个 C3),生成一系列文件补丁,然后以基底分支(也就是主干分支 master)最后一个提交对象(C4)为新的出发点,
+      逐个应用之前准备好的补丁文件,最后会生成一个新的合并提交对象(C3'),从而改写 experiment 的提交历史,使它成为 master 分支的直接下游
+      再快进 master 分支:
+      $ git checkout master
+      $ git merge experiment
+      关于 git rebase --onto 操作.
+      例, 为了给服务器端添加一些功能而创建了特性分支 server, 然后提交 C3 和 C4. 然后又从 C3 的地方再增加一个 Client 分支来对客户端代码
+      进行一些相应修改, 所以提交了 C8 和 C9. 最后又回到 server 分支提交 C10.
+      此即 从一个特性分支里再分出一个特性分支的历史. 假设在接下来的一次软件发布中, 我们决定把客户端的修改并到主线中, 而暂缓并入服务端软件的修改/
+      此时, 就可以把基于 client 分支而非 server 分支的改变(即 C8 和 C9), 跳过 server 直接放到 master 分支中重演一遍, 但这需要用 git rebase
+      的 --onto 选项指定新的基地分支 master.
+      $ git rebase --onto master server client
+      解释: 取出 client 分支, 找出 client 分支和 server 分支的共同祖先之后(C3 以后, 不包括 C3, 即 C8 和 C9)的变化, 然后把它们在 master 上重演一遍.
+      之后再快进 master 分支.
+      $ git checkout master  # 切换到 master.
+      $ git merge client     # 将 client 合并到 当前分支(master).
+      现在, 决定把 server 分支的变化也包含进来. 可以直接把 server 分支变基到 master, 而不用切换到 server 分支之后再执行变基操作 --
+      $ git rebase [主分支] [特性分支] 分支会先取出特性分支 server, 然后在主分支 master 上重演.
+      $ git rebase master server
+      之后再快进主干分支 master.
+      $ git checkout master
+      $ git merge server
+      注: 变基的风险.
+      一旦分支中的提交对象发布到公共仓库, 就千万不要对该分支进行变基操作.
+      如果把变基当成一种在推送之前清理提交历史的手段，而且仅仅变基那些尚未公开的提交对象，就没问题。
+      如果变基那些已经公开的提交对象，并且已经有人基于这些提交对象开展了后续开发工作的话，就会出现叫人沮丧的麻烦。
 
-    merge:
-     $ git
+     merge:
+      $ git
 
-   查看指定文件每一行的修改历史.
-   $ git blame [文件名]
+    查看指定文件每一行的修改历史.
+    $ git blame [文件名]
 
- *
  *
  */
 public class Demo {
