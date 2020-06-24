@@ -8,7 +8,13 @@
  *    3. 各自开发各自的模块, 如果需要修改公共代码, 必须事先确认有没有人正在修改
  *    4. 不要擅自修改同事的代码.
 
- * !$    # 该命令自动补全上一次执行命令的余下部分
+ * !$     # 该命令自动补全上一次执行命令的余下部分.
+   !:n    # 获取上一个命令的第 n 个参数,用于命令参数次序错误. n 从 0 开始, !: 表示最后一个参数
+   !:1-$  # 获取所有参数(第一个具体命令元素后的所有). 可以指定 !:1-n 获取 1 到 n 的参数.
+   !-n:$  # 获取倒数第 n 个命令
+   !$:h   # 获取上一条命令最后一个参数对应的路径. eg: 最后一个参数是 /etc/afile, 则 !$:h 获取到 /etc
+   !#:1   # 获取当前行第一个参数. eg: cp /path/to/some/file !#:1.bak    --> cp /path/to/some/file /path/to/some/file.bak
+   !!:gs  # 替换上一条命令中字符串.  !!:gs/f/s/    # 将上一条命令中的所有 f 替换为 s
  -----------------------------------------------------------------------------
  * git 中的一些选项
      -d
@@ -119,14 +125,24 @@
  *      1). 文件自修改后还没有被放到 stage (暂缓区), 这时撤销修改就回到和版本库一模一样的状态
  *      2). 文件已经添加到暂缓去之后, 又做了修改, 这时撤销就回到添加到 暂缓区后的状态
  *      简而言之: 撤销(checkout), 就是让文件回到最近一次 git commit 或 git add 时的状态
- * 2. git reset HEAD 文件名              # 丢弃 已经添加到 暂缓区(stage)的修改  # 注意与上面的区别
+ * 2. git reset HEAD 文件名              # 丢弃 已经 add 到 暂缓区(stage)的修改  # 注意与上面的区别
  *      bash 源码: (use "git reset HEAD <file>..." to unstage)
  *      该命令相当于回到 最近的已更新(已提交commit过)的版本(HEAD 即是最新版), (清除暂缓区的指定文件)
  *      git reset 上面也用到了: 可以回退指定版本, 也可以把 暂缓区的修改 回退到 工作区原状态
  *     使用 git reset HEAD 文件名  命令之后, 暂缓区回退, 但是 工作区 有修改,
  *       再使用 git checkout -- 文件名  命令, 丢弃工作区的修改
- *    注: 如果已经提交(commit) 了修改到 本地版本库, 想要回退 上一个版本, 使用上面的命令 git reset --hard HEAD^ 回退上一个版本
+ *    注: 如果已经提交(commit) 了修改到 本地版本库, 想要回退 上一个版本,
+       使用上面的命令 git reset --hard HEAD^ 回退上一个版本
+        $ git reset --soft 回退到暂存区
+        --soft：保留源码，只回退commit信息到某个版本，不涉及index的回退。如果还需要提交，直接commit即可。
+        --mixed：会保留源码，只是将git commit和index的信息回退到了某个版本。（git reset默认的就是--mixed模式，即git reset等价于git reset --mixed）
+        --hard：源码也会回退到某个版本，commit和index都会回退到某个版本。(注意这种方式是会改变本地代码仓库源码)
  *     但是, 如果已经提交到了远程版本库, 就不能使用这种方式回退了.
+ *     $ git revert <commit_id>   # 已经 push 到远程仓库的回退(需要先切换到需要 revert 的分支).
+       # 在 push 此 revert 到远程.
+   reset的本质：reset的功能虽然是起到了撤销commit的作用，但实质上它是将 HEAD 的指向移动了位置(回移)。
+   revert：revert是一次新的 commit，HEAD会继续向前执行. -- revert 之后再将更改推送到远程.
+
  *
  * -----------------------------------------------------------------------------------------------------------
  * log:
@@ -186,6 +202,9 @@
        # 从指定提交点切换分支
       $ git checkout --orphan <new_branch>
        # 切换到新分支,此分支没有任何 commit, 需要手动执行 commit, 可以消除原始分支上的 commit log.
+      =================
+      创建分支的另一种方式：fetch
+      $ git fetch origin :<branch_name>   # 将远程的空分支 fetch 到本地。
  *  2. $ git branch    # 查看当前分支
        $ git branch -r    # 查看远程所有分支
        $ git branch -a    # 查看本地和远程的所有分支
@@ -200,6 +219,10 @@
  *    $ git branch -d dev
  *     删除后, 查看当前分支 git branch, 就只有 master 分支了
     7. 关联本地分支与远程分支.
+      $ git branch -b <new_branch_name> <remote_name>/<remote_branch_name>
+        # 创建新分支,并将新分支指向指定的远程分支
+      $ git branch -u origin/master foo
+        # foo 分支会追 origin/master, 效果同上. 如果当前就在 foo 分支上, foo 参数可以省略.
       $ git branch --set-upstream-to=<name>/<remote_branch>  <your_branch>
       <name>: 名称 eg, origin 或者自定义的名称(id).
       <remote_branch>: 远程分支.
@@ -228,8 +251,10 @@
     从远程分支 checkout 出来的本地分支, 称为 跟踪分支(tracking branch). 跟踪分支是一种和某个远程分支
     有直接关联的本地分支. 在跟踪分支里输入 git push, git 会自行推断应该向哪个服务器的哪个分支推送数据.
     同样, 在这些分支里运行 git pull 会获取所有远程索引, 并把它们的数据都合并到本地分支中来.
+    $ git branch -u <remote_name>/<remote_branch> <local_branch>
+       # 跟踪分支,效果同上一条命令. 如果当前就在 local_branch 分支,则可以省略该参数.
     -------------------------------------
-    fetch & pull
+    fetch & pull    # pull = fetch + merge
     $ git fetch <remote_name>   # 将某个远程主机的更新全部取回本地
     $ git fetch <remote_name> <remote_branch_name>  # 指定分支, eg: git fetch origin master
     更新后,会返回一个 FETCH_HEAD, 指 fetch 指定分支在服务器上的最新状态
@@ -240,6 +265,13 @@
     $ git merge FETCH_HEAD      # 将拉取下来的最新内容合并到当前所在的分支中
     如果远程分支是与当前分支合并,可以省略本地当前分支:
     $ git pull <remote_name> <remote_branch_name>
+    =========================================
+    $ git pull origin foo    # 等价于
+    $ git fetch origin foo; git merge origin/foo
+    $ git pull origin bar~1:bugFix  # 等价于
+    $ git fetch origin bar~1:bugFix; git merge bugFix
+    # 如果 buFix 不存在,会创建该分支,并将该分支 merge 到 当前分支
+    # pull 关注的只是 fetch 所提供的 destination 参数
     ==============================
     在新的 workspace 使用 fetch
     $ git init
@@ -247,6 +279,20 @@
     $ git checkout -b <local_branch_name>
     $ git merge FETCH_HEAD
     ## 以上操作可以把远程指定地址的文件 down 到本地
+    ===================================
+    $ git fetch
+    $ git rebase <remote_name>/<remote_branch>
+    $ git push
+      # 以上命令是对于远程仓库已经有新的提交,而当前本地没有对应的更新(导致直接 push 失败)
+      # 这里的 rebase 改为 merge 会得到相同的结果,但是 rebase 的提交记录不会分支
+      # 由于 pull 就是 fetch + merge 的缩写
+      # 所以以上命令可以简化为
+    $ git pull --rebase; git push
+----------------------------------------------------------------------------------------------
+   checkout 其他用法:
+   分离 HEAD
+   $ git checkout <commit_id>   # 将 HEAD 分离出分支名, 让其指向指定的 commit 节点.
+   eg: git checkout HEAD^   # 将 HEAD 移动到父节点
 
 -------------------------------------------------------------------------------------------
  *
@@ -296,6 +342,9 @@
  *   $ git push origin master
  *   如果要推送 dev 分支, 就是用命令
  *    $ git push origin dev
+     $ git push origin <source>:<destination>
+       # 将指定本地分支节点推送到目标远程地址
+       # source 可以是节点 id, 分支名称, 或者分支的相对位置(如: foo^  foo 的父节点)
  *  如果从远程克隆下来后
  *   $ git checkout -b dev
  *
@@ -305,6 +354,12 @@
  *   发布一个版本,就在版本库中打一个标签, 这样, 就唯一确定了打标签时刻的版本.
  *   将来无论什么时候, 取某个标签的版本, 就是把那个打标签的时刻的历史版本取出来.
  *   标签也是版本库的一个快照.
+   分支很容易被人为移动，并且当有新的提交时，它也会移动。分支很容易被改变，大部分分支还只是临时的，并且还一直在变。
+   你可能会问了：有没有什么可以永远指向某个提交记录的标识呢，比如软件发布新的大版本，
+    或者是修正一些重要的 Bug 或是增加了某些新特性，有没有比分支更好的可以永远指向这些提交的方法呢？
+    当然有了！Git 的 tag 就是干这个用的啊，它们可以（在某种程度上 —— 因为标签可以被删除后重新在另外一个位置创建同名的标签）
+    永久地将某个特定的提交命名为里程碑，然后就可以像分支一样引用了。
+    更难得的是，它们并不会随着新的提交而移动。你也不能检出到某个标签上面进行修改提交，它就像是提交树上的一个锚点，标识了某个特定的位置。
  *  在指定分支创建标签:
  *    $ git tag v1.0
  *  查看所有标签:
@@ -324,6 +379,14 @@
  *  删除已经推送到远程的标签:
  *     先删除本地: $ git tag -d v0.9
  *     再删除远程: $ git push origin :refs/tags/v0.9
+
+git describe 的​​语法是：
+    git describe <ref>
+    <ref> 可以是任何能被 Git 识别成提交记录(比如分支名称)的引用，如果你没有指定的话，Git 会以你目前所检出的位置（HEAD）。
+    它输出的结果是这样的：
+    <tag>_<numCommits>_g<hash>
+    tag 表示的是离 ref 最近的标签， numCommits 是表示这个 ref 与 tag 相差有多少个提交记录， hash 表示的是你所给定的 ref 所表示的提交记录哈希值的前几位。
+    当 ref 提交记录上有某个标签时，则只输出标签名称.
  *
  * ----------------------------------------------------------------------------------------------------------------------
  *
@@ -537,16 +600,28 @@
  *   9. 版本变换: 前进后退
  *      1) 基于索引操作: 推荐(可进可退)
  *          $ git reset --hard 索引值
+     相对引用: ^/~
  *      2) 基于 ^ 操作: 只能后退
  *          $ git reset --hard HEAD^    # 后退一个版本
  *      3) 基于 ~ 操作: 只能后退
  *          $ git reset --hard HEAD~n   # 后退 n 个版本
  *      注: 与 --hard 相对应的
- *
+ -------------------------------------------------------------------------------------------
+ *  $ git branch -f master HEAD~3/commit_id    # 将 master 强制移动到指定提交节点
+    $ git checkout HEAD^   #将 HEAD 节点回退一个提交
+        # 一个是移动分支, 一个是移动 HEAD 节点
+    $ git checkout HEAD~^2~2  # 先回退一步,再侧移一步(当前 节点的兄弟节点, merge 之前的并列节点),后再回退两步
+      # 如果直接 HEAD~3 表示在当前分支记录上回退三个版本, 而上述的命令是在另一分支上回退.
+     # HEAD^2 表示 另一个父节点
+    $ git branch bug master~^2~1
+    $ git branch bug master^^2^
+      # 以上两条命令结果完全一致. 新建 bug 分支, 且 bug 分支指向 master 父节点的第二父节点的父节点.
+      # ^/~  都表示 父节点
+
 
  --------------------------------------------------------------------
    Rebase 用法一:
-   使用 rebase 合并本地多个 commit 为一个完整的 commit
+   使用 rebase 合并本地多个 commit 为一个完整的 commit(可以省略某些提交点,可以 交换位置)
    $ git rebase -i [start_point] [end_point]
     # -i 指 --interactive, 即弹出交互式界面让用户编辑完成合并操作
     # start_point 和 end_point 指定一个编辑区间,如果不指定 end_point, 则该区间的终点默认是当前分支 HEAD 所指向的 commit
@@ -558,6 +633,7 @@
    s ssasss add c.txt
    s ssdfss add d.txt
   # 这里把需要合并的 pick 改为 s 即表示将当前提交合并到上一个, 第一个不能改(其前面没有可合并的提交)
+  # 如果不需要指定的提交,可以改为 d (drop)
   #
   # Commands:
   # p, pick <commit> = use commit
@@ -580,9 +656,9 @@
   编辑保存后出现注释界面,根据需要修改.
   提交后,即完成了 多个本地 commit 的合并
  注:
-  eg1: $ git rebase -i 36334db    # 将指定提交下一个提交开始(前开区间: start point^),直到 HEAD 为止合并
-  eg2: $ git rebase -i HEAD~3     # 将包括 HEAD 在内的之前 3 个提交合并为一个.
-  eg3: $ git rebase -i 3333fdf  222sdf   # 将 3333fdf + 1 到  222sdf 的 commit 合并.
+  eg1: $ git rebase -i 36334db    # 对指定提交 子节点 开始(前开区间: start point^),直到 HEAD 为止进行操作
+  eg2: $ git rebase -i HEAD~3     # 对包括 HEAD 在内的 3 个提交进行操作(选择或去除).
+  eg3: $ git rebase -i 3333fdf  222sdf   # 对 3333fdf 子节点 到  222sdf 的 commit 进行.
   ====================
   rebase 用法二:
   将某一段 commit 粘贴到另一个分支上(如果只是某一两个分支,使用 cherry-pick)
@@ -593,20 +669,23 @@
      # 此时, HEAD 指针还没有移动, 在原始位置.
   $ git reset --hard <commit_id>
      # commit_id 指 rebase 后的提交点(窗口会有提示).
+     --------------------
+  $ git cherry-pick c3 c5 c7        # 将 c3, c5, c7 提交节点的记录按顺序放在当前分支后面
 
 
 
 
-    merge 与 rebase.
+    merge 与 rebase.  rebase 到指定分支, merge 到当前分支
      rebase:
       $ git checkout experiment   # 切换分支.
-      $ git rebase master         # 变基当前分支到指定分支.
+      $ git rebase master(也可以使用 commit_id)         # 变基当前分支到指定分支(master).
+      $ git rebase <branch_1> <branch_2>   # 将 branch_2 变基到 branch_1
       它的原理是回到两个分支最近的共同祖先,根据当前分支(也就是要进行变基的分支 experiment)后续的历次提交对象
       (这里只有一个 C3),生成一系列文件补丁,然后以基底分支(也就是主干分支 master)最后一个提交对象(C4)为新的出发点,
       逐个应用之前准备好的补丁文件,最后会生成一个新的合并提交对象(C3'),从而改写 experiment 的提交历史,使它成为 master 分支的直接下游
       再快进 master 分支:
       $ git checkout master
-      $ git merge experiment
+      $ git merge experiment    # 合并 指定分支到 当前(master) 分支
       关于 git rebase --onto 操作.
       例, 为了给服务器端添加一些功能而创建了特性分支 server, 然后提交 C3 和 C4. 然后又从 C3 的地方再增加一个 Client 分支来对客户端代码
       进行一些相应修改, 所以提交了 C8 和 C9. 最后又回到 server 分支提交 C10.
@@ -634,6 +713,10 @@
 
     查看指定文件每一行的修改历史.
     $ git blame [文件名]
+
+
+  ---------------------------------------------------------------------------------------
+
 
  *
  */

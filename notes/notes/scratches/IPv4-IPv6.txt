@@ -9,6 +9,9 @@ IPv6: Internet Protocol version 6. 互联网通信协议(TCP/IP 协议)第六版
     eg: 2001:0db8:86a3:08d3:1319:8a2e:0370:7344  -- 十六进制, 一位十六进制数对应 4 位 二进制数.
 
 HTTPS: Hyper Text Transfer Protocol over SecureSocket Layer
+HTTPS = HTTP + SSL/TLS
+SSL: Secure Socket Layer
+TLS: Transport LayerSecurity
 
 TCP/IP 是一组不同层次上的多个协议的组合。TCP/IP 通常被认为是一个四层协议的组合。
 尽管通常称该协议族为 TCP/IP，但 TCP/IP 只是其中的两种协议而已（该协议族的另一个名字是 Internet 协议族，Internet Protocol Suite）
