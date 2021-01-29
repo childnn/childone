@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--namespace:名称空间
+		区分模块
+	唯一：namespace.id
+ -->
+<mapper namespace="org.anonymous.dao.ContactDao">
+    <!-- select 查询 -->
+    <select id="findAll" resultType="org.anonymous.beans.Contact">
+        select * from contact
+    </select>
+</mapper>

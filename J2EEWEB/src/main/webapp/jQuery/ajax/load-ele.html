@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>把 jQuery 选择器添加到 URL 参数, load 文件中指定的数据</title>
+	<script src="../../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        // 文件中 id="p1" 的元素的内容，加载到指定的 <div> 元素中：
+        $(document).ready(function () {
+            $("button").click(function () {
+                $("#div1").load("./load.txt #p1");
+            });
+        });
+	</script>
+</head>
+<body>
+
+<div id="div1"><h2>使用 jQuery AJAX 来改变文本</h2></div>
+<button>获得外部内容</button>
+
+</body>
+</html>

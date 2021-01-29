@@ -1,6 +1,12 @@
 package jmh;
 
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.results.RunResult;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -15,9 +21,10 @@ import java.util.stream.IntStream;
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
  * @author MiaoOne
- * @State(Scope.Benchmark) 声明类实例是线程共享的，且所有线程共享一个实例
- * @State(Scope.Thread) 声明类实例是非线程共享的，且所有线程都实例话一个对象
  * @since 2020/6/2 13:32
+ * ---------------
+ * .@State(Scope.Thread) 声明类实例是非线程共享的，且所有线程都实例话一个对象
+ * .@State(Scope.Benchmark) 声明类实例是线程共享的，且所有线程共享一个实例
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)

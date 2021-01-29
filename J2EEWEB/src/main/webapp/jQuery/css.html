@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+	<script src="../lib/js/jquery-3.3.1.min.js"></script>
+	<!--
+		addClass() - 向被选元素添加一个或多个类
+		removeClass() - 从被选元素删除一个或多个类
+		toggleClass() - 对被选元素进行添加/删除类的切换操作
+		css() - 设置或返回样式属性
+	-->
+	<script>
+        $(document).ready(function () {
+            $("#btn1").click(function () {
+                $("h1,h2,p").addClass("blue");
+                $("#div").addClass("important");
+            });
+            // 设置多个 class
+            $("#btn2").click(function () {
+                $("#div1").addClass("important blue");
+            });
+            // 删除 class
+            $("#btn3").click(function () {
+                $("h1,h2,p").removeClass("blue");
+            });
+
+            $("#btn4").click(function () {
+                $("h1,h2,p").toggleClass("blue");
+            });
+        });
+	</script>
+	<style type="text/css">
+		.important {
+			font-weight: bold;
+			font-size: xx-large;
+		}
+
+		.blue {
+			color: blue;
+		}
+	</style>
+</head>
+<body>
+
+
+<h1>标题 1</h1>
+<h2>标题 2</h2>
+<p>这是一个段落。</p>
+<p>这是另一个段落。</p>
+<div id="div">这是非常重要的文本！</div>
+<br>
+<button id="btn1">向元素添加类</button>
+
+<hr/>
+<div id="div1">这是一些文本。</div>
+<div id="div2">这是一些文本。</div>
+<br>
+<button id="btn2">向第一个 div 元素添加多个类</button>
+
+<hr/>
+<h1 class="blue">标题 1</h1>
+<h2 class="blue">标题 2</h2>
+<p class="blue">这是一个段落。</p>
+<p>这是另一个段落。</p>
+<br>
+<button id="btn3">从元素上删除类</button>
+
+
+<hr/>
+<h1>标题 1</h1>
+<h2>标题 2</h2>
+<p>这是一个段落。</p>
+<p>这是另一个段落。</p>
+<button id="btn4">切换 CSS 类</button>
+
+</body>
+</html>

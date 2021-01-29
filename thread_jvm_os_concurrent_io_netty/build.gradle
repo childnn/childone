@@ -1,0 +1,40 @@
+/*
+1.implementation，默认的scope。implementation的作用域会让依赖在编译和运行时均包含在内，但是不会暴露在类库使用者的编译时。
+    举例，如果我们的类库包含了gson，那么其他人使用我们的类库时，编译时不会出现gson的依赖。
+2.api，和implementation类似，都是编译和运行时都可见的依赖。但是api允许我们将自己类库的依赖暴露给我们类库的使用者。
+3.compileOnly和runtimeOnly，这两种顾名思义，一种只在编译时可见，一种只在运行时可见。而runtimeOnly和Maven的provided比较接近。
+4.testImplementation，这种依赖在测试编译时和运行时可见，类似于Maven的test作用域。
+5.testCompileOnly和testRuntimeOnly，这两种类似于compileOnly和runtimeOnly，但是作用于测试编译时和运行时。
+* */
+
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    compile group: 'junit', name: 'junit', version: '4.12'
+    compile 'io.netty:netty-all:4.1.52.Final'
+    compile 'com.google.protobuf:protobuf-java:3.11.4'
+//    compile 'com.google.protobuf:protobuf-java:44.0.0-rc-2'
+    compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
+    compile group: 'cglib', name: 'cglib', version: '3.3.0'
+//    implementation ''
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+}
+
+//compileJava.options.encoding = 'UTF-8'
+//compileTestJava.options.encoding = 'UTF-8'

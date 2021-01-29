@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--依赖注入: 对象属性赋值-->
+    <bean id="aaa" class="org.anonymous.service.impl.ServiceImpl5">
+        <!--set 方式: ref 引入对象 id: 一定是 spring 容器管理的对象-->
+        <property name="serviceDao" ref="dao"/>
+    </bean>
+    <!--spring 容器管理的对象: 如果该对象还有相依赖的属性需要赋值,也需要设置
+       -->
+    <bean id="dao" class="org.anonymous.dao.impl.ServiceDaoImpl"/>
+    <!--;;;dao 的其他属性赋值/如果由-->
+</beans>

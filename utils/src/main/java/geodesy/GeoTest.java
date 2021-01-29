@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 public class GeoTest {
     @Test
     public void test() {
-        GlobalCoordinates source = new GlobalCoordinates(29.490295, 106.486654);
-        GlobalCoordinates target = new GlobalCoordinates(29.615467, 106.581515);
+        GlobalCoordinates source = new GlobalCoordinates(31.25673162076973, 121.67478955175843);
+        GlobalCoordinates target = new GlobalCoordinates(47.624851, -122.52099);
 
         double meter = getDistanceMeter(source, target, Ellipsoid.Sphere);
         double meter1 = getDistanceMeter(source, target, Ellipsoid.WGS84);

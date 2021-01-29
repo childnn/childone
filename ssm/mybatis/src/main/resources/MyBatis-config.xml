@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="http://mybatis.org/schema/mybatis-config"
+               xsi:schemaLocation="http://mybatis.org/schema/mybatis-config
+       http://mybatis.org/schema/mybatis-config/mybatis-config.xsd">
+
+    <!--
+        <xs:element minOccurs="0" ref="properties"/>
+        <xs:element minOccurs="0" ref="settings"/>
+        <xs:element minOccurs="0" ref="typeAliases"/>
+        <xs:element minOccurs="0" ref="typeHandlers"/>
+        <xs:element minOccurs="0" ref="objectFactory"/>
+        <xs:element minOccurs="0" ref="objectWrapperFactory"/>
+        <xs:element minOccurs="0" ref="reflectorFactory"/>
+        <xs:element minOccurs="0" ref="plugins"/>
+        <xs:element minOccurs="0" ref="environments"/>
+        <xs:element minOccurs="0" ref="databaseIdProvider"/>
+        <xs:element minOccurs="0" ref="mappers"/>
+    -->
+
+    <!-- 引入 .properties 文件, resource 指定 classPath 路径 -->
+    <properties resource="" url="">
+
+        <!--        <property name="" value=""/>-->
+    </properties>
+
+    <settings>
+        <setting name="" value=""/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="" alias=""/>
+        <!--        <package name=""/>-->
+    </typeAliases>
+
+
+    <typeHandlers>
+        <typeHandler handler=""/>
+        <package name=""/>
+    </typeHandlers>
+
+    <objectFactory type="">
+        <property name="" value=""/>
+    </objectFactory>
+
+    <objectWrapperFactory type=""/>
+
+    <reflectorFactory type=""/>
+
+    <plugins>
+        <plugin interceptor=""/>
+    </plugins>
+
+    <environments default="">
+        <environment id="">
+            <transactionManager type=""/>
+            <dataSource type=""/>
+        </environment>
+    </environments>
+
+
+    <databaseIdProvider type=""/>
+
+    <mappers>
+        <package name=""/>
+        <package name=""/>
+    </mappers>
+
+
+</configuration>

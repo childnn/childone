@@ -20,6 +20,13 @@ import java.util.Map;
  */
 public class TwoSum {
 
+    static class T {
+        public static void main(String[] args) {
+            System.out.println("哦我是");
+        }
+    }
+
+
     /**
      * 方法一:
      * 注意获取数组中的数,在剩余的数中找到与其和为 target 的数.

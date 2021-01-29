@@ -1,7 +1,22 @@
 package test;
 
 import org.junit.Test;
-import org.quartz.*;
+import org.quartz.CalendarIntervalScheduleBuilder;
+import org.quartz.CalendarIntervalTrigger;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.DateBuilder;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.utils.Key;
 import pojo.MyJob;
@@ -26,6 +41,7 @@ import java.util.TimeZone;
  * 以及执行其他与调度相关的操作(如暂停 Trigger). 但是, Scheduler 只有在调用 {@link Scheduler#start()} 方法后,
  * 才会真正出发 trigger(执行 Job).
  * @since 2019/11/9 19:19
+ * quartz 的任务默认是并发执行, 所以不会等到上一个任务执行完再去执行下一个
  */
 public class QuartzTest {
     @SuppressWarnings({"deprecation", "serial"})
@@ -49,6 +65,16 @@ public class QuartzTest {
                     .setJobData(dataMap)
                     .build();
 
+            CalendarIntervalTrigger trigger1 = TriggerBuilder.newTrigger()
+                    .withIdentity("calender", "g")
+                    .forJob(job)
+                    .startNow()
+                    .withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
+                            .withInterval(3, DateBuilder.IntervalUnit.SECOND)) // 两次 task 时间间隔: 无论上一个任务是否执行完毕
+                    //.usingJobData()
+                    .build();
+
+            // cron trigger
             CronTrigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(TriggerKey.triggerKey("myTrigger", "group1"))
                     // .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 8-17 * * ?")) // 每天上午 8 点至下午 5 点, 周期一分钟.
@@ -76,7 +102,8 @@ public class QuartzTest {
                     .endAt(DateBuilder.dateOf(22, 0, 0))
                     .build();*/
 
-            Date date = scheduler.scheduleJob(job, trigger);
+            // 返回下一次执行时间
+            Date date = scheduler.scheduleJob(job, trigger1);
 
             System.err.println("date = " + date.toLocaleString());
 

@@ -1,0 +1,72 @@
+package org.anonymous.beans;
+
+/**
+ * @author child
+ * 2019/3/29 11:41
+ */
+public class Contact {
+    private Integer id;
+    private String name;
+    private String sex;
+    private Integer age;
+    private Integer province_id;
+    private String qq;
+    private String email;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getProvince_id() {
+        return province_id;
+    }
+
+    public void setProvince_id(Integer province_id) {
+        this.province_id = province_id;
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+}

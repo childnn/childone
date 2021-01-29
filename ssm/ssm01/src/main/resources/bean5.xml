@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--set 方式-->
+    <bean id="bbb" class="org.anonymous.service.impl.ServiceImpl3">
+        <!--<property name="arr">
+            <array> 会报错呢???
+            </array>
+        </property>>-->
+
+        <!--map/properties 通用 -->
+        <property name="Map">
+            <!-- <map>
+                 <entry key="张三" value="中文"/>
+                 <entry key="李四" value="英文"/>
+             </map>-->
+            <props>
+                <prop key="Jack">21342</prop>
+                <prop key="rose">21342</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

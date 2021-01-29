@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--<?xml-stylesheet type="text/css" href="a.css" ?> &lt;!&ndash;&ndash;&gt;-->
+<!--This XML file does not appear to have any style information associated with it. The document tree is shown below.-->
+<users>
+
+    <user id="1">
+        <name>张三</name>
+        <age>23</age>
+        <gender>male</gender>
+    </user>
+
+    <user id="2">
+        <name>lisi</name>
+        <age>24</age>
+        <gender>female</gender>
+    </user>
+
+</users>

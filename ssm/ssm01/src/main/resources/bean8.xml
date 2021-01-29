@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--半注解方式: 自己的资源用注解, 第三方 用 xml-->
+    <!--注解使用条件: spring 的注解默认是关闭的,需要配置 注解扫描器, 开启注解功能
+            告诉 spring 去哪些包(包括子包) 下解析注解
+    -->
+    <context:component-scan base-package="org.anonymous"/>
+
+    <!--引入 外部的 数据库连接信息:
+         类路径下的配置文件: classpath:properties文件名
+         使用引入文件: spring-el 标签获取 value
+    -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--第三方 jar class-->
+
+    <!--c3p0: 让 spring 容器通过 反射(无参构造) 第三方 class, 创建对象,放入 spring 容器中
+        通过set 属性 设置值: 注册 mysql 驱动
+      -->
+    <bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--druid-->
+    <bean id="druid" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--jdbcTemplate: 创建 jdbcTemplate 对象,并 使用 有参构造 赋值: datasource - druid-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg name="dataSource" ref="druid"/>
+    </bean>
+
+</beans>

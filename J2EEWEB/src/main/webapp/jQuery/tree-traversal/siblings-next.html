@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+	<style>
+		.siblings * {
+			display: block;
+			border: 2px solid lightgrey;
+			color: lightgrey;
+			padding: 5px;
+			margin: 15px;
+		}
+	</style>
+
+	<script src="../../lib/js/jquery-3.3.1.min.js"></script>
+
+	<script>
+        /*
+        * next() 方法返回被选元素的下一个同胞元素。
+        该方法只返回一个元素。
+        * */
+        $(document).ready(function () {
+            $("h2").next().css({"color": "red", "border": "2px solid red"});
+        });
+
+	</script>
+
+</head>
+<body class="siblings">
+
+<h1>h1's next sibling</h1>
+<div>div (父)
+	<p>p</p>
+	<span>span</span>
+	<h2>h2</h2>
+	<h3>h3</h3>
+	<p>p</p>
+</div>
+
+</body>
+</html>

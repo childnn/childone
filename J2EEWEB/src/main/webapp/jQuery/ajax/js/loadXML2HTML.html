@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>把 XML 文件显示为 HTML 表格</title>
+	<script>
+        var xmlhttp;
+
+        function loadXMLDoc(url) {
+            xmlhttp = null;
+            if (window.XMLHttpRequest) { // code for IE7, Firefox, Mozilla, etc.
+                xmlhttp = new XMLHttpRequest();
+            } else if (window.ActiveXObject) { // code for IE5, IE6
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            if (xmlhttp != null) {
+                xmlhttp.onreadystatechange = onResponse;
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(null);
+            } else {
+                alert("Your browser does not support XMLHTTP.");
+            }
+        }
+
+        function onResponse() {
+            if (xmlhttp.readyState !== 4) {
+                return;
+            }
+            if (xmlhttp.status !== 200) {
+                alert("Problem retrieving XML data");
+                return;
+            }
+
+            var txt = "<table border='1'>";
+            var x = xmlhttp.responseXML.documentElement.getElementsByTagName("book");
+            for (i = 0; i < x.length; i++) {
+                txt = txt + "<tr>";
+                txt = loadXMLByTagName(x[i].getElementsByTagName("title"), txt)
+                txt = loadXMLByTagName(x[i].getElementsByTagName("author"), txt);
+                txt = loadXMLByTagName(x[i].getElementsByTagName("year"), txt);
+                txt = loadXMLByTagName(x[i].getElementsByTagName("price"), txt);
+                /*var xx = x[i].getElementsByTagName("title");
+                {
+                    try {
+                        txt = txt + "<td>" + xx[0].firstChild.nodeValue + "</td>";
+                    } catch (er) {
+                        txt = txt + "<td> </td>";
+                    }
+                }
+                xx = x[i].getElementsByTagName("author");
+                {
+                    try {
+                        txt = txt + "<td>" + xx[0].firstChild.nodeValue + "</td>";
+                    } catch (er) {
+                        txt = txt + "<td> </td>";
+                    }
+                }*/
+                txt = txt + "</tr>";
+            }
+            txt = txt + "</table>";
+            document.getElementById('copy').innerHTML = txt;
+        }
+
+        function loadXMLByTagName(e, txt) {
+            try {
+                txt = txt + "<td>" + e[0].firstChild.nodeValue + "</td>";
+            } catch (er) {
+                txt = txt + "<td> </td>";
+            }
+            return txt;
+        }
+	</script>
+</head>
+<body>
+
+<div id="copy">
+	<button onclick="loadXMLDoc('./books.xml')">Get CD info</button>
+</div>
+
+</body>
+</html>

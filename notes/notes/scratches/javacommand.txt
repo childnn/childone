@@ -1,0 +1,34 @@
+javac -d destdir(.表示存放在当前路径) srcfile
+    编译(eg)：
+    	在 src 目录下： javac -d ../classes lee/*.java
+java classfilename
+    // 带包的 .java 文件, 编译在 java 文件所在目录, 运行在包所在目录, 使用全限定名运行
+    运行(eg)：
+    	进入编译包所在顶层路径, 此处为 lee 所在目录
+    	java lee.Hello
+javadoc
+    -d <directory>: 生成 API 文档的目录
+    -windowtitle <text>: 用于设置 API 文档的浏览器窗口标题
+    -doctitle <html-code>: 指定 HTML 格式的文本, 用于指定概述页面的标题
+    -header <html-code>: 该选项指定一个 HTML 格式的文本, 包含每个页面的页眉
+    -version: 提取 @version
+    -author: 提取 @author
+java -verbose:gc classfilename
+     -verbose:gc 选项可以看到每次垃圾回收后的提示信息
+jar cf jarname.jar dirname
+      将当前路径下名为 dirname 的文件夹下的内容打成名为 jarname 的 jar
+jar cvf ....   // 显示压缩过程
+jar cvfM ...... // 不生成清单文件  META-INF/MANIFEST.MF
+jar cvfm jarname.jar mainfest.mf dirname
+    自定义 MANIFEST.MF 文件内容:
+     每行一个 key:<空格>value, 文件以空行结束, 文件名任意, 自动提取到 META-INF/MANIFEST.MF 中
+jar tf jarname.jar   查看 jar 内容
+jar tf jarname.jar > filename.txt  重定向到文件
+jar tvf jarname.jar  查看详细信息
+jar xf jarname.jar  解压
+jar xvf jarname.jar 带提示信息解压
+jar uf jarname.jar filename   更新或覆盖指定文件: filename 以当前路径为标准
+jar uvf jarname.jar filename  带详情的更新
+jar cvfe jarname.jar 主类的全限定名 dirname(带打包的文件夹根目录)   // 打包可执行 jar, 指定主类全限定名
+        eg:     >jar cvfe d.jar demo.Hello demo
+                >java -jar d.jar   // 运行可执行 jar

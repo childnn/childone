@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+	<script src="../../lib/js/jquery-3.3.1.min.js"></script>
+
+	<script>
+        /*
+        * eq() 方法返回被选元素中带有指定索引号的元素。
+         索引号从 0 开始，因此首个元素的索引号是 0 而不是 1。
+         * 下面的例子选取第二个 <p> 元素（索引号 1）
+        * */
+        $(document).ready(function () {
+            $("p").eq(1).css("background-color", "yellow");
+        });
+	</script>
+
+</head>
+<body>
+
+<h1>欢迎来到我的主页</h1>
+<p>我是唐老鸭 (index 0)。</p>
+<p>唐老鸭 (index 1)。</p>
+<p>我住在 Duckburg (index 2)。</p>
+<p>我最好的朋友是米老鼠 (index 3)。</p>
+
+
+</body>
+</html>

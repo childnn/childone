@@ -1,3 +1,47 @@
+事务: 构成单个逻辑工作单元的操作集合.
+    事务处理保证所有的事务都作为一个工作单元来执行, 即使出现硬件故障或者系统失灵, 都不能改变这种执行.
+    当在一个事务中执行多个操作时, 要么所有操作都被提交 commit, 要么整个事务回滚 rollback 到最初的状态.
+
+当一个连接对象 Connection 被创建时, 默认情况事务自动提交, 每执行一条 sql, 成功则向数据库自动提交, 不可回滚.
+为了将多个 sql 作为一个事务执行, 可以调用 Connection 对象的 serAutoCommit() 方法, 传入 false 来取消自动提交事务
+然后在所有 sql 执行成功后, 调用 Connection 对象的 commit() 方法提交事务, 或者在执行出错时, 调用 Connection 对象的
+rollback() 方法回滚事务.
+
+为了避免多个事务同时访问同一份数据可能引发的冲突, 还需设置 事务的隔离级别.
+事务隔离是指 RDBMS(或其他事务系统)通过某种机制, 在并行的多个事务之间进行分离, 使每个事务在其执行过程中保持独立(如同当前只有此事务单独运行).
+
+要理解事务隔离级别, 首先明白 3 个概念: 脏读 dirty read, 不可重复读 non-repeatable read, 幻读 phantom read.
+与这 3 个概念相对的 4 种隔离级别: read uncommitted, read committed, repeatable read, serializable
+
+Connection 接口定义关于隔离级别的常量, java.sql.Connection.setTransactionIsolation 设置隔离级别
+    TRANSACTION_NONE: 不支持事务
+    TRANSACTION_READ_UNCOMMITTED:    * A constant indicating that dirty reads, non-repeatable reads and phantom reads can occur.
+                                        * This level allows a row changed by one transaction to be read
+                                        * by another transaction before any changes in that row have been
+                                        * committed (a "dirty read").  If any of the changes are rolled back,
+                                        * the second transaction will have retrieved an invalid row.
+    TRANSACTION_READ_COMMITTED:   * A constant indicating that
+                                       * dirty reads are prevented; non-repeatable reads and phantom
+                                       * reads can occur.  This level only prohibits a transaction
+                                       * from reading a row with uncommitted changes in it.
+    TRANSACTION_REPEATABLE_READ:  * A constant indicating that
+                                       * dirty reads and non-repeatable reads are prevented; phantom
+                                       * reads can occur.  This level prohibits a transaction from
+                                       * reading a row with uncommitted changes in it, and it also
+                                       * prohibits the situation where one transaction reads a row,
+                                       * a second transaction alters the row, and the first transaction
+                                       * rereads the row, getting different values the second time
+                                       * (a "non-repeatable read").
+    TRANSACTION_SERIALIZABLE:  * A constant indicating that
+                                   * dirty reads, non-repeatable reads and phantom reads are prevented.
+                                   * This level includes the prohibitions in
+                                   * <code>TRANSACTION_REPEATABLE_READ</code> and further prohibits the
+                                   * situation where one transaction reads all rows that satisfy
+                                   * a <code>WHERE</code> condition, a second transaction inserts a row that
+                                   * satisfies that <code>WHERE</code> condition, and the first transaction
+                                   * rereads for the same condition, retrieving the additional
+                                   * "phantom" row in the second read.
+
 PROPAGATION_REQUIRED ： 支持当前事务，如果当前没有事务，就新建一个事务，这也是最常见的
 PROPAGATION_SUPPORTS ： 支持当前事务，如果当前没有事务，就以非事务的方式执行
 PROPAGATION_MANDATORY： 支持当前事务，如果当前没有事务，就抛异常

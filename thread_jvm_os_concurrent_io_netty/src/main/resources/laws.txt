@@ -1,0 +1,18 @@
+破窗定律: 任何一种不良现象的存在,都在传递着一种信息,这种信息会导致不良现象的无限扩展,
+    必须高度警觉那些看起来是偶然的,轻微的"过错",如果对这种行为不闻不问,纠正不力,就会纵容
+    更多的人"去打烂更多的窗户玻璃".
+墨菲定律: Murphy's Law, 凡是可能出错的事就一定会出错.
+古德哈特定律: Goodhart's Law, 当一个措施本身成为目标时,它就不再是一个好的措施.
+    一项指标一旦成为政策指定的依据,便立即不再有效.政策制定者会牺牲其他方面来强化这个指标,
+    使得这个指标本身不再具有指示整体情况的作用.
+霍夫斯塔特定律: Hofstadter's Law, 事情总是要花费比你预想更长的时间.
+布鲁克斯法则: Brook's Law, 向一个延期的项目增加人手只会让它延期得更加厉害.
+二八定律: 80/20 定律,帕累托法则(Pareto's principle,巴莱特定律),朱伦法则(Juran's Principle),
+    关键少数法则(Vital Few Rule),不重要多数法则(Trivial Many Rule). 在任何一组东西中,最重要的
+    只占其中一小部分. || 代码中 80% 的错误都是由代码中的 20% 引起的. 公司 80% 的工作是由 20%
+    的员工完成的,问题是并不清楚谁是那 20%
+康威定律:
+   第一定律: Communication dictates design. 组织沟通方式决定系统设计.
+   第二定律: There is never enough time to do something right, but there is always enough time to do it over.
+   第三定律: There is a homomorphism from the linear graph of a system to the linear graph of its design organization.
+   第四定律: The structures of large systems tend to disintegrate during development, qualitatively more so than with small systems.

@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
+    // https://mvnrepository.com/artifact/com.mchange/c3p0
+    compile group: 'com.mchange', name: 'c3p0', version: '0.9.5.5'
+    // https://mvnrepository.com/artifact/com.alibaba/druid
+
+//    compile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    compile 'org.springframework:spring-jdbc:5.3.2'
+    compile 'org.springframework:spring-beans:5.3.2'
+    compile 'org.springframework:spring-core:5.3.2'
+    compile 'org.springframework:spring-tx:5.3.2'
+    compile 'com.alibaba:druid:1.2.4'
+}

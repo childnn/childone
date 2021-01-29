@@ -1,0 +1,6 @@
+<!ELEMENT students (student*) > <!--students 标签 下的子标签 student, 出现 0 次或多次-->
+        <!ELEMENT student (name,age,sex)> <!--student 标签 下,可以出现-->
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT age (#PCDATA)>
+        <!ELEMENT sex (#PCDATA)>
+        <!ATTLIST student number ID #REQUIRED>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+	            http://www.springframework.org/schema/aop
+        	    http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--<![CDATA[.....]]>-->
+    <!--开启 包扫描: 注解扫描器-->
+    <context:component-scan base-package="org.anonymous"/>
+
+    <!--开启 aspectj 的注解支持-->
+    <aop:aspectj-autoproxy/>
+
+    <!--
+        AOP 的注解配置:
+            0. 开启 IOC 注解扫描器- <context:component-scan base-package="org.anonymous"/>
+                使用 注解, 把 类交给 ioc 管理(四大创建对象的 注解): @Component(value="") ....
+            1. 开启 aop 的注解支持- <aop:aspectj-autoproxy/>
+            2. 确定哪个是切面类: @Aspect - 定义在 类上
+            3. 在通知上指定,该通知的类别(前置/后置/../环绕),
+                以及, 切入点(目标方法)
+          切入点的抽取: execution((* org.anonymous..*.切入点()))
+           抽取 execution() 表达式
+           必须定义在一个 无参 无返回值 无实际方法内容的 方法上
+               使用： 谁要使用，直接调用 方法名()
+      必须 使用 符合版本的 aspectjweaver.jar (1.9.3 目前最新版可以)
+        1.8.3 不支持, 会报运行时异常
+    -->
+
+</beans>

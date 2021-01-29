@@ -1,4 +1,4 @@
-package cn.itheima.mysql;
+package mysql;
 
 /**
  * 2019年3月7日09:14:15
@@ -21,6 +21,10 @@ package cn.itheima.mysql;
  *              查询多表有关系数据,以及 B表 所有数据
  *
  *  子查询:
+ *      from 后: 数据表
+ *      where 后: 过滤条件
+ *      把子查询当成过滤条件时,将子查询放在比较运算符的右边, 可增强 SQL 可读性.
+ *
  *      1.将一条 sql 语句的查询结果作为另一条 sql 语句的条件
  *          select * from 表明 where(子查询结果)
  *       单列单值:
@@ -32,6 +36,47 @@ package cn.itheima.mysql;
  *        eg:
  *          子查询: SELECT * FROM dept,(SELECT * FROM emp WHERE join_date > '2011-1-1') temp WHERE dept.id = temp.dept_id;
  *          内连接: SELECT * FROM emp e, dept d WHERE e.dept_id=d.id AND e.join_date > "2011-1-1";
+ *  集合运算:
+ *     1. union: select 语句 union select 语句;
+ *        eg: select * from table_1
+ *            union
+ *            select * from table_2;
+ *           -- 以上两个表的结果集的数据列必须一一对应
+ *     2. minus: select 语句 minus select 语句;
+ *        -- mysql 不支持
+ *        select stu_id, stu_name from student_table
+ *        minus
+ *        -- 两个结果集的数据列的数量相等, 数据类型一一对应.
+ *        select teach_id, teach_name from teacher_table;
+ *      -- mysql 实现 minus
+ *        select stu_id, stu_name from student_table
+ *        where (stu_id, stu_name)
+ *        not in
+ *        (select teach_id, teach_name from teacher_table);
+ *      3. intersect
+ *        select 语句 intersect select 语句;
+ *        -- mysql 不支持
+ *        select stu_id, stu_name from student_table
+ *        intersect
+ *        -- 两个结果集的数据列的数量相等, 数据类型一一对应
+ *        select teach_id, teach_name from teacher_table;
+ *        -- mysql 实现 intersect
+ *        select stu_id, stu_name from student_table
+ *        join
+ *        teacher_table
+ *        on (stu_id = teach_id and stu_name = teach_name);
+ *        ------------
+ *        select stu_id, stu_name from student_table where student_id < 4
+ *        intersect
+ *        select teach_id, teach_name from teacher_table where teach_name like '李%';
+ *        -- mysql 改写上述 sql
+ *        select stu_id, stu_name from student_table
+ *        join
+ *        teacher_table
+ *        on (stu_id = teach_id and stu_name = teach_name)
+ *        where stu_id < 4 and teach_name like '李%';
+ *
+ *
  *
  * 事务: 当一个业务需要多条 sql 语句才能完成时,需要用到事物 -- 如:转账业务 (sql1: A 账户减钱 sql2: B 账户加钱)
  *      如果一个包含多个步骤的业务操作被 事务 管理,那么这些操作要么同时成功,要么同时失败.
@@ -39,8 +84,17 @@ package cn.itheima.mysql;
  * 事务的四大特征: ACID
  *      1.原子性(atomicity): 事务是不可分割的最小操作单位,要么同时成功,要么同时失败（失败则回滚）
  *      2.一致性(Consistency): 事务操作前后,数据总量不变
+ *            事务的执行结果, 必须使数据库从一个一致性状态, 变到另一个一致性状态. 当数据库只包含事务成功提交的结果时, 数据库处于一致性状态.
+ *            如果系统运行发生中断, 某个事务尚未完成而被迫终端, 而该未完成的事务对数据库所做的修改已被写入数据库, 此时, 数据库就处于一种不正确
+ *            的状态. 比如银行转账, 只修改 A 账户金额而未修改 B 账户金额, 则数据库就处于不一致性状态.
+ *            因此, 一致性是通过原子性来保证的.
  *      3.隔离性(Isolation): 多个事务之间.相互独立 -- 多个用户并发访问数据库时，数据库为每个用户开启一个事务，事务和事务之间相互隔离，互不干扰
  *      4.持久性(Durability): 当事务 提交后,数据库会持久化的保持数据 -- 事务一旦被提交，则数据库中数据的改变就是永久性的
+ *   数据库的事务由下列语句组成:
+ *     1. 一组 DML 语句
+ *     2. 一条 DDL 语句
+ *     3. 一条 DCL 语句
+ *
  *   事务的隔离性:
  *      多个事务之间相互独立. 多个事务操作同一批数据,会引发一些问题,设置不同的隔离级别就可以解决这些问题
  *      存在的问题:
@@ -67,6 +121,15 @@ package cn.itheima.mysql;
  *          数据库设置隔离级别:
  *              set global transaction isolation level 级别字符串（上述四种）;
  *              set tx_isolation='(上述四种)'
+ *
+ * MySQL 事务关键字:
+ *   begin/start transaction;
+ *   ...
+ *   commit/rollback;
+ *   --
+ *   savepoint a;
+ *   ...
+ *   rollback to a;
  *
  *
  *  开启事务: start transaction; 手动提交数据

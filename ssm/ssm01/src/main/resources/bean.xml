@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--bean 标签: 创建对象
+        id: 唯一标识, 要求 在 整个配置文件中 唯一
+        class: 需要创建对象的 全限定名
+
+        scope:
+             singleton: 单例 - 默认
+                如果是单例: 对象会随着 spring 容器的创建而创建, 随着 spring 容器的销毁而销毁
+             prototype: 多例
+                如果是多例: 对象与 spring 容器已经没有关系了, 调用 getBean() 方法时,才会创建对象,
+                 调用一次,创建一次
+           应用场景: 线程安全问题
+             结合 mybatis: SqlSessionFactory(线程安全)
+                           SqlSession(线程不安全)
+
+          init-method: 配置初始化方法 (单例对象/容器创建 或 多例对象创建)
+              对象 一 创建出来就会执行的方法(无参构造执行,随之执行)  - 单例/多例通用
+          destroy-method: 配置销毁方法 (容器销毁)
+              容器销毁时就会执行的方法
+                  (scope="singleton" 时,表示 容器销毁,对象销毁)
+                 (scope="prototype" 时, 对象与容器无关, 此配置无效: 多例对象的销毁与 垃圾回收机制有关)
+    -->
+    <!--单例-->
+    <bean id="accountService" class="org.anonymous.service.impl.AccountServiceImpl1" scope="singleton"
+          init-method="aaa" destroy-method="bbb"/>
+    <!--多例-->
+    <bean id="accountService0" class="org.anonymous.service.impl.AccountServiceImpl0" scope="prototype"
+          init-method="ccc" destroy-method="ddd"/>
+
+</beans>

@@ -1,3 +1,13 @@
+float: 第 1 位符号位, 接下来 8 位指数, 再接下来 23 位尾数
+double: 第 1 位符号位, 接下来 11 位指数, 再接下来 52 位尾数
+
+压缩：
+$ jar -cvf a.war *   # 压缩当前目录
+$ jar -cvf a.war *.html WEB-INF/  # 压缩指定文件/目录
+$ jar -tf a.war  # 查看 war 包内容
+$ jar -uf a.war WEB-INF/classes/org/anonymous/servlet/XXXX.class  # 替换修改的文件
+
+
 UML: unified modeling language 统一建模语言
 UML 规定的 九种图
  用例图(use case diagram) 表示用户使用程序的方式

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE students SYSTEM
+        "E:\dev-code\WorkSpace\J2EE\Day21CoreOfJavaWeb\src\org\anonymous\xml\xml_Constraint\dtd\student.dtd"> <!--约束-->
+
+<students>
+    <student number="itcast_0001">
+        <name>tom</name>
+        <age>18</age>
+        <sex>female</sex>
+    </student>
+
+</students>

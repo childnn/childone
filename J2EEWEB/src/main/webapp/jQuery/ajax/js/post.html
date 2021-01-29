@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script>
+        /**
+         * 属性:
+         * responseText: 获得字符串形式的响应数据。
+         * responseXML: 获得 XML 形式的响应数据。
+         *   eg:
+         *      document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+         *      XML: 详见 response-xml.html
+         * --------------------------------------------------
+         * onreadystatechange 事件
+         当请求被发送到服务器时，我们需要执行一些基于响应的任务。
+         每当 readyState 改变时，就会触发 onreadystatechange 事件。
+         readyState 属性存有 XMLHttpRequest 的状态信息。
+         1. onreadystatechange:    存储函数（或函数名），每当 readyState 属性改变时，就会调用该函数。
+         2. readyState: // onreadystatechange 事件被触发 5 次（0 - 4），对应着 readyState 的每个变化。
+         存有 XMLHttpRequest 的状态。从 0 到 4 发生变化。
+         0: 请求未初始化
+         1: 服务器连接已建立
+         2: 请求已接收
+         3: 请求处理中
+         4: 请求已完成，且响应已就绪
+         3. status:
+         200: "OK"
+         404: 未找到页面
+         当 readyState 等于 4 且状态为 200 时，表示响应已就绪：
+         */
+        function loadXMLDoc() {
+            // 根据不同的 浏览器版本, 创建
+            var xmlhttp;
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            // 当使用 async=true 时，请规定在响应处于 onreadystatechange 事件中的就绪状态时执行的函数：
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
+                }
+            }
+            // open 方法的三个参数
+            /*var method = 'POST';
+            var url = "../load.txt";
+            var async = true;*/
+            // 如果需要像 HTML 表单那样 POST 数据，请使用 setRequestHeader() 来添加 HTTP 头。
+            // 然后在 send() 方法中规定您希望发送的数据：
+            /**
+             * 不推荐使用 async=false，但是对于一些小型的请求，也是可以的。
+             请记住，JavaScript 会等到服务器响应就绪才继续执行。如果服务器繁忙或缓慢，应用程序会挂起或停止。
+             注释：当您使用 async=false 时，请不要编写 onreadystatechange 函数 - 把代码放到 send() 语句后面即可：
+             eg:    xmlhttp.open("GET","test1.txt",false);
+             xmlhttp.send();
+             document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+             */
+            xmlhttp.open("POST", "../load.txt", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send("fname=Bill&lname=Gates");
+        }
+	</script>
+</head>
+<body>
+
+
+<h2>AJAX</h2>
+<button onclick="loadXMLDoc()" type="button">请求数据</button>
+<div id="myDiv"></div>
+</body>
+</html>

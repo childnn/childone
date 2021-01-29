@@ -1,0 +1,4 @@
+1. 安装 node.js
+2. npm install apidoc -g
+3. apidoc -h
+    # 该指令识别成功, 说明安装成功

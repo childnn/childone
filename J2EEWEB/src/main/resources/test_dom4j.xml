@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<person>
+    测试:如果标签元素下的子标签获取完毕,继续调用 elements() 方法,会得到什么
+</person>

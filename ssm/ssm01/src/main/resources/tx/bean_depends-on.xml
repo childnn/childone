@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--account 依赖于 animal; animal 依赖于 user-->
+    <bean id="user" class="org.anonymous.beans.User" c:name="杰克" c:age="20" destroy-method="destroy" scope="prototype"/>
+
+    <bean id="animal" class="org.anonymous.beans.Animal" destroy-method="destroy" depends-on="user"/>
+
+    <!--depends-on 是单独 创建一个 animal 对象: 并不是 ioc 容器初始化时创建的 那个 animal 单例对象-->
+    <bean id="account" class="org.anonymous.beans.AccountDepend" depends-on="animal" destroy-method="destroy"/>
+
+
+</beans>

@@ -1,7 +1,9 @@
 package org.anonymous.config;
 
-import org.springframework.amqp.core.*;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.CustomExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,8 +49,8 @@ public class RabbitConfig {
 
     // 延时 binding: 将延时队列绑定到延时交换器.
     @Bean
-    public Binding binding(@Qualifier("queue") Queue queue, @Qualifier("delayExchange") Exchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY_OF_DELAYED_MESSAGE).noargs();
+    public Binding binding(/*@Qualifier("queue") Queue queue, @Qualifier("delayExchange") Exchange exchange*/) {
+        return BindingBuilder.bind(queue()).to(delayExchange()).with(ROUTING_KEY_OF_DELAYED_MESSAGE).noargs();
     }
 
 }

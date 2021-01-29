@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+	<style>
+		.siblings * {
+			display: block;
+			border: 2px solid lightgrey;
+			color: lightgrey;
+			padding: 5px;
+			margin: 15px;
+		}
+	</style>
+
+	<script src="../../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        /*
+        * 可以使用 siblings(args) 可选参数来过滤对同胞元素的搜索。
+        * */
+        $(document).ready(function () {
+            $("h2").siblings("p").css({"color": "red", "border": "2px solid red"});
+        });
+
+	</script>
+</head>
+<body class="siblings">
+
+<h1>h2's &lt;p &gt; siblings</h1>
+<div>div (父)
+	<p>p</p>
+	<span>span</span>
+	<h2>h2</h2>
+	<h3>h3</h3>
+	<p>p</p>
+</div>
+
+
+</body>
+</html>

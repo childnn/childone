@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+	            http://www.springframework.org/schema/aop
+        	    http://www.springframework.org/schema/aop/spring-aop.xsd
+                http://www.springframework.org/schema/tx
+        	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--如果有必要，可以引入其他 xml 配置文件-->
+    <!--<import resource="classpath:bean1.xml"/>-->
+
+    <!--全 xml 事务-->
+
+    <!--数据库连接信息-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--ioc+di-->
+    <!--自己的资源: xml/注解-->
+    <!--service-->
+    <bean id="accountServiceImplR2" class="org.anonymous.service.impl.AccountServiceImplR2">
+        <property name="accountDao" ref="accountDaoImpl"/>
+    </bean>
+    <!--dao-->
+    <bean id="accountDaoImpl" class="org.anonymous.dao.impl.AccountDaoImplR1">
+        <!--通过父类 注入: JdbcDaoSupport-->
+        <property name="dataSource" ref="springDatasource"/>
+    </bean>
+
+
+    <!--第三方资源-->
+    <!--datasource-->
+    <bean id="springDatasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--配置事务管理器: ioc (用 spring 的事务管理器替代 自定义的 切面类)-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="springDatasource"/>
+    </bean>
+
+    <!--为每个切入点(需要增强的方法) 配置事务特性: 隔离级别,超时时间,是否只读,传播行为-->
+    <!--
+        name="transfer" : 切入点(方法名) - 支持通配符: 如果有多个方法名相似的方法(比如查询方法: 都有 findXxx()) 可以使用 : name="find*" 代表所有查询方法
+        isolation: 隔离级别 - 默认值
+        read-only : 是否只读 - 默认值 - false - 增删改
+        timeout : -1 超时时间 默认值
+        propagation: 传播行为(是否需要事务) - 增删改(REQUIRED) 查(SUPPORTS)
+    -->
+    <!--对应 @Transactional 注解的配置-->
+    <tx:advice id="advicetx" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 指定 切入点的事务特性： 即配置 对指定的切入点如何操作-->
+            <tx:method name="transfer" isolation="DEFAULT" read-only="false" timeout="-1" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--aop: 连接 事务管理器(切面类) 和 切入点-->
+    <aop:config>
+        <!--切入点-->
+        <aop:pointcut id="pt" expression="execution(* org.anonymous..AccountService.transfer(..))"/>
+        <!--通知
+            advice-ref: 引入 配置了事务特性的通知
+            pointcut-ref: 引入切入点
+        -->
+        <aop:advisor advice-ref="advicetx" pointcut-ref="pt"/>
+    </aop:config>
+
+</beans>

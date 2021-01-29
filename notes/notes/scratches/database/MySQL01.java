@@ -1,9 +1,12 @@
-package cn.itheima.mysql;
+package mysql;
 
 /**
  * 2019年3月5日11:16:52
  * show variables like 'char%'; 查看当前数据库的相关编码集。
  * set names gbk; 设置当前数据库的相关编码集。
+ * 修改表存储引擎: ALTER TABLE 表明 ENGINE = INNNDB;
+ * 查看表使用的存储引擎: SHOW CREATE TABLE 表明;
+ *
  * 数据的存储: 个体(事物)的存储,个体之间的关系的存储
  * 1. 数据库是如何存储数据的
  *      字段  记录  表  约束(主键 外键 唯一键 非空 check default 触发器)
@@ -74,13 +77,25 @@ package cn.itheima.mysql;
  *      还原 cmd 命令: 登录mysql-->创建数据库-->使用数据库-->执行文件
  * sql 语句分类:
  *      DDL: data definition language 数据定义语言 ---增删改查 数据库/表
- *          用来定义数据库对象: 数据库,表,列等   //关键字 : create, drop, alter, show， desc(表)
+ *          用来定义数据库对象: 数据库,表,列等   //关键字 : create, drop, alter, show, desc(表). truncate(先删除再重建表)
  *  (重点)   DML: data manipulation language 数据操作语言 ---增删改 表中的数据
  *          用来对数据库中表的数据进行增删改  //关键字: insert, delete, update
  * (重点中的重点)  DQL: data query language 数据查询语言 (关键) ---查 表中的数据
  *          用来查询数据库中表的 记录(行/元组)(数据)  //关键字: select, where
  *      DCL: data control language 数据控制语言 -- 管理用户,授权
  *          用来定义数据库的访问权限,安全级别,创建用户  //关键字: GRANT, REVOKE
+ * 事务: commit, rollback, savepoint
+ *
+ * 常见数据库对象:
+ *  table: 表. 存储数据的逻辑单元, 列是字段, 行是记录
+ *  数据字典: 系统表, 存放数据库相关信息. 通常只读
+ *  constraint: 约束. 执行数据校验的规则, 用于保证数据完整性的规则
+ *  view: 视图. 一个或多个数据表里数据的逻辑显示. 视图并不存储数据
+ *  index: 索引. 用于提高查询性能, 相当于书的目录
+ *  function: 函数. 用于完成一次特定的计算, 具有一个返回值
+ *  procedure: 存储过程. 用于完成一次完整的业务处理, 无返回值, 但可通过传出参数将多个值传给调用环境.
+ *  trigger: 触发器. 相当于一个事件监听器, 当数据库发生特定事件后, 触发器被触发, 完成相应的处理.
+ *
  *
  * 操作【数据库】: CRUD
  *      C: Create
@@ -139,9 +154,10 @@ package cn.itheima.mysql;
  *              ALTER TABLE 表明 CHARACTER SET 字符集名称(gbk/utf8)
  *          添加列 (字段) (重点******重点)
  *              ALTER TABLE 表明 ADD 列名 数据类型
+ *              alter table 表明 add(column_name1 datatype [default expr], ...); // 添加多个字段
  *          修改列名称 类型
  *              ALTER TABLE 表明 CHANGE 列名 新列名 新数据类型;
- *              ALTER TABLE 表明 MODIFY 列名 新数据类型;  ---> 这也是 删除 NOT NULL 约束的方法  -- 见 273 行
+ *              ALTER TABLE 表明 MODIFY 列名 新数据类型;  ---> 这也是 删除 NOT NULL 约束的方法
  *          删除列 (删除字段):
  *              ALTER TABLE 表明 DROP 列名;
  *              删除到最后一列时,不能使用该sql语句:  (You can't delete all columns with ALTER TABLE; use DROP TABLE instead)
@@ -158,13 +174,14 @@ package cn.itheima.mysql;
  *          INSERT INTO 表明(列一, 列二..) values(值一, 值二), (值一, 值二)...; 可以给全部字段赋值,也可以选择部分
  *          INSERT INTO 表明 values(值一, 值二); //给所有列(字段)赋值,且一一对应
  *          除了数字类型,其他类型需要引号(单引号双引号都可)
+ *          insert into table_name(column_name) select column_name from table_name;
  *      U: UPDATE and set
- *          UPDATE 表明 SET 列名1 = 值1, 列名2 = 值2  WHERE 条件;
+ *          UPDATE 表明 SET 列名1 = 值1, 列名2 = 值2,...  [WHERE 条件];
  *          如果不加任何where条件,则会改变表中 指定列的所有值
  *      D: DELETE (删除记录,行)  **************************************重点************************
- *          DELETE FROM 表明 WHERE 条件;
- *                如果不加 WHERE ,则删除所有记录(有多少条记录就执行删除语句多少次,不推荐使用,效率低)
- *                delete 删除所有数据后, 再次添加数据的主键索引 会从上次删除的最大值开始算(区别于 truncate)
+ *          DELETE FROM 表明 [WHERE 条件];
+ *                如果不加 WHERE, 则删除所有记录(有多少条记录就执行删除语句多少次,不推荐使用,效率低)
+ *                delete 删除所有数据后, 再次添加数据的主键索引 会从上次删除的最大值开始算(区别于 truncate: 截断)
  *          TRUNCATE TABLE 表明; ---删除表,并创建一个空表
  *           两个删除的区别:
  *                  DELETE FROM 表明称 [where 条件]:
@@ -177,10 +194,16 @@ package cn.itheima.mysql;
  *                          不可以加 where: 只能删除整张表
  *              共同点:
  *                    都不会删除 字段 信息,只会删除 记录
+ *          注: 如果使用非 InnoDB 存储机制, truncate 比 delete 速度快; 如果使用 InnoDB 存储机制, 在 M有SQL 5.0.3 之前, truncate 和 delete 完全一样
+ *          在 5.0.3 之后, truncate table 比 delete 效率高, 但如果该表被外键约束所参照, truncate 又变为 delete 操作.
  *
  *   DQL : 查询表中数据 (重点中的重点*******************************!!!!) data query language
  *      SELECT * FROM 表明; (* 表示所有字段名) ---> 显示指定表的完整信息
  *       若只需要显示一部分信息,则 将※换成 对应的字段名,字段之间用逗号分隔
+ *       %: 任意多个字符
+ *       _: 任意两个字符
+ *       \: 转义. select * from table_name where name like '\_%' escape '\';  -- 标准 SQL 没有反斜杠转义, 使用 escape 关键字显式转义.
+ *       IS NULL: SQL 中 null = null 返回 null, 不能用 =null 判断.
  *      多个
  *          SELECT
  *              字段1,
@@ -248,11 +271,12 @@ package cn.itheima.mysql;
  *          GROUP BY 字段
  *          分组之后的查询字段,只能是聚合函数
  *           例: SELECT 分组字段,聚合函数(字段1),聚合函数(字段2) FROM 表明 GROUP BY 分组字段;
- *           where 和 having 的区别:
+ *           where 和 having 的区别: where 过滤行, having 过滤组
  *              where 在分组之前限定,如果不满足条件,则不参与分组.
  *                  having 在分组之后进行限定,如果不满足结果,则不会被查询
  *              where 后不可以跟聚合函数,
  *                  having 后可跟聚合函数的判断
+ *          多字段分组: group by 后跟多个字段时, 表示这些字段值完全相同才会被当成一组.
  *      分页查询
  *          LIMIT 开始的索引,一页显示的记录条数
  *          开始索引 = (当前页-1) * 每页显示的记录条数
@@ -262,31 +286,43 @@ package cn.itheima.mysql;
  *      对表中数据进行限定,保证数据的正确性、有效性、完整性
  *      在数据类型后添加约束
  *      分类：
- *          主键： PRIMARY KEY
- *          非空： NOT NULL
- *          唯一： UNIQUE
- *          外键： FOREIGN KEY
+ *          主键: PRIMARY KEY
+ *          非空: NOT NULL
+ *          唯一: UNIQUE
+ *          外键: FOREIGN KEY
+ *
  *    1.NOT NULL
  *       1.1 在创建表时添加约束:
  *          create table 表明(
  *                字段名 数据类型,
- *                字段名 数据类型 约束(NOT NULL)
+ *                字段名 数据类型 [default default_value] NOT NULL
  *           );
  *       1.2 创建表之后,添加约束:
  *           ALTER TABLE 表明 MODIFY 字段名 数据类型 NOT NULL;
  *       1.3 删除字段的非空约束:
- *           ALTER TABLE 表明 MODIFY 字段名 数据类型; (相当于修改字段的数据类型) --- 见141行
+ *           ALTER TABLE 表明 MODIFY 字段名 数据类型; (相当于修改字段的数据类型)
  *    2.UNIQUE (对 null 值无效)
- *       2.1 可以有 NULL 值: 可以出现多个 null --- mysql (不同数据库有差异,有的只允许一个 null)
+ *       2.1 可以有 NULL 值: 可以出现多个 null --- mysql 中 null != null. (不同数据库有差异,有的只允许一个 null)
  *       2.2 在创建表时添加约束:
  *           create table 表明(
  *               字段名 数据类型,
- *               字段名 数据类型 约束(UNIQUE)
+ *               字段名 数据类型 UNIQUE
  *           );
+ *          表级约束: [constraint 约束名] 约束定义
+ *          eg:
+ *         -- 创建表时
+ *         create table table_name (
+ *              ...,
+ *              unique (column_name),
+ *              constraint 约束名 unique(column_name, ...);  -- 指定两列组合不允许重复: 不是针对某一个字段
+ *         );
  *       2.3 在创建表之后,添加约束
  *          ALTER TABLE 表明 MODIFY 字段名 数据类型 UNIQUE;
+ *         -- 创建表后
+ *         alter table table_name add unique(column_name, ...);
  *       2.4 删除字段的唯一约束:(区别于 NOT NULL)
  *          ALTER TABLE 表明 DROP INDEX 字段名; (索引)
+ *          alter table 表明 drop index 约束名;
  *    3.PRIMARY KEY : 一般不要使用业务逻辑当主键,应该单独创建一个主键字段
  *          非空且唯一 //一个记录区别于其他记录的唯一标识
  *          一张表有且只能有一个主键:
@@ -298,7 +334,10 @@ package cn.itheima.mysql;
  *          3.1 创建表时添加主键约束
  *              create table 表明(
  *                  字段名 数据类型 primary key [auto-increment],
- *                  字段名 数据类型
+ *                  字段名 数据类型,
+ *                  -- 表级约束
+ *                  constraint 主键名 primary key (cloumn_name, ...),
+ *                  primary key (cloumn_name, ...)
  *              );
  *          3.2 创建表后添加主键
  *              alter table 表明 modify 字段名 数据类型 primary key;
@@ -328,8 +367,10 @@ package cn.itheima.mysql;
  *    4.FOREIGN KEY : 用来维护 表之间的关系. 一个表的外键一般是另一个表的主键
  *          4.1 在创建表时,添加外键
  *              create table 表明(
+ *                  -- 外键字段名 数据类型 references 主表名(主表主键字段名)
  *                  外键字段 数据类型,
- *                  constraint 外键别名 foreign key(外键字段名) references 主表名(主表主键字段名)
+ *                  [constraint 外键别名] foreign key(外键字段名, ...) references 主表名(参照主表的字段名: 一般就是主键, ...) [on delete cascade/on delete set null]
+ *                  -- 使用 on delete cascade 或 on delete set null 表示, 当主表记录删除时, 从表记录也会随之删除/外键设为 null.
  *              );
  *              constraint 外键别名 就是用来删除外键的
  *         4.2 创建表之后,添加外键 -- 外键别名必须要,否则 无法删除
@@ -364,24 +405,39 @@ package cn.itheima.mysql;
  *           3.1 方式一 让任意表的主键 作为 另一张表的 外键
  *           3.2 方式二 在任意一方创建一个字段,作为该表的外键(此外键必须 unique 约束),指向另一张表的主键
  *
- *    数据库范式:
- *          设计数据库时,需要遵循的规范
- *          设计 关系数据库 时,遵循不同的规范要求,设计出合理的关系型数据库,这些不同的规范要求 被称为不同的范式,各种范式呈递次规范
- *              越高的范式数据库冗余越小
- *          关系数据库的六种范式:
- *              1NF: 基本要求,每一个字段下对应的记录只能有一个数据
- *              2NF: 在 1NF 的基础上, 一张表只能描述一个事物,且一张表必须有一个主键(其他字段必须依赖主键)
- *                    函数依赖:
- *                          A --> B, 如果通过属性 A 的值,可以唯一确定 属性 B 的值,则称 B 依赖于 A (如: 学号 --> 学生姓名)
- *              3NF: 在 2NF 的基础上, 一张表的任何非主键属性不依赖于其他非主键属性
- *                   从表的外键必须是主表的主键
- *              BCNF:巴斯-科德范式.
- *              4NF:
- *              5NF: 完美范式
+ *
+ *  索引: 索引存放在模式(schema)中的一个数据库对象, 虽然索引总是从属于数据表, 但它和数据表一样属于数据库对象. 创建索引的唯一作用就是加速堆表的查询,
+ *      索引通过使用快速路径访问方法来快速定位数据, 从而减少磁盘的 I/O.
+ *    索引作为数据库对象, 在数据字典中独立存放, 但不能独立存在, 必须属于某个表.
+ *    create index index_namae on table_name (column[, column]...)
+ *    drop index 索引名 on 表明
+ *  视图: 视图看上去非常像一个数据表, 但它不是数据表, 因为它并不能存储数据. 视图只是一个或多个数据表中数据的逻辑显示.
+ *     使用视图的好处:
+ *      1. 限制对数据的访问
+ *      2. 使复杂的查询变得简单
+ *      3. 提供数据的独立性
+ *      4. 提供对相同数据的不同显示
+ *     create or replace view 视图名 as sbuquery [with check option]; -- with check option 表示不允许修改该视图的数据
+ *     视图的本质就是一条被命名的 SQL 查询语句(DQL)
+ *     drop view 视图名;
  *
  */
 public class MySQL01 {
     /*
+     数据库范式:
+              设计数据库时,需要遵循的规范
+           设计 关系数据库 时,遵循不同的规范要求,设计出合理的关系型数据库,这些不同的规范要求 被称为不同的范式,各种范式呈递次规范
+               越高的范式数据库冗余越小
+           关系数据库的六种范式:
+               1NF: 基本要求,每一个字段下对应的记录只能有一个数据
+               2NF: 在 1NF 的基础上, 一张表只能描述一个事物,且一张表必须有一个主键(其他字段必须依赖主键)
+                        函数依赖:
+                              A --> B, 如果通过属性 A 的值,可以唯一确定 属性 B 的值,则称 B 依赖于 A (如: 学号 --> 学生姓名)
+               3NF: 在 2NF 的基础上, 一张表的任何非主键属性不依赖于其他非主键属性
+                    从表的外键必须是主表的主键
+               BCNF:巴斯-科德范式.
+               4NF:
+               5NF: 完美范式
         引导学生思考
     * DQL: data query language
     *  查询的核心在于顺序! -- 每个子语句的执行顺序

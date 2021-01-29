@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/aop
+               http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--service - ioc-->
+    <bean id="userService" class="org.anonymous.service.impl.UserServiceImpl"/>
+    <!--aspect: 切面类, 里面都是通知 - ioc -->
+    <bean id="aspect" class="org.anonymous.aspect.Aspect1"/>
+
+    <!--告诉 spring 自己的哪些通知要在管理对象的哪些方法上执行-->
+    <aop:config>
+        <aop:aspect ref="aspect">
+            <!--定义 切入点(目标方法)-->
+            <aop:pointcut id="pt" expression="execution(* org.anonymous..UserServiceImpl.save(..))"/>
+
+            <!--定义通知-->
+            <!--环绕通知: 必须单独用(不可和其他 通知一起使用)-->
+            <aop:around method="around" pointcut-ref="pt"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>

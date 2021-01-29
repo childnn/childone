@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!--xml 文档声明-->
+<!--内部引入 dtd 约束-->
+<!DOCTYPE students [
+        <!ELEMENT students (student)* >    <!--星号可以写在括号里面或外面-->
+        <!ELEMENT student (name|age|sex)*>  <!--<!ELEMENT student (name|age|sex)* > student 元素(标签)下 只能出现 name,age,sex 中的任意元素(标签), 可以出现 0 或多次, 如果有 不同元素, 不区分出现的顺序-->
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT age (#PCDATA)>
+        <!ELEMENT sex (#PCDATA)>
+        <!ATTLIST student number ID #REQUIRED>
+        ]>
+
+<students>
+    <student number="s">
+        <age>321</age>
+        <age>321</age>
+        <age>321</age>
+        <age>321</age>
+        <age>321</age>
+        <name>123</name>
+        <!--<sex>123</sex>-->
+    </student>
+    <student number="st">
+        <name>123</name>
+        <age>321</age>
+        <sex>123</sex>
+    </student>
+</students>

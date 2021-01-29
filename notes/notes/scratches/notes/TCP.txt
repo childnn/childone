@@ -1,0 +1,9 @@
+TCP: 可靠. 网络要求高,速度慢
+UDP: 不可靠. 速度快.
+RUDP: Reliable UDP. 既保证可靠性,又保证实时性. 常见 RUDP 协议右 QUIC, WebRTC, Aeron 等.
+
+QUIC: Quick UDP Internet Connection. Google 公司提出的基于 UDP 的高效可靠协议, 和 HTTP 一样是应用层协议.
+    高效: 基于 UDP
+    可靠: 模仿 TCP 的可靠性.
+ 特性:
+  RTT: Round-Trip Time. 往返时延. QUIC 可以在第一次发送的时候就带上数据.

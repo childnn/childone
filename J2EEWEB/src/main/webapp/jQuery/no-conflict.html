@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        // 以下两种方式都可以
+        let jq = $.noConflict(); // 使用 jq 代替 $
+        // let jq = jQuery.noConflict(); // 使用 jq 代替 $
+        jq(function () {
+            jq('button').click(function () {
+                jq('p').text("点击");
+            });
+        });
+	</script>
+</head>
+<body>
+
+<button type="button">click</button>
+<p></p>
+
+</body>
+</html>

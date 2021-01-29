@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-destroy-method="destroy"> <!--destroy-method 的全局设置-->
+    <!--default-destroy-method="destroy"-->
+    <!--测试： 多例依赖于单例， 当单例销毁时， 多例会如何？-->
+
+    <bean id="singleBean" class="org.anonymous.beans.SingleBean" scope="singleton"/>
+
+    <bean id="protoBean" class="org.anonymous.beans.ProtoBean" c:singleBean-ref="singleBean" scope="prototype"/>
+    <!-- c:singleBean-ref="singleBean"-->
+
+</beans>

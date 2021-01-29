@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--引入约束-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.anonymous.dao.ContactDao0">
+
+    <select id="mapperContact" resultMap="contact">
+        SELECT id AS 编号, name AS 姓名, sex, age, province_id, qq, email
+        FROM contact;
+    </select>
+
+    <!--配置对象属性和表字段的映射: 对象属性/字段别名 , 不起别名就不写对应的 映射-->
+    <resultMap id="contact" type="contact">
+        <!--对象属性和主键的映射-->
+        <id property="id" column="编号"/>
+        <!--其他属性和其他字段映射-->
+        <result property="name" column="姓名"/>
+        <!--	<result property="sex" column=""/>
+            <result property="age" column=""/>
+            <result property="province_id" column=""/>
+            <result property="qq" column=""/>
+            <result property="email" column=""/>-->
+    </resultMap>
+    <!--动态 sql(条件查询) - sql 拼接
+        String sql = "select * from contact where true";
+        if(contact.getName() != null && !"".equals(contact.getName())){
+            sql += " and name = " + contact.getName();
+        }
+        .....
+
+        <if> 标签
+            test 属性: ognl 表达式, 可以省略格式, 只关注对象的属性
+    /*sql 拼接*/ - 优化 where 标签
+    -->
+    <!-- 动态 sql 的进一步优化
+      抽取 sql 主体 的部分, 其他 sql 可以通过 id 调用(复用): 使用 include 标签 引入
+     select 关键字 也可以放在 include 标签之前, 只 抽取 字段名 - 这样 这些抽取的字段也可以供其他 非 select 语句 使用
+    -->
+    <sql id="selectSql">
+        SELECT id, name, sex, age
+    </sql>
+
+    <select id="findContact" resultType="contact" parameterType="contact">
+
+        <include refid="selectSql"/>
+        , province_id, qq, email from contact
+        <where>
+
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+    <!--in 包含查询-->
+    <!--
+    foreach 标签
+        collection 属性:
+            类型
+                数组: array
+                集合: list
+                pojo 对象 : 对象中list的属性名
+        open: 开始符号 (
+        close: 结束符号 )
+        separator: 分隔符 逗号,
+        item: 循环的每一个元素
+    -->
+    <!--数组-->
+    <select id="findById" parameterType="int[]" resultType="contact">
+        select * from contact where id
+        <foreach collection="array" open="in(" close=")" separator="," item="i">
+            #{i}
+        </foreach>
+    </select>
+    <!--list-->
+    <select id="findByList" parameterType="list" resultType="contact">
+        select * from contact where id in
+        <foreach collection="list" open="(" close=")" separator="," item="i">
+            #{i}
+        </foreach>
+    </select>
+    <!--pojo 对象-->
+    <select id="findByPojo" parameterType="POJOContact" resultType="contact">
+        select * from contact where id in
+        <foreach collection="abcd" open="(" close=")" separator="," item="i">
+            #{i}
+        </foreach>
+    </select>
+
+</mapper>   

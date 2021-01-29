@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script type="text/javascript">
+        function loadXMLDoc() {
+            var xmlhttp;
+            var txt, x, i;
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else { // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    var xmlDoc = xmlhttp.responseXML; // 直接当成对象解析
+                    txt = "";
+                    x = xmlDoc.getElementsByTagName("title");
+                    for (i = 0; i < x.length; i++) {
+                        txt = txt + x[i].childNodes[0].nodeValue + "<br/>";
+                    }
+                    document.getElementById("myDiv").innerHTML = txt;
+                }
+            }
+            xmlhttp.open("GET", "./books.xml", true);
+            xmlhttp.send();
+        }
+	</script>
+</head>
+<body>
+
+<h2>My Book Collection:</h2>
+<div id="myDiv"></div>
+<button onclick="loadXMLDoc()" type="button">获得我的图书收藏列表</button>
+
+</body>
+</html>

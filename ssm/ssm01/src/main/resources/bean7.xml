@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--引入 外部的 数据库连接信息:
+         类路径下的配置文件: classpath:properties文件名
+         使用引入文件: spring-el 标签获取 value
+    -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--dao: 引入 jdbcTemplate-->
+    <bean id="adao" class="org.anonymous.dao.impl.AccountDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <!--service-->
+    <bean id="accountService" class="org.anonymous.service.impl.AccountServiceImpl3">
+        <!--依赖赋值:set 方式
+            name: set 方法
+            ref: spring ioc 管理的对象 的 id - 依赖注入
+        -->
+        <property name="accountDao" ref="adao"/>
+    </bean>
+
+    <!--第三方 jar class-->
+
+    <!--c3p0: 让 spring 容器通过 反射(无参构造) 第三方 class, 创建对象,放入 spring 容器中
+        通过set 属性 设置值: 注册 mysql 驱动
+      -->
+    <bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--set 方式-->
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--druid-->
+    <bean id="druid" class="com.alibaba.druid.pool.DruidDataSource">
+        <!--set 方式-->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--jdbcTemplate: 创建 jdbcTemplate 对象,并 使用 有参构造 赋值: datasource - druid-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <!--name:  创建 jdbcTemplate 对象需要的 连接池, ref: 引入 ioc 管理的 druid 对象的 id -->
+        <constructor-arg name="dataSource" ref="druid"/>
+    </bean>
+
+</beans>

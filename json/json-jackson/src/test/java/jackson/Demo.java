@@ -2,9 +2,12 @@ package jackson;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jackson.pojo.LocalDateTimeBean;
 import jackson.pojo.serial.Student;
 import jackson.pojo.serial.User;
 import org.junit.Test;
+
+import java.time.LocalDateTime;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :)
@@ -28,9 +31,15 @@ public class Demo {
         System.out.println("user1 = " + user1);
     }
 
+    ObjectMapper om = new ObjectMapper();
+
     @Test
-    public void test1() {
-        ObjectMapper om = new ObjectMapper();
-        // om.
+    public void test1() throws JsonProcessingException {
+        LocalDateTimeBean bean = new LocalDateTimeBean();
+        bean.setTime(LocalDateTime.now());
+        String s = om.writeValueAsString(bean);
+        System.out.println("s = " + s);
+        LocalDateTimeBean time = om.readValue(s, LocalDateTimeBean.class);
+        System.out.println("time = " + time);
     }
 }

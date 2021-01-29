@@ -1,0 +1,171 @@
+1. 新建文件夹.
+2. 在文件夹下执行 $ git init    # 会生成 .git 目录.
+3. 再执行 $ git remote add <自定的远程仓库 id, 一般就是 origin, 也可以是其他的任意 id> 远程仓库 url
+   eg: $ git remote add origin http://git.xiang7.net/java/global-voyage-center.git
+4. 接着执行 $ git pull <远程仓库 id, 如上述 origin> master
+5. pull 完毕, 用 idea--open, 此时就是 master 分支的代码.
+6. idea 右下角, 新建分支: New Branch -- 命名: eg: dev
+7. pull dev 的代码, 得到了 dev 的代码 -- 没有提交到 master 的代码都在 Default Changelist 里面.
+   接着指定你需要提交到 master 的文件, 执行 commit --> push 操作.
+   注: 最好新建一个 changelist(可以命名 commit, 把此 changelist 设置为 active 状态: 右键设置 "Set Active Changelist"),
+       把 需要提交到 master 的文件拖到(直接鼠标左键按住就可以拖动) commit-changelist 中, 然后再执行 commit-push 操作.
+
+git pull = fetch + merge
+
+$ git checkout -b <local_branch> <remote_id>/<remote_branch>  # 从远程指定分支切换并创建本地分支
+
+============================================================================
+commit
+   $ git commit   # 在当前分支上扩展一个提交节点
+branch
+   $ git branch <new_branch_name>  # 在 HEAD 所在节点新建分支
+   $ git checkout branchName   # 切换到 branchName 分支
+   == 以上两命令的简写:
+   $ git checkout -b <new_branch_name>   # 新建并切换分支
+merge 合并(合并到当前分支)
+   1. 切换到目的分支(主合并分支)
+   2. 合并目标分支(被合并分支)到当前分支
+   $ git checkout master
+   $ git merge bugFix
+    # 以上两个命令把 bugFix 合并到 master, 此时, bugFix 指向节点不变, 而 master 分支指向合并后的新的节点
+   $ git checkout bugFix
+   $ git merge master
+     # 以上两个命令会直接把 bugFix 的指针移动到 master(master 已经包含了所有更改)
+rebase 变基: 合并方式二
+   # 取出一系列提交记录, "复制" 它们, 然后将它们逐一放在目标节点之后
+   $ git rebase master
+     # 当前在 bugFix 分支, 使用以上命令后, bugFix 上的 commit 会直接"复制"到 master 分支之后,
+     # 注意, 此时, bugFix/master 指向的节点都没有变化 -- bugFix 变为 继承自 master
+   $ git checkout master
+   $ git rebase bugFix
+     # 上述两个命令将 HEAD 切换到 master, 并将 master rebase 到 bugFix,
+     # 由于此前 bugFix 继承自 master, 所以上述两命令只是将 master 的引用移动到 bugFix.
+   $ git rebase master bugFix
+     # 将 bugFix rebase 到 master,并将 HEAD 指向 bugFix, master 指向不变
+HEAD
+   HEAD 总是指向当前分支上最近一次提交记录.
+   查看 HEAD 指向:
+    $ cat .git/HEAD
+      # 或者
+    $ git symbolic-ref HEAD
+   比如, 当前在分支 master, master 最近一次提交记录为 C1(提交记录的 hash 值).
+   则可以理解为  HEAD -> master -> C1 .
+   $ git checkout C1
+     # 执行上述命令后, HEAD 从 master 分离出来, 变成了 HEAD -> C1.
+     # 即,此时 HEAD, master 都指向 C1.
+     # 分离 HEAD 就是让 HEAD 不指向某个具体的分支, 而是指向一个特定的提交记录.
+相对引用: 移动分支,HEAD
+    由于使用提交记录的 hash 值不太方便,因此用到引用.
+    ^           # 一个此符号表示 向上(父节点)移动一个提交记录
+    ~<num>      # 向上移动多个提交记录. num 为正整数
+    相对应用的参照可以是任意引用: 分支名称, HEAD, 提交记录的 hash 值.
+    $ git checkout master^
+      # 上述命令表示将 HEAD 指向 master 的父节点.
+    $ git checkout master~4
+      # 上述命令将 HEAD 上移 4 个节点
+    $ git branch -f master HEAD~3
+      # 上述命令将 master 强制指向 HEAD 的第 3 级父提交
+reset 与 revert: 撤销变更
+    $ git reset HEAD~1
+       # 上述命令将当前分支会退一个版本(父节点), 此前的节点变更还存在,只是处于未加入暂存区的状态.
+       # 关于 soft/mixed/hard 参数的介绍参见另一个文件. 默认为 mixed.
+       # reset 只能回退本地历史.
+    $ git revert HEAD
+       # 此命令会多一个提交记录,但实际上的内容是回到此前的上一个版本.
+       # 之后再把更改推送到远程即可实现回退.
+===========
+整理提交记录
+cherry-pick
+   # 将指定提交依次复制到当前所在的位置(HEAD)之后
+   $ git cherry-pick C2 C4
+     # 将 C2 C4 按顺序复制到 HEAD 之后.
+     # 此方法用于直到提交记录 hash 值的时候.
+交互式 rebase: --interactive   简写 -i
+    # 交互式方式中, 可以调整提交记录的顺序(上下排序);删除不需要的提交(类似 cherry-pick 提取需要的提交);合并提交.
+   $ git rebase -i HEAD~4
+     # 提交此命令后,会出现交互式界面, 包括 HEAD 在内的 四次提交在交互界面以供操作.
+   $ git rebase -i C1 C4
+     # 操作 C1(不含)到 C4 的提交
+本地栈式提交
+    来看一个在开发中经常会遇到的情况：我正在解决某个特别棘手的 Bug，为了便于调试而在代码中添加了一些调试命令并向控制台打印了一些信息。
+    这些调试和打印语句都在它们各自的提交记录里。最后我终于找到了造成这个 Bug 的根本原因，解决掉以后觉得沾沾自喜！
+    最后就差把 bugFix 分支里的工作合并回 master 分支了。你可以选择通过 fast-forward 快速合并到 master 分支上，
+    但这样的话 master 分支就会包含我这些调试语句了。你肯定不想这样，应该还有更好的方式……
+    实际我们只要让 Git 复制解决问题的那一个提交记录就可以了。跟之前我们在“整理提交记录”中学到的一样，我们可以使用
+        git rebase -i
+        git cherry-pick
+        来达到目的。
+提交技巧:
+    1. 接下来这种情况也是很常见的：你之前在 newImage 分支上进行了一次提交，然后又基于它创建了 caption 分支，然后又提交了一次。
+      此时你想对的某个以前的提交记录进行一些小小的调整。比如设计师想修改一下 newImage 中图片的分辨率，尽管那个提交记录并不是最新的了。
+      先用 git rebase -i 将提交重新排序，然后把我们想要修改的提交记录挪到最前
+      然后用 git commit --amend 来进行一些小修改
+      接着再用 git rebase -i 来将他们调回原来的顺序
+      最后我们把 master 移到修改的最前端 git branch -f master <commit_id>
+---------
+远程
+  远程分支命名: <remote_name>/<branch_name>
+      eg: origin/master
+  本地存在 本地分支和本地远程分支(对应远程分支的本地分支)
+fetch
+    $ git fetch
+       # 将远程所有内容更新到本地远程分支
+       # 如果 git fetch 没有参数，它会下载所有的提交记录到各个对应的 本地远程分支……
+       # 如更新远程 master 的内容到 本地 origin/master
+       # 此时 本地 master 的内容时不变的
+       # fetch 其实做了两件事: 1. 下载远程仓库最新的提交记录; 2. 更新 本地远程分支 指针(origin/master...)
+       # 不接任何参数的 fetch 会更新所有本地远程分支. 而 本地分支本身是不变的(本地的所有内容都没有变化)
+     # 在 fetch 之后,如何将这些更新合并到本地?
+       # 方法很多, 比如以下三种:
+       $ git cherry-pick origin/master
+       $ git rebase origin/master
+       $ git merge origin/master
+       ...
+     $ git fetch origin foo
+       # Git 会到远程仓库的 foo 分支上，然后获取所有本地不存在的提交，放到本地的 o/foo 上(注意 fetch 不会更新本地的 foo 分支)
+     $ git fetch origin foo~1:bar    # <source(远程仓库分支)>:<本地分支>
+       # Git 将 foo~1 解析成一个 origin 仓库的位置(远程仓库 foo 分支)，然后将那些提交记录下载到了
+       # 本地的 bar 分支（一个本地分支）上。注意由于我们指定了目标分支，foo 和 o/foo 都没有被更新。
+       # 如果本地不存在 bar 分支,则会创建.
+     创建本地分支的另一种方法: source 参数为空 -- 与 push 相反
+       $ git fetch origin :<local_branch_name>
+     两参数的 fetch 命令会更新本地分支
+pull  抓取远程更新并合并到本地分支.
+     $ git fetch; git merge origin/master
+     $ git pull origin master
+      # 以上两行命令完全等价(第一行实际是两个命令)
+     $ git fetch origin foo; git merge origin/master
+     $ git pull origin foo
+       # 以上等价
+     $ git fetch origin bar~1:bugFix; git merge bugFix
+     $ git pull origin bar~1:bugFix
+       # 以上等价; 参数二实际上就是 destination
+push  将本地更新同步到远程 (本地远程分支, 远程仓库分支同步更新)
+     $ git push origin master
+       # 以上命令做了两件事: 1. 将本地 master 内容同步到 远程仓库的 master; 2. 将 本地 origin/master 和远程 master 指针指向最新记录
+       # 以上命令只能实现 指定分支存在完全一致的远程分支时使用.
+     $ git push origin <source(本地分支)>:<destination(远程仓库分支)>
+       # 此命令的 source 参数可以使用相对位置实现.
+       # 此命令实现 本地分支和远程仓库分支不同名的情况.
+       # 如果远程仓库分支不存在,会自动创建
+     $ git push origin :foo
+       # source 参数为空, 删除远程 foo 分支. -- 与 fetch 相反
+偏离的提交历史: 团队合作时,远程与本地更新交叉, 无法直接 push. 需要将当前本地空间基于最新的远程更新
+    $ git fetch; git rebase origin/master; git push
+       #  git fetch 更新了本地仓库中的本地远程分支，然后用 rebase 将我们的工作移动到最新的提交记录下(将 master 移动到 origin/master 子节点)，
+       #  最后再用 git push 推送到远程仓库。
+       # rebase 会移动 master 的指针 -- 这是与 merge 的区别之一.
+    $ git fetch; git merge origin/master; git push
+       #  git fetch 更新了本地仓库中的远程分支，然后合并了新变更到我们的本地分支（为了包含远程仓库的变更），
+       #  最后我们用 git push 把工作推送到远程仓库
+       # merge 不会移动 master 的工作, 而是创建新的 合并提交(出现了两个父节点合并形成新的子节点)
+    # 由于 pull 是 fetch 和 merge 的缩写, 上述 fetch/rebase 的命令可以简化
+    $ git pull --rebase; git push        # 与上述第一个命令一致 ------------ 这实际上就是最快的提交命令,而且保证提交记录的清晰
+    $ git pull; git push                 # 与上述第二个命令一致
+     # rebase 的缺点在于修改了提交树的历史
+------------
+一般操作:
+     1. fetch 后 rebase(注意其后跟两个参数的情况)
+     2. pull(在指定分支: 本地与远程对应) 后 merge
+
+

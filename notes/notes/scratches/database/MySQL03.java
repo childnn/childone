@@ -1,4 +1,4 @@
-﻿package cn.itheima.mysql;
+﻿package mysql;
 
 /**
  * 2019年3月7日15:24:19
@@ -38,4 +38,26 @@
  *      撤销所有权限:同授权
  */
 public class MySQL03 {
+    /**
+     * MySQL 支持的列类型
+     *      tinyint/smallint/mediumint/int(integer)/bigint: 1/2/3/4/8 字节整数, 可分为有符号/无符号. 这些整型区别仅仅是表数范围不同
+     *      float/double: 单精度/双精度浮点类型
+     *      decimal(dec): 精确小数类型, 相对于 float/double 不会产生精度丢失问题
+     *      date: 日期类型, 不能保存时间. 把 java.util.Date 对象保存进 date 列时, 时间部分将会丢失
+     *      time: 时间类型, 不能保存日期. 把 java.util.Date 对象保存进 time 列时, 日期部分将丢失
+     *      datetime: 日期, 时间类型
+     *      timestamp: 时间戳类型
+     *      year: 年类型, 仅仅保存时间的年份
+     *      char: 定长字符串类型
+     *      varchar: 可变长字符串类型
+     *      binary: 定长二进制字符串类型, 以二进制形式保存字符串
+     *      varbinary: 可变长度的二进制字符串类型, 它以二进制形式保存字符串
+     *      tinyblob/blob/mediumblob/longblob: 1/2/3/4 字节的二进制大对象, 可用于存储图片, 音乐等二进制数据, 分别可存储 255B/64KB/16MB/4GB 大小
+     *      tinytext/text/mediumtext/longtext: 1/2/3/4 字节的文本对象, 可用于存储超长长度的字符串, 分别可存储: 255B/64KB/16MB/4GB 的文本
+     *      enum('value1', 'value2', ...): 枚举类型, 该列的值只能是 enum 后括号里多个值的其中之一
+     *      set('value1', 'value2', ...): 集合类型, 该列的值可以是 set 后括号里多个值的其中几个
+     *
+     */
+
+
 }

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>数据库表信息</title>
+
+	<script src="/lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        $(function () {
+            $.ajax({
+                url: "/meta",
+                type: "GET",
+                success: function (returnData) {
+                    if (returnData) {
+                        var tableList; // 数据库表明称的集合
+                        try {
+                            tableList = JSON.parse(returnData);
+                        } catch (e) {
+                            console.log("数据错误: " + returnData);
+                            return;
+                        }
+                        for (var table in tableList) {
+                            console.log(table);
+                            let tableName = tableList[table];
+                            var optionElement = $("<option>", {"value": tableName}); // 创建节点
+                            optionElement.html("表明称: " + tableName);
+                            console.log(optionElement);
+                            console.log(tableName);
+                            $("#tn").append(optionElement);
+                        }
+                        $("[name='tableList']").css("display", "");
+                    }
+
+                },
+                error: function (returnData) {
+                    alert('ERROR: ' + returnData);
+                }
+            });
+
+            // 提交并获取指定表的结构信息
+            $("#submit").click(function () {
+                $("[name='tableList']").css("display", "none");
+                var url = "/meta";
+                var data = "tableName=" + $("select[name='tableName']").val(); // 获取选中的 value
+                var text = $('select[name="tableName"] option:selected').text(); // 获取文本信息
+                console.log("text: " + text);
+                console.log(data);
+                $.get(url, data, function (result) {
+                    console.log(result);
+                    if (result) {
+                        let tableMetaAndBooks = JSON.parse(result);
+                        let columns = tableMetaAndBooks["tableMetaDatum"]; // 这里的属性名 就是对象的 field 名(json 的 key 值)
+
+                        var $body = $("body");
+                        for (let key in columns) {
+                            // console.log(key)
+                            // console.log(columns[key]);
+                            // fixme: 此处没有进一步创建表样式...
+                            $body.html($body.text() + "<br/>" + JSON.stringify(columns[key]));
+                            if (parseInt(key) === columns.length - 1) {
+                                let books = tableMetaAndBooks["books"];
+                                console.log(books);
+                                $body.html($body.text() + "<br/>" + "表数据: <br/>" + JSON.stringify(books));
+                            }
+                        }
+                        // console.log($body.html());
+                        // $body.html($body.html() + "<br/>" + JSON.stringify(books));
+                    }
+                });
+
+            });
+        })
+	</script>
+
+</head>
+<body>
+
+<!-- 表名列表 -->
+<form action="" method="post" name="tableList" style="display: none">
+	<label>
+		<select id="tn" name="tableName" size="1">
+		</select>
+	</label>
+
+	<input id="submit" type="button" value="查询">
+
+</form>
+
+<!-- 指定表的信息 -->
+
+
+</body>
+</html>

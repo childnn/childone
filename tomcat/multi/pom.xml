@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>tomcat</artifactId>
+        <groupId>org.example</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>multi</artifactId>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- tomcat-4 -->
+        <!-- <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>4.0.4</version>
+         </dependency>
+         <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>4.0.6</version>
+         </dependency>
+         <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>4.1.9</version>
+         </dependency>
+         <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>4.1.31</version>
+         </dependency>
+         <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>4.1.34</version>
+         </dependency>
+         <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>4.1.36</version>
+         </dependency>-->
+        <!-- tomcat-5 -->
+        <dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>5.0.16</version>
+        </dependency>
+        <!--  <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.0.18</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.0.28</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.4</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.7-alpha</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.7</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.8-alpha</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.9-alpha</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.9</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.12</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.15</version>
+          </dependency>
+          <dependency>
+              <groupId>tomcat</groupId>
+              <artifactId>catalina</artifactId>
+              <version>5.5.23</version>
+          </dependency>-->
+    </dependencies>
+
+
+</project>

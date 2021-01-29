@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="../../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        // $.get() 方法通过 HTTP GET 请求从服务器上请求数据。
+        // $.get(URL,callback);
+        $(document).ready(function () {
+            $("button").click(function () {
+                // get: 参数一 url, 参数二 回调
+                // 回调: 参数一 存有被请求页面的内容，参数二 存有请求的状态。
+                $.get("./load.txt", function (data, status) {
+                    alert("数据：" + data + "\n状态：" + status);
+                });
+            });
+        });
+	</script>
+</head>
+<body>
+
+<button>向页面发送 HTTP GET 请求，然后获得返回的结果</button>
+</body>
+</html>

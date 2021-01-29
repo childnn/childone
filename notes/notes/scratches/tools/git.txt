@@ -219,9 +219,10 @@
  *    $ git branch -d dev
  *     删除后, 查看当前分支 git branch, 就只有 master 分支了
     7. 关联本地分支与远程分支.
-      $ git branch -b <new_branch_name> <remote_name>/<remote_branch_name>
+      $ git checkout -b <new_branch_name> <remote_name>/<remote_branch_name>
         # 创建新分支,并将新分支指向指定的远程分支
       $ git branch -u origin/master foo
+        # 前提, 必须存在本地分支 foo
         # foo 分支会追 origin/master, 效果同上. 如果当前就在 foo 分支上, foo 参数可以省略.
       $ git branch --set-upstream-to=<name>/<remote_branch>  <your_branch>
       <name>: 名称 eg, origin 或者自定义的名称(id).

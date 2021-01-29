@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd
+
+
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--0.自定义类型转换器
+        1.配置类型转换器
+        2.在 映射器/适配器 标签中加入 类型转换属性
+    <mvc:annotation-driven conversion-service="conversionService2"/>
+    -->
+    <bean id="conversionService2" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <!--在类型转换器中配置自定义的转换器: 把自定义的 类型转换器 加入到 springMVC 的 转换器集合中
+          源码:
+            public void setConverters(Set<?> converters) {
+		        this.converters = converters;
+	        }
+        -->
+        <property name="converters">
+            <array>
+                <bean class="org.anonymous.utils.StringToDate"/>
+            </array>
+        </property>
+    </bean>
+
+
+    <!--注解扫描器-->
+    <context:component-scan base-package="org.anonymous"/>
+
+    <!--处理器映射器, 处理器适配器:  指定自定义的类型转换器-->
+    <mvc:annotation-driven conversion-service="conversionService2"/>
+
+    <!--视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+</beans>

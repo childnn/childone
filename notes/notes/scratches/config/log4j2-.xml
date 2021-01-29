@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--status = off 表示不记录 log4j 本身的日志-->
+<configuration status="off">
+    <properties>
+        <property name="LOG_HOME">${web:rootDir}/logs</property>
+        <!--<property name="FILE_NAME">log4j2</property>-->
+    </properties>
+    <appenders>
+        <!--输出控制台-->
+        <Console name="myConsole" target="SYSTEM_OUT">
+            <!--ThresholdFilter: info 以上的命令不会被拦截-->
+            <!--<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>-->
+            <PatternLayout pattern="[%-5p][%d{HH:mm:ss.SSS}][%l][%m]%n"/>
+        </Console>
+        <!--输出到文件-->
+        <File name="myLogFile" fileName="${LOG_HOME}/log4j2.log" append="true">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%-5p][%t][%d{yyyy-MM-dd HH:mm:ss}][%l][%m]%n"/>
+        </File>
+        <!--压缩文件-->
+        <!--<RollingFile  name="myRollingFile " fileName="${LOG_HOME}/app.log"
+                     filePattern="logs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="[%-5p][%t][%d{yyyy-MM-dd HH:mm:ss}][%l][%m]%n" />
+            &lt;!&ndash;<Policies>&ndash;&gt;
+                &lt;!&ndash;<TimeBasedTriggeringPolicy interval="1"/>&ndash;&gt;
+                <SizeBasedTriggeringPolicy size="10 kB" />
+            &lt;!&ndash;</Policies>&ndash;&gt;
+            &lt;!&ndash;<DefaultRolloverStrategy max="20" />&ndash;&gt;
+        </RollingFile >-->
+    </appenders>
+
+    <!--将日志以指定方式写出-->
+    <loggers>
+        <!--日志输出级别-->
+        <root level="debug">
+            <!-- 将日志输出到文件-->
+            <!--<appender-ref ref="myRollingFile" />-->
+            <appender-ref ref="myLogFile"/>
+            <!-- 这里是输入到控制台-->
+            <appender-ref ref="myConsole"/>
+        </root>
+    </loggers>
+
+</configuration>

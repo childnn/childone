@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--引入约束-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace:名称空间
+		区分模块
+	唯一：namespace.id
+	namespace: 当前接口的 全限定名
+	id: 接口调用方法的 方法名
+ -->
+<mapper namespace="org.anonymous.dao.ContactDao">
+    <!-- insert 插入
+         id: 接口方法名
+         parameterType: 方法参数类型
+         ognl表达式: 替换占位符
+             格式: #{ognl 表达式}
+
+         获取最后一次 保存数据的 主键: 必须得保存之后再查询(主键是数据库自动生成)
+      方式一:
+         需要使用 mysql 提供的独有函数: select last_insert_id()
+        配置:
+            selectKey: 获取主键
+            order: 指定 该语句指定的查询顺序
+                一般是 先插入 再查询 - 最后一条记录的 主键
+            resultType: 返回值类型
+            keyProperty: 将值封装给指定对象的指定属性
+        该方法执行了 2 条 sql 数据: 与数据库交互两次
+
+       方式二:
+            mybatis 会将最后一次插入数据的主键 id 自动封装给对象
+            但是默认是不开启的,需要开启 id 赋值功能
+            useGeneratedKeys
+     -->
+    <!--<insert id="saveContact" parameterType="org.anonymous.domain.Contact" >
+        获取最后一次插入的 id 属性值, 如果希望获取 插入之前的一个 id: order="BEFORE"
+        <selectKey order="AFTER" resultType="int" keyProperty="id">
+            select last_insert_id();
+        </selectKey>
+        insert into contact (name, sex, age, province_id, qq, email) values (#{name}, #{sex}, #{age}, #{province_id}, #{qq}, #{email});
+    </insert>-->
+
+    <!--开启 id 赋值功能
+        useGeneratedKeys="true" : 默认false
+        keyProperty: 指定赋值的属性
+        该方法只会执行 一条 sql: 与数据库交互一次
+    -->
+    <!--PreparedStatement pst = connection.prepareStatement("
+        insert into contact (name, sex, age, province_id, qq, email)
+        values (?, ?, ?, ?, ?, ?)")-->
+    <!-- mybatis 将 sql 解析为 占位符形式，使用 PreparedStatement，预加载
+         然后： pst.setInt(1, contact.getId());
+                 .......
+                 java.util.Date -> 数据库 java.sql.Timestamp
+              pst.setTimestamp(n, new Timestamp(contact.getDate().getTime()));
+     -->
+    <insert id="saveContact" parameterType="contact" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO contact (name, sex, age, province_id, qq, email)
+        VALUES (#{name}, #{sex}, #{age}, #{province_id}, #{qq}, #{email})
+    </insert>
+
+    <!--修改-->
+    <update id="updateContact" parameterType="contact">
+        UPDATE contact
+        SET name = #{name}
+        WHERE id = #{id};
+    </update>
+
+    <!--
+        parameterType: 被代理对象方法的参数类型
+            1.pojo 对象: plain ordinary java object. 就是一个 JavaBean 对象, 这个 pojo 对象不参与业务数据的封装,只用来封装数据库的数据
+                在参数中写  全限定名
+            2.基本数据类型: 包含 String, Integer, Long
+                在参数中, 写小写的 包装类类型 - string/int/long 或 包装类的 全限定名 java.lang.String/Integer/Long
+         对应的 sql 语句:
+             pojo 对象: #{对象的属性}
+             基本数据类型: #{随便写}
+    -->
+    <!--删除1-->
+    <delete id="deleteContact" parameterType="contact">
+        DELETE
+        FROM contact
+        WHERE id = #{id};
+    </delete>
+    <!--删除2-->
+    <delete id="deleteContact0" parameterType="int">
+        DELETE
+        FROM contact
+        WHERE id = #{随便写};
+    </delete>
+
+    <!--全查
+        resultType: 封装的对象
+    -->
+    <select id="findAll" resultType="contact">
+        SELECT *
+        FROM contact;
+    </select>
+
+    <!--根据 id 查询 单个-->
+    <select id="findById" parameterType="int" resultType="contact">
+        SELECT *
+        FROM contact
+        WHERE id = #{随便写};
+    </select>
+
+    <!--模糊查询
+       1. #{随便写} : PreparedStatement 对象,预编译
+       2. '%${...}%' : sql 拼接 statement 对象, 没有预编译处理, 有 sql 注入的风险 不建议使用
+        sql 拼接: el 表达式  ${} 底层是 statement
+            parameterType: pojo 对象类型 ${属性}
+                            基本数据类型 ${value}
+    -->
+    <!--<select id="findLike" parameterType="string" resultType="org.anonymous.domain.Contact">
+        select * from contact where name like #{随便写};
+    </select>-->
+    <select id="findLike" parameterType="string" resultType="contact">
+        SELECT *
+        FROM contact
+        WHERE name LIKE '%${value}%';
+    </select>
+
+    <!--统计用户数量-->
+    <select id="count" resultType="int">
+        SELECT count(*)
+        FROM contact;
+    </select>
+
+
+    <!--简单映射映射: 字段与别名-->
+    <!--<select id="find" resultType="org.anonymous.domain.Contact">
+        select * from contact;
+    </select>-->
+    <select id="find" resultMap="id">
+        SELECT name AS 姓名, sex AS 性别, age AS 年龄, province_id AS 省份, qq AS qq, email AS 邮箱
+        FROM contact;
+    </select>
+
+    <!--映射: 做 Javabean 的属性和表的字段关联 - 要给表中的 字段定义别名时使用映射
+        resultMap 映射标签
+            id: 唯一 (一般用表明)
+            type: javabean 全限定名
+        ps: 映射配置完毕,不影响全局, 谁用谁调用 - 根据 id 调用
+    -->
+    <resultMap id="id" type="contact">
+        <!--
+            property: JavaBean的属性
+            column: 字段名(可以定义别名： 别名必须及时 sql 语句中定义的 别名)
+        -->
+        <!--主键映射 id-->
+        <id property="id" column="id"/>
+        <!--其他字段的映射-->
+        <result property="name" column="姓名"/>
+        <result property="sex" column="性别"/>
+        <result property="age" column="年龄"/>
+        <result property="province_id" column="省份"/>
+        <result property="qq" column="qq"/>
+        <result property="email" column="邮箱"/>
+    </resultMap>
+
+
+    <!--补充: 根据对象属性的查询 对象.属性-->
+    <select id="findBC" parameterType="org.anonymous.domain.PageBean" resultType="contact">
+        SELECT *
+        FROM contact
+        WHERE id = #{contact.id};
+    </select>
+
+</mapper>   

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        /**
+         * 由于 JavaScript 语句（指令）是逐一执行的 - 按照次序，
+         * 动画之后的语句可能会产生错误或页面冲突，因为动画还没有完成。
+         为了避免这个情况，您可以以参数的形式添加 Callback 函数。
+         */
+        $(function () {
+            $("p").hide(2000, function () {
+                alert("The paragraph is now hidden");
+            });
+        });
+	</script>
+</head>
+<body>
+
+<p>This is a paragraph with little content.</p>
+
+</body>
+</html>

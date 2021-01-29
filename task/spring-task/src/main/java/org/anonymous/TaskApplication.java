@@ -3,6 +3,7 @@ package org.anonymous;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ImportResource;
 
 import java.io.IOException;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
  * @since 2019/11/10 23:15
  */
 @SpringBootApplication(scanBasePackages = {"org.anonymous"})
+@ImportResource(locations = {"classpath:spring-task.xml", "classpath:spring-quartz-task.xml"})
 public class TaskApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(TaskApplication.class, args);

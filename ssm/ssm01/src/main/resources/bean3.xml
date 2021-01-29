@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--简单属性注入 方式二: set 属性方式-->
+    <bean id="accountService" class="org.anonymous.service.impl.ServiceImpl0">
+        <!--
+          property 标签:
+             属性:
+                name:   定位 set 方法 的 方法名的 后半部分(除去 "set" 的部分) - 一般就是对应的 变量名
+                        (首字母小写) - 底层就是 把 name 属性的值 首字母 变成大写, 再在前面拼接上 "set"
+                value: 简单属性赋值
+                ref: 给 spring 容器 管理的对象属性赋值
+        -->
+        <property name="name" value="dota"/>
+        <property name="age" value="21321"/>
+    </bean>
+
+
+</beans>

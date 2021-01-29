@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--简单属性注入方式一: 构造器方式-->
+    <bean id="accountService" class="org.anonymous.service.impl.AccountServiceImpl2">
+        <!--构造器方式
+             constructor-arg 标签: 给当前对象的属性使用 构造器方式赋值
+                属性:
+                    index: 参数索引
+                    name: 参数 变量名
+                    type: 参数 类型(类型全类名)
+                    ******* 上面 3 个参数用来定位参数//下面 2 个参数用来给参数赋值
+                    value: 给简单属性赋值
+                    ref: 给 spring 容器管理的对象 赋值的
+        -->
+        <!--构造器方式一:index 赋值-->
+        <!--<constructor-arg index="0" value="英雄"/>
+        <constructor-arg index="1" value="12"/>-->
+
+        <!--构造器方式二: name 赋值-->
+        <!-- <constructor-arg name="name" value="张三"/>
+         <constructor-arg name="age" value="111"/>-->
+
+        <!--构造器方式三: type 赋值-->
+        <constructor-arg type="java.lang.String" value="jack"/>
+        <constructor-arg type="java.lang.Integer" value="2222"/>
+    </bean>
+</beans>

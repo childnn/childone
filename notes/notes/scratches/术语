@@ -1,0 +1,4 @@
+CGI: common gateway interface 公共网关接口
+URI: uniform resources identifier 统一资源标识符
+    URI 通常会被解释为相对于服务器根目录的相对路径, 因此它总是以 "/" 开头.
+CRLF: Carriage Return/LineFeed 回车/换行

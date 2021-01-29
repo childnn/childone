@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        /*
+        * Chaining 允许我们在一条语句中允许多个 jQuery 方法（在相同的元素上）。
+        * 直到现在，我们都是一次写一条 jQuery 语句（一条接着另一条）。
+            不过，有一种名为链接（chaining）的技术，允许我们在相同的元素上运行多条 jQuery 命令，一条接着另一条。
+            提示：这样的话，浏览器就不必多次查找相同的元素。
+            如需链接一个动作，您只需简单地把该动作追加到之前的动作上。
+        * */
+        $(document).ready(function () {
+            $("button").click(function () {
+                $("#p1").css("color", "red")
+                    .slideUp(2000)
+                    .slideDown(2000);
+            });
+        });
+	</script>
+</head>
+<body>
+
+
+<p id="p1">jQuery 乐趣十足！</p>
+<button type="button">点击这里</button>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- spring 整合 quartz -->
+
+
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="true">
+        <property name="triggers">
+            <list>
+                <!--                <bean class="org.anonymous.test.SpringQuartzTaskXML"/>-->
+                <!--                <ref bean="myTrigger"/>-->
+                <ref bean="simpleTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="myJobDetail"/>
+        <property name="startDelay" value="3000"/>
+        <!-- 默认并发: 两次 task 时间间隔: 3s, 无论上一次是否执行完毕. -->
+        <!-- 关闭并发: @DisallowConcurrentExecution -->
+        <property name="repeatInterval" value="3000"/>
+    </bean>
+
+    <!-- cron 表达式 trigger -->
+    <bean id="myTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- cron expression 必须设置 -->
+        <!-- 1min 一次 -->
+        <property name="cronExpression" value="0 0/1 * * * ?"/>
+
+        <property name="jobDetail" ref="myJobDetail"/>
+
+        <property name="startDelay" value="3000"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="key1" value="value1"/>
+            </map>
+        </property>
+
+        <!--        <property name="jobDataMap" ref="map"/>-->
+        <!--        <property name="group"-->
+    </bean>
+    <!--    <bean id="map" class="org.quartz.JobDataMap">
+            <constructor-arg>
+                <map>
+                    <entry key="" value=""/>
+                </map>
+            </constructor-arg>
+        </bean>-->
+
+    <!-- quartz-job detail -->
+    <bean id="myJobDetail" class="org.quartz.impl.JobDetailImpl">
+        <property name="jobClass" value="org.anonymous.task.MyQuartzJob"/>
+        <!--        <property name="key" ref="jobKey"/>-->
+        <!-- 必须设置 -->
+        <property name="name" value="jobKey"/>
+        <!--        <property name="requestsRecovery"-->
+    </bean>
+    <!--<bean id="jobKey" class="org.quartz.JobKey">
+        <constructor-arg index="0" value="jobKey"/>
+    </bean>-->
+
+
+    <!-- spring 的 quartz-job detail -->
+    <!--    <bean id="myJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+    <!--        &lt;!&ndash; 1. non-static method &ndash;&gt;-->
+    <!--        <property name="targetObject" ref="myJob"/>-->
+    <!--        <property name="targetMethod" value="execute"/>-->
+
+    <!--        &lt;!&ndash; 2. static method &ndash;&gt;-->
+    <!--&lt;!&ndash;        <property name="targetClass" value="className"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;        <property name="targetMethod" value="execute"/>&ndash;&gt;-->
+
+    <!--        &lt;!&ndash; 3. fully qualified static method name: "example.MyExampleClass.myExampleMethod" &ndash;&gt;-->
+    <!--&lt;!&ndash;        <property name="staticMethod" value="execute"/>&ndash;&gt;-->
+    <!--    </bean>-->
+
+
+</beans>

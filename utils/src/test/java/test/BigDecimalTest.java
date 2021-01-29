@@ -8,7 +8,10 @@ import java.math.BigDecimal;
  * ~~ Talk is cheap. Show me the code. ~~ :)
  *
  * @author MiaoOne
+ * @see java.math.BigDecimal#BigDecimal(double) The results of this constructor can be somewhat unpredictable.
+ * 如果为 double 类型, 则应使用 {@link java.math.BigDecimal#valueOf(double)}
  * @since 2019/9/11 20:57
+ * 如果 {@link java.math.BigDecimal#BigDecimal(String)} 构造器的结果是可预知的, 为 String 类型数字, 可以使用构造器
  */
 public class BigDecimalTest {
 

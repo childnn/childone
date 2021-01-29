@@ -14,3 +14,9 @@
 	注: 如果改密不成功, 推荐使用 mysql 官方的 workbench 登录(该软件在登录 mysql 时, 会自动提示修改系统生成的初始化密码)
 	
 default-time-zone="+8:00"
+
+sqlyog 注册码：
+    ttrar
+    8d8120df-a5c3-4989-8f47-5afc79c56e7c
+    59adfdfe-bcb0-4762-8267-d7fccf16beda
+    ec38d297-0543-4679-b098-4baadf91f983

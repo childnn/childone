@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+             http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--在没有 spring框架的 ioc 之前, 工厂类都是 项目里自定义的
+        这些工厂分为两类: static factory method, instance factory method
+        二者的主要却别在于: 使用静态工厂,不需要将 静态工厂类 本身 作为 bean 注册到 ioc
+                而只是将其方法的返回值 作为 bean 注册到 ioc
+            而 使用实例工厂,首先需要将 实例工厂类本身 作为 bean 注册到 ioc
+                然后再调用 其非静态方法, 将返回值作为 bean 注册到 ioc
+    -->
+
+    <!--静态工厂的方式创建对象: class 写的是 静态工厂的 全限定名, 对应 其中创建对象的方法-->
+    <bean id="accountService" class="org.anonymous.util.BeanFactory2" factory-method="getBean"/>
+
+    <!--实例工厂的方式
+        第一个 bean 标签: 创建 工厂对象 (非静态工厂,必须现有工厂类的对象)
+        第二个 bean 标签: 调用 工厂对象的 非静态方法
+    -->
+    <bean id="beanFactory0" class="org.anonymous.util.BeanFactory1"/>
+    <bean id="accountService0" factory-bean="beanFactory0" factory-method="getBean" scope="prototype"/>
+</beans>

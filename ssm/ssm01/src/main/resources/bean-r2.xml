@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--数据库连接-->
+    <!--方式一-->
+    <!--<context:property-placeholder location="jdbc.properties"/>-->
+    <!--方式二-->
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="location" value="jdbc.properties"/>
+    </bean>
+
+    <!--dao-->
+    <bean id="accountDaoImpl" class="org.anonymous.dao.impl.AccountDaoImplR">
+        <!--<property name="jdbcTemplate" ref="jdbcTemplate"/>-->
+
+        <!--
+            细节:
+            只要 dao 层 继承了 JdbcDaoSupport, 就不再需要 JdbcTemplate 属性, 也 不再需要 在配置文件中 将 JdbcTemplate 交给 ioc 管理了
+            只需要 注入 一个 dataSource, 相当于 间接调用 父类(JdbcDaoSupport) 的 setDateSource(dataSource) 方法, 创建 JdbcTemplate 对象
+            然后 调用 父类的 getJdbcTemplate() 方法, 获取 JdbcTemplate 对象, 即可使用
+        -->
+        <property name="dataSource" ref="springDriver"/>
+    </bean>
+
+    <!--  spring 源码: org.springframework.jdbc.core.support.JdbcDaoSupport
+         @Nullable
+         private JdbcTemplate jdbcTemplate;
+
+         public final void setDataSource(DataSource dataSource) {
+            // 如果没有 JdbcTemplate,
+            if (this.jdbcTemplate == null || dataSource != this.jdbcTemplate.getDataSource()) {
+                //就利用 传进来的 dataSource : new JdbcTemplate(dataSource);
+                this.jdbcTemplate = this.createJdbcTemplate(dataSource);
+                this.initTemplateConfig();
+            }
+        }
+        protected JdbcTemplate createJdbcTemplate(DataSource dataSource) {
+            return new JdbcTemplate(dataSource);
+        }
+
+    -->
+    <!--jdbcTemplate-->
+    <!--<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg name="dataSource" ref="springDriver"/>
+    </bean>-->
+    <!--druid-->
+    <bean id="druid" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--c3p0-->
+    <bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--spring 内置-->
+    <bean id="springDriver" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+</beans>

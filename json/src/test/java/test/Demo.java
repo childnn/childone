@@ -1,6 +1,6 @@
 package test;
 
-import com.sun.deploy.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Demo {
 
-    private  static List<String> list = new ArrayList<>();
+    private static final List<String> list = new ArrayList<>();
     static{
         list.add("1");
         list.add("1");
@@ -30,7 +30,7 @@ public class Demo {
 
     @Test
     public void test2() {
-        String join = org.apache.commons.lang3.StringUtils.join(list, ",");
+        String join = StringUtils.join(list, ",");
         System.out.println(join);
     }
 

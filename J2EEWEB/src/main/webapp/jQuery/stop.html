@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        $(document).ready(function () {
+            $("#flip").click(function () {
+                $("#panel").slideDown(5000);
+            });
+            $("#stop").click(function () {
+                /**
+                 *
+                 * $(selector).stop(stopAll,goToEnd);
+                 可选的 stopAll 参数规定是否应该清除动画队列。默认是 false，即仅停止活动的动画，允许任何排入队列的动画向后执行。
+                 可选的 goToEnd 参数规定是否立即完成当前动画。默认是 false。
+                 因此，默认地，stop() 会清除在被选元素上指定的当前动画。
+                 */
+                $("#panel").stop(/*true, true*/);
+            });
+        });
+	</script>
+
+	<style type="text/css">
+		#panel, #flip {
+			padding: 5px;
+			text-align: center;
+			background-color: #e5eecc;
+			border: solid 1px #c3c3c3;
+		}
+
+		#panel {
+			padding: 50px;
+			display: none;
+		}
+	</style>
+	<title>滑动与停止</title>
+</head>
+
+<body>
+
+<button id="stop">停止滑动</button>
+<div id="flip">点击这里，向下滑动面板</div>
+<div id="panel">Hello world!</div>
+
+</body>
+</html>

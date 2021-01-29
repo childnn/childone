@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--c-namespace 的使用：constructor-arg 标签 的简化-->
+
+    <!--测试: 单例对象的初始化时间比多例对象早,
+        能否在 xml 中配置: 单例对象依赖多例对象
+        多例对象 user(被 animal 依赖), 会优先创建
+        执行顺序:
+            1. User (prototype): 优先实例化
+            2. Animal (single): 有参构造实例化
+    -->
+    <!--constructor-based di-->
+    <bean name="animal" id="animal0" class="org.anonymous.beans.Animal" scope="singleton" destroy-method="destroy"
+          c:_0-ref="user">  <!--方法一：使用 构造方法的参数索引： 索引从零开始-->
+        <!--c:user-ref="user">-->  <!--方法二： 使用 构造方法的参数名-->
+        <!--注入 多例对象-->
+        <!--<constructor-arg ref="user"/> &lt;!&ndash;constructor-based di&ndash;&gt;-->
+    </bean>
+    <bean id="user" class="org.anonymous.beans.User" c:name="杰克" c:age="100" scope="prototype"
+          destroy-method="destroy"/>
+
+</beans>

@@ -3,6 +3,8 @@
 修改： set global time_zone='+8:00';
 或设置 url： "jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8"
 
+$ mysqld --character_set_server=utf-8 设置 mysql 系统变量
+$ mysqld-nt --character_set_server=utf-8 等价上一条
 mysql 编码
  show variables like "%char%"
 show variables where variable_name like 'character\_set\_%' or variable_name like "collation%";

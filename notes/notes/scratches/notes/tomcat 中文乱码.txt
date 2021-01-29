@@ -1,0 +1,12 @@
+1. idea.exe.vmoptions:
+     -Dfile.encoding=UTF-8
+2. 编辑 tomcat\bin 目录下的 startup.bat 文件
+    将 call "%EXECUTABLE%" start %CMD_LINE_ARGS%
+    修改为  call "%EXECUTABLE%" run %CMD_LINE_ARGS%
+   编辑 catalina.bat 文件
+    将 set "JAVA_OPTS=%JAVA_OPTS% %JSSE_OPTS%"
+    修改为  set "JAVA_OPTS=%JAVA_OPTS% %JSSE_OPTS%  -Dfile.encoding=UTF-8"
+3. CMD 乱码
+      win+r --> 输入 regedit 打开注册表
+      找到 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Command Processor]
+      右键--新建--字符串值: autorun/chcp 65001

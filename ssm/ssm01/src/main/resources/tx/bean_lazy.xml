@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--
+        depend-on 的测试:
+            1. 可以尝试分别 去掉 c:user-ref 和 depends-on 看看结果
+                ref 和 depends-on 好像会重复 注入
+            2. 可以尝试将 user 的多例设置为 单例, 看看结果
+    -->
+
+    <bean id="animal" class="org.anonymous.beans.Animal" destroy-method="destroy"
+          c:user-ref="user" lazy-init="true" depends-on="user"/> <!--为单例对象定义懒加载-->
+
+    <bean id="user" class="org.anonymous.beans.User" destroy-method="destroy"
+          p:name="杰克" p:age="19" scope="prototype"/>
+
+    <!--
+    main-main...
+user-多例对象!!!- constructor-based:1
+aninmiinininimal-constructor-based di
+Animal{user=null}
+true
+
+user-多例对象!!!- constructor-based:2
+user-多例对象!!!- constructor-based:3
+User{name='杰克', age=19}
+false
+
+    -->
+
+</beans>

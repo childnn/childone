@@ -1,0 +1,8 @@
+LDAP: lightweight directory access protocol 轻量级目录访问协议
+HTTP basic auth: HTTP 基本认证协议. 用户凭借该机制在浏览器中使用用户名和密码向一个网页进行身份认证.
+HTTP digest auth: HTTP 摘要认证.
+HTTP 是一个无状态的协议, 因此每个 HTTP 事务都要求呈递这些凭据(用户名,密码).
+委托概念是 OAuth 强大功能的根基.
+虽然 OAuth 经常被称作 授权协议, 但它也是一个委托协议. 通常,被委托的是用户权限的子集,但是 OAuth 本身并不承载或这传递权限.
+相反, 它提供了一种方法, 让客户端可以请求用户将部分权限委托给自己. 然后, 用户可以批准这个委托请求. 被批准之后, 客户端就可以去执行那些操作了.
+OAuth 系统通常准寻 TOFU 原则: trust on first use.

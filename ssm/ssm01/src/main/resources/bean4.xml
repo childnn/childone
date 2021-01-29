@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--依赖注入: 复杂属性赋值-->
+    <bean id="aaa" class="org.anonymous.service.impl.ServiceImpl1">
+        <constructor-arg name="arr">
+            <!--复杂属性的赋值: 数组/list/set
+                array + value
+                list + value
+                set + value
+                <array><list><set> 三个标签 与 Array/List/Set 可以混用(不是一一对应的关系)
+            -->
+            <!-- <array>
+                 <value>aaa</value>
+                 <value>bbb</value>
+                 <value>ccc</value>
+             </array>-->
+            <list>
+                <value>123123</value>
+                <value>43t4</value>
+                <value>43ewrew</value>
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>

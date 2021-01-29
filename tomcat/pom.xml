@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>tomcat</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>HowTomcatWorks</module>
+        <module>source</module>
+        <module>multi</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+
+    <dependencies>
+        <!--  <dependency>
+              <scope>compile</scope>
+              <groupId>javax.servlet</groupId>
+              <artifactId>javax.servlet-api</artifactId>
+              <version>4.0.1</version>
+          </dependency>
+  -->
+        <!--   <dependency>
+               <scope>compile</scope>
+               <groupId>org.apache.tomcat</groupId>
+               <artifactId>tomcat-util</artifactId>
+               <version>9.0.39</version>
+           </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.tomcat.embed</groupId>-->
+        <!--            <artifactId>tomcat-embed-core</artifactId>-->
+        <!--            <version>9.0.38</version>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
+        <!--<dependency>
+            <scope>compile</scope>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <version>7.0.0</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/tomcat/tomcat-util -->
+        <!--<dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>tomcat-util</artifactId>
+            <version>4.0.6</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/tomcat/catalina -->
+        <!--<dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>4.1.9</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/tomcat/catalina -->
+        <!--<dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>4.0.6</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/tomcat/catalina -->
+        <!--<dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>4.0.4</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/tomcat/catalina -->
+        <!--<dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>sources</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/tomcat/catalina -->
+        <!-- <dependency>
+             <groupId>tomcat</groupId>
+             <artifactId>catalina</artifactId>
+             <version>5.5.23</version>
+         </dependency>-->
+
+
+    </dependencies>
+</project>

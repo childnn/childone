@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--引入约束-->
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--
+    properties?, settings?, typeAliases?, typeHandlers?, objectFactory?,
+    objectWrapperFactory?, reflectorFactory?, plugins?, environments?, databaseIdProvider?, mappers?
+    -->
+
+    <!--
+    解析 xml 配置核心类
+    org.apache.ibatis.builder.xml.XMLConfigBuilder.parseConfiguration
+    -->
+    <!--
+      properties 标签:
+        resource: 可以引入 外部 的 .properties 配置文件 (数据库连接信息)
+        使用:  ${jdbc文件内容的 key 值} 得到对应的 value 值
+    -->
+    <properties resource="jdbc.properties"/>
+
+    <!--
+    解析 xml 并设置相关属性
+    org.apache.ibatis.builder.xml.XMLConfigBuilder.settingsElement
+    org.apache.ibatis.session.Configuration
+    -->
+    <!--全局环境配置: 延迟加载开关,默认是 false, 手动开启,设置为 true-->
+    <settings>
+        <!--所有关联对象的数据都会延迟加载-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--使用 mybatis 的二级缓存: 可以省略, 默认就是开启的-->
+        <setting name="cacheEnabled" value="true"/>
+        <!--
+        org.apache.ibatis.session.LocalCacheScope
+        org.apache.ibatis.session.Configuration.localCacheScope
+           设置一级缓存的作用域: 默认是 SESSION 级别, 可以改为 STATEMENT 级别. 区分大小写
+           如果设置为 STATEMENT, 则表示禁用 一级缓存, 不会缓存 select 的查询结果
+           @see org.apache.ibatis.executor.BaseExecutor.query(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
+           源码:
+             if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
+                // issue #482
+                clearLocalCache();
+             }
+         -->
+        <setting name="localCacheScope" value="SESSION"/>
+
+        <!--
+              是否重用 预编译 sql
+              org.apache.ibatis.session.ExecutorType: 默认 SIMPLE
+         -->
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <!--
+        org.apache.ibatis.builder.xml.XMLConfigBuilder.loadCustomLogImpl
+        别名: STDOUT_LOGGING 注册点: org.apache.ibatis.session.Configuration.Configuration()
+        -->
+        <setting name="logImpl" value="org.apache.ibatis.logging.log4j.Log4jImpl"/>
+        <!--<setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>-->
+
+    </settings>
+
+    <!--
+    typeAliases: 给指定的 类全限定名 起别名 : sql 映射配置文件中对应的 类全限定名就可以写 别名了
+     子标签: typeAlias:
+        type: 类的全限定名
+        alias: 别名
+        子标签 typeAlias 可以写多个: 对应多个 Javabean
+        只能一个一个起别名
+
+     子标签:
+       package: 指定一个包
+        这个包下的 所有 类 都有别名: 就是类名(不区分大小写)
+  -->
+
+    <typeAliases>
+        <!-- <typeAlias type="org.anonymous.domain.Contact" alias="contact"/>
+         <typeAlias type="" alias=""/>-->
+
+        <package name="org.anonymous.domain"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <!--
+          org.apache.ibatis.builder.xml.XMLConfigBuilder.typeHandlerElement
+           javaType="" jdbcType=""
+        -->
+        <typeHandler handler="org.anonymous.config.mybatis.MyTypeHandler"/>
+        <!--    <package name=""/>-->
+    </typeHandlers>
+
+    <environments default="development">
+        <environment id="development">
+            <!-- org.apache.ibatis.builder.xml.XMLConfigBuilder.environmentsElement
+             别名映射: org.apache.ibatis.session.Configuration.Configuration()
+            -->
+            <!-- org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory -->
+            <transactionManager type="JDBC"/>
+            <!-- org.apache.ibatis.datasource.pooled.PooledDataSourceFactory -->
+            <dataSource type="POOLED">
+                <!--数据库连接信息-->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--引入的 sql 映射配置文件
+      mappers:
+        子标签:
+            一: mapper
+                1.属性 resource : sql 映射配置文件路径
+                2.属性 class :
+                    使用条件:
+                      1. 配置文件 放在 resources 目录下的包里,包名必须和 dao 的接口 所在的 包名 一致
+                      2. 配置文件名必须和 dao 接口名一致
+            二: package 引入整个包下的配置文件
+                属性值: name 包名
+                  满足与 class 相同的两个条件
+    -->
+    <mappers>
+
+        <!--
+         解析入口:
+            org.apache.ibatis.builder.xml.XMLConfigBuilder.mapperElement
+        -->
+
+        <!--<mapper resource="ContactMapper.xml"/>-->
+        <!--下面还可以加多个mapper 配置文件-->
+        <!--<mapper class=""/>-->
+        <!--        <mapper url=""/>-->
+        <!--针对整个包下的配置文件-->
+        <package name="org.anonymous.dao"/>
+    </mappers>
+
+</configuration>   

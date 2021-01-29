@@ -1,3 +1,46 @@
+
+ifnull(expr1, expr2): 如果 expr1 为 null, 则返回 expr2, 否则 expr1
+nullif(expr1, expr2): 如果 expr1 和 expr2 相等, 则返回 null, 否则返回 expr1
+if(ex1, ex2, ex3): 三元运算符. 如果 ex1 为 true, 不等于 0, 不等于 null, 则返回 ex2, 否则返回 ex3
+isnull(ex1): 判断 ex1 是否为 null, 如果为 null 则返回  true, 否则返回 false
+
+case 函数:
+  语法一:
+    case value
+    when compare_value1 then result1
+    when compare_value2 then result2
+    ...
+    else result
+    end
+ eg:
+   select stu_name,
+       case teach_id
+       when 1 then 'Java 老师'
+       when 2 then 'C老师'
+       else '未知'
+       end
+   from table_name;
+  语法二:
+    case
+    when condition1 then result1
+    when condition2 then result2
+    ...
+    else result
+    end
+  -- condition 为返回一个 boolean 值的表达式.
+=================================
+avg([distinct|all]expr): 计算多行 expr 平均值, 其中 expr 可以是变量, 常量或数据列, 但其数据类型必须为整型.
+      可以在变量,列前使用 distinct 或 all 关键字, 如果使用 distinct, 则表明不计算重复值; all 为默认值, 计算重复值.
+count({*|[distinct|all]expr}): 计算多行 expr 的总条数, 其中, expr 可以是变量, 常量或数据列, 数据类型任意;
+     用 * 表示统计该表内的记录行数; distinct 表示不计算重复值.
+max(expr): 计算多行 expr 的最大值, 其中 expr 可以是变量, 常量或数据列, 数据类型任意.
+min(expr): 计算多行 expr 的最小值, 其中 expr 可以是变量, 常量会数据列, 数据类型任意.
+sum([distinct|all]expr): 计算多行 expr 的总和, 其中, expr 可以是变量, 常量或数据列, 但其数据类型必须是数值型; distinct 表示不计算重复值.
+
+
+
+
+
 SELECT CURDATE();
 SELECT CURRENT_DATE();
 SELECT CURRENT_TIME();

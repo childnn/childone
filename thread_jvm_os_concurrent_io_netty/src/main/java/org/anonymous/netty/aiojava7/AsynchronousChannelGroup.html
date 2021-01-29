@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<table border summary="System properties">
+	<tr>
+		<th>System property</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td> {@code java.nio.channels.DefaultThreadPool.threadFactory}</td>
+		<td> The value of this property is taken to be the fully-qualified name
+			of a concrete {@link java.util.concurrent.ThreadFactory ThreadFactory}
+			class. The class is loaded using the system class loader and instantiated.
+			The factory's {@link java.util.concurrent.ThreadFactory#newThread
+			newThread} method is invoked to create each thread for the default
+			group's thread pool. If the process to load and instantiate the value
+			of the property fails then an unspecified error is thrown during the
+			construction of the default group.
+		</td>
+	</tr>
+	<tr>
+		<td> {@code java.nio.channels.DefaultThreadPool.initialSize}</td>
+		<td> The value of the {@code initialSize} parameter for the default
+			group (see {@link #withCachedThreadPool withCachedThreadPool}).
+			The value of the property is taken to be the {@code String}
+			representation of an {@code Integer} that is the initial size parameter.
+			If the value cannot be parsed as an {@code Integer} it causes an
+			unspecified error to be thrown during the construction of the default
+			group.
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

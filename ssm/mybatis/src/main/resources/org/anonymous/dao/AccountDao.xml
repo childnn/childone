@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--引入约束-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    xml-mapper 解析入口: org.apache.ibatis.builder.xml.XMLMapperBuilder.parse
+-->
+<mapper namespace="org.anonymous.dao.AccountDao"> <!--org.anonymous.dao.AccountDao-->
+
+    <!-- 解析入口: org.apache.ibatis.builder.xml.XMLMapperBuilder.cacheRefElement -->
+    <cache-ref namespace="org.anonymous.dao.UserDao"/>
+    <!--
+    解析入口: org.apache.ibatis.builder.xml.XMLMapperBuilder.cacheElement
+
+        type: org.apache.ibatis.cache.Cache 子类
+              别名: org.apache.ibatis.session.Configuration.Configuration()
+        eviction: 淘汰策略, 默认 LRU(least recently used)
+     -->
+    <!--<cache blocking="" eviction="" flushInterval="" readOnly="" size="" type=""/>-->
+    <!--<cache>
+        <property name="" value=""/>
+        <property name="" value=""/>
+    </cache>-->
+
+    <!--左外: 全查-->
+    <select id="findList" resultMap="account">
+        SELECT u.*, a.id AS aid, a.uid, a.money
+        FROM user u
+                 LEFT OUTER JOIN account a ON u.id = a.uid
+    </select>
+
+    <!--为 account 表和 对应的 javabean Account 定义映射
+        property: type 所表示的 JavaBean 的属性名(成员变量名)
+        column: 表中的字段名(查询语句定义的字段别名)
+    -->
+    <resultMap id="account" type="org.anonymous.domain.Account">
+        <!--primary key-->
+        <id property="id" column="aid"/>
+        <!--其他属性-->
+        <!--  typeHandler="" javaType="" jdbcType="" -->
+        <result property="uid" column="uid"/>
+        <result property="money" column="money"/>
+        <!--Account 中的 对象属性: User-->
+        <association property="user" javaType="org.anonymous.domain.User">
+            <!--user表的主键-->
+            <id property="id" column="id"/>
+            <!--其他属性-->
+            <result property="username" column="username"/>
+            <result property="sex" column="sex"/>
+            <result property="birthday" column="birthday"/>
+            <result property="address" column="address"/>
+        </association>
+    </resultMap>
+
+    <!--延迟加载-->
+    <!--查询所有账户信息
+        resultType : account 只查询账户信息
+         -> resultMap: 调用 accountLazy  查询所有账户信息的同时,延迟加载 用户信息
+    -->
+    <select id="findAccount" resultMap="accountLazy">
+        SELECT *
+        FROM account
+    </select>
+    <!--配置 account 中 关联对象 user 数据 的 延迟加载-->
+    <resultMap id="accountLazy" type="account">
+        <!--account 自己的映射-->
+        <id property="id" column="id"/>
+        <result property="uid" column="uid"/>
+        <result property="money" column="money"/>
+        <!--配置关联对象的映射 - 需要开启延迟加载的全局开关
+            association 标签的属性:
+                    property : Account 类中关联的 User 对象属性名
+                    javaType: property 对应的 javabean 的全限定名
+                    select : 延迟加载的 sql 引入 "namespace.id" (dao 接口的 全限定名.方法名)
+                    column : 由 select 引入的 sql 中需要的参数 对应的 字段名 (account 外键名: uid 对应 user 的主键 id)
+        -->
+        <association property="user" javaType="user" select="org.anonymous.dao.UserDao.findUserById" column="uid"/>
+
+    </resultMap>
+
+    <!--根据用户 id 查询所有账户: 被 user 引入-->
+    <select id="findAccountByUId" resultType="account" parameterType="int">
+        SELECT *
+        FROM account
+        WHERE uid = #{随便写也是用户的id}
+    </select>
+
+
+    <!-- batch insert -->
+    <!--   <insert id="insertAuthor" useGeneratedKeys="true" keyProperty="id">
+           insert into Author (username, password, email, bio) values
+           <foreach item="item" collection="list" separator=",">
+               (#{item.username}, #{item.password}, #{item.email}, #{item.bio})
+           </foreach>
+       </insert>-->
+
+    <!-- association 的用法. -->
+    <!-- case-1 -->
+    <!--   <resultMap id="blogResult" type="Blog">
+           <association property="author" column="author_id" javaType="Author" select="selectAuthor"/>
+       </resultMap>
+
+       <select id="selectBlog" resultMap="blogResult">
+           SELECT * FROM BLOG WHERE ID = #{id}
+       </select>
+
+       <select id="selectAuthor" resultType="Author">
+           SELECT * FROM AUTHOR WHERE ID = #{id}
+       </select>-->
+
+    <!-- case-2 -->
+    <!-- <resultMap id="blogResult" type="Blog">
+         <id property="id" column="blog_id" />
+         <result property="title" column="blog_title"/>
+         <association property="author" column="blog_author_id" javaType="Author" resultMap="authorResult"/>
+     </resultMap>
+
+     <resultMap id="authorResult" type="Author">
+         <id property="id" column="author_id"/>
+         <result property="username" column="author_username"/>
+         <result property="password" column="author_password"/>
+         <result property="email" column="author_email"/>
+         <result property="bio" column="author_bio"/>
+     </resultMap>-->
+
+    <!-- case-3 -->
+    <!--    <resultMap id="blogResult" type="Blog">
+            <id property="id" column="blog_id" />
+            <result property="title" column="blog_title"/>
+            <association property="author" javaType="Author">
+                <id property="id" column="author_id"/>
+                <result property="username" column="author_username"/>
+                <result property="password" column="author_password"/>
+                <result property="email" column="author_email"/>
+                <result property="bio" column="author_bio"/>
+            </association>
+        </resultMap>-->
+
+    <!-- collection -->
+    <!-- case-1 -->
+    <!--   <resultMap id="blogResult" type="Blog">
+           <id property="id" column="blog_id" />
+           <result property="title" column="blog_title"/>
+           <collection property="posts" ofType="Post">
+               <id property="id" column="post_id"/>
+               <result property="subject" column="post_subject"/>
+               <result property="body" column="post_body"/>
+           </collection>
+       </resultMap>-->
+    <!-- case-2 -->
+    <!--  <resultMap id="blogResult" type="Blog">
+          posts 是一个存储 Post 的 ArrayList 集合
+          <collection property="posts" javaType="ArrayList" column="id" ofType="Post" select="selectPostsForBlog"/>
+      </resultMap>
+
+      <select id="selectBlog" resultMap="blogResult">
+          SELECT * FROM BLOG WHERE ID = #{id}
+      </select>
+
+      <select id="selectPostsForBlog" resultType="Post">
+          SELECT * FROM POST WHERE BLOG_ID = #{id}
+      </select>-->
+
+    <!-- discriminator: 类似 switch -->
+
+    <!-- discriminator-case-1 -->
+    <!--  <resultMap id="vehicleResult" type="Vehicle">
+          <id property="id" column="id" />
+          <result property="vin" column="vin"/>
+          <result property="year" column="year"/>
+          <result property="make" column="make"/>
+          <result property="model" column="model"/>
+          <result property="color" column="color"/>
+          <discriminator javaType="int" column="vehicle_type">
+              <case value="1" resultMap="carResult"/>
+              <case value="2" resultMap="truckResult"/>
+              <case value="3" resultMap="vanResult"/>
+              <case value="4" resultMap="suvResult"/>
+          </discriminator>
+      </resultMap>-->
+
+    <!-- discriminator-case-2 -->
+    <!-- <resultMap id="vehicleResult" type="Vehicle">
+         <id property="id" column="id" />
+         <result property="vin" column="vin"/>
+         <result property="year" column="year"/>
+         <result property="make" column="make"/>
+         <result property="model" column="model"/>
+         <result property="color" column="color"/>
+         <discriminator javaType="int" column="vehicle_type">
+             <case value="1" resultType="carResult">
+                 <result property="doorCount" column="door_count" />
+             </case>
+             <case value="2" resultType="truckResult">
+                 <result property="boxSize" column="box_size" />
+                 <result property="extendedCab" column="extended_cab" />
+             </case>
+             <case value="3" resultType="vanResult">
+                 <result property="powerSlidingDoor" column="power_sliding_door" />
+             </case>
+             <case value="4" resultType="suvResult">
+                 <result property="allWheelDrive" column="all_wheel_drive" />
+             </case>
+         </discriminator>
+     </resultMap>-->
+
+</mapper>   

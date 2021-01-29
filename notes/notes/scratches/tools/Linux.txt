@@ -1,6 +1,179 @@
-package org.linux;
+Linux 脚本中的 $ 表示引用原有的 $ 后面的变量值, 如 $PATH 表示引用原有的 $PATH 环境变量值
+linux 中路径分隔符为 冒号(:)
+环境变量修改:
+  进入当前用户 home 路径, 环境变量文件为  .bash_profile
+  修改环境变量:
+  PATH=.:$PATH:$HOME/bin:/home/java/jdk1.8.xx/bin
+  运行 .bash_profile 文件的方式(任选其一):
+  1. 重新登录
+  2. 运行命令: source .bash_profile
 
 /**
+   $ uname: 内核版本 ($ uname --help)
+   $ pwd: print working directory
+   $ ls: list (指定目录或当前目录)
+        -a: linux 中以 "." 开头的文件/文件夹默认隐藏, -all 显示 "." 开头的文件/文件夹
+        -l: list, 列表形式展示
+        -h: human-readable, 必须与 -l 合用, 显示大小等信息
+        -R: recursive, 递归展示指定目录
+   $ cat: concatenate (指定拼合输出, 标准输出流, 参数化支持通配符)
+        -n: 显示行号
+   $ cd: change directory
+   双击 tab, 现实可用命令, ctrl + c 退出
+   $ whatis/whereis/which
+        whereis:
+          -b: binaries, 二进制文件位置
+          -m: manuals 手册位置
+          -s: sources 源码位置
+
+   ctrl + w: 退格一个单词
+   ctrl + <-/->: 向左/右一个单词
+   ctrl + a: ahead, 行头
+   ctrl + e: end, 行尾
+   ctrl + f: forward 下一页
+   ctrl + b: backward 上一页
+   ctrl + c: 忽略当前行
+   ctrl + u: 从光标位置开始, 删除左方所有的字符, 直到该行开始的位置
+   ctrl + k: 从光标位置开始, 删除右方所有的字符, 直到该行结束的位置
+   ctrl + d: 退出终端
+   vi:
+        输入 4G 光标移动到第 4 行
+        2 个 x, 删除两个字符
+   $ man: manual 手册
+   /关键字: 搜索
+   $ clear: 清屏 ctrl + l
+   ctrl + r: 搜索历史命令
+
+   dpkg: Debian Package
+   apt: advanced package tools
+   $ apt search linuxlogo  # 搜索源里有没有 linuxlogo 这个软件包
+   $ apt show linuxlogo  # 查看镜像站上对于此包的描述
+   $ apt install linuxlogo  # 下载此软件包
+   $ sudo apt install xxxx  # 当执行命令权限不足时, 添加 sudo 前缀, root 权限
+
+   figlet
+   $ figlet xxx: 艺术字符
+      -l: 左对齐
+      -c: center
+      -r: right
+      -f: fontfile  # 字体文件
+    $ sudo find /  -name "*.flf"   # 查找 figlet 字体, 文件名即表示字体
+    toilet
+    $ sudo apt install toilet  # 特殊字体
+    sl
+    $ sudo apt install sl
+      steam locomotive.
+      -l: 小火车
+      -F: 火车越飞越高
+      -e: 允许被 ctrl + c 打断
+    matrix
+     $ apt search matrix
+     $ apt show cmatrix
+     $ sudo apt install cmatrix
+     $ cmatrix
+        -b: bold 部分加粗,头部变色
+        -B: 全部加粗, 头部变色
+        -o: old-school 老式的
+        -s: screensaver 屏保
+        -u [number]: number 0-9, 时间间隔, 0 无间隔, 9 较慢
+        -C [color-name]: color, eg: -C blue
+    bb
+      $ apt show bb
+      $ apt search bb
+      $ sudo apt install bb
+      $ bb -loop  # 死循环
+      $ bb -driver stdout  # -driver 选择输出位置, stdout 在当前窗口, 有时要向上翻一下才能看见
+      $ bb -dim  # 昏暗
+   hollywood
+     $ apt show hollywood
+     $ apt search hollywood
+     $ sudo apt update  # 更新源
+     $ sudo apt install hollywood
+   $ dpkg --list  # 查看所有已安装软件包
+   $ sudo apt --installed  # 高级软件包管理
+   $ sudo apt list --upgradable  # 查看可升级的软件包
+   $ sudo apt list --all-versions --installed | grep firefox  # 通过 apt 工具查询 firefox 软件包信息
+   $ dpkg --list | grep firefox  # 通过 dpkg 查询 firefox 软件包信息
+   $ sudo apt update  # 更新本地软件源信息
+   $ sudo apt upgrade # 更新本地软件
+     # upgrade 会比较本地安装包的信息和已下载的源信息, 找出所有满足依赖条件的软件包安装
+     # 如果一个包依赖于某已经安装包的删除, 那这个包不会被安装
+   $ sudo apt full-upgrade
+     # 如果升级软件的时候依赖于删除现有的包, full-upgrade 可以先删除再安装
+   $ sudo apt autoremove
+     # 自动清理不再被需要的软件包
+   管理 apt 的软件: aptitude
+   $ sudo apt install aptitude
+    / 搜索
+    ? 帮助
+    q quit
+    g 预览/下载/安装/移除
+    u update
+    ctrl + t 调出菜单
+
+ cowsay
+     $ man cowsay # 查看手册
+        -b # borg mode 极简主义
+        -d # dead 死亡装填
+        -g # greedy 贪婪金钱
+        -p # paranoia 偏执狂
+        -s # stone 石化
+        -w # wired 紧张睁大眼
+        -t # 闭眼
+        -e # 设置眼睛 eye 字符, 后跟眼睛字符
+ cowthink  # 类似 cowsay
+ cowsay -l # 列出所有动物
+    $ cowsay -f dragon message  # dragon 形状
+
+ 管道:
+    figlet "oeasy" | cowsay -f moose -n
+    toilet --gay oeasy | cowthink -n   # -n 回车相关
+ boxes  字符画
+   $ sudo apt install boxes
+   $ figlet oeasy | boxes -d peek -pa2t0b0 watch -n1 "date '+%D%n%T' | figlet -k | boxes -a c -s 59 -d cat"
+
+ 中文输入法
+    $ sudo apt install fcitx
+    $ sudo dpkg -i sougoupinyin_xxx_amd64.deb   # 安装 debian package
+    $ sudo apt-get -f install    # 如果存在冲突, 进行修复或删除
+    $ sudo reboot   # 重启
+
+ aview
+  $ sudo apt install aview
+  $ sudo apt install imagemagick
+    # aview 只支持专门的格式
+  $ asciiview panda.jpg
+
+fortune 讲笑话
+   $ sudo apt install fortune
+   $ fortune | cowsay
+  # 中文  fortune
+   $ apt search fortune chinese
+   $ sudo apt install fortune-zh
+   $ fortune-zh
+
+oneko  小猫
+   $ sudo apt install oneko
+   $ oneko
+xeyes
+   $ sudo apt install xeyes
+   $ xeyes
+
+firefox
+   $ firefox -v  # version
+   $ apt search firefox
+   $ sudo apt upgrade
+nautilus
+   $ sudo apt update
+   $ sudo apt install nautilus
+   $ nautilus .  # 打开当前路径
+   $ nautilus /etc # 打开根目录下的 etc 文件夹
+GUI
+   $ echo $DESKTOP_SESSION  # 查看当前 gui
+
+
+
+
  * xshell 传输文件:
  *
  * yum安装lrzsz工具：其命令为：yum -y install lrzsz

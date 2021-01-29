@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author MiaoOne
  * @since 2020/1/5 13:22
+ * 1. 启动 admin-server, 访问进入 admin 管理界面
+ * 2. 启动 client, 可在 admin-server 界面看到相关信息
  */
 @SpringBootApplication
 @EnableAdminServer

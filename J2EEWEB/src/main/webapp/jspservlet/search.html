@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>网上书店</title>
+
+	<script>
+        function fsubmit() {
+            if (searchForm.rcond[0].checked) {
+                searchForm.action = 'search?cond=all';
+            } else if (searchForm.rcond[1].checked) {
+                searchForm.action = 'search?cond=precision';
+            } else if (searchForm.rcond[2].checked) {
+                searchForm.action = '/search?cond=keyword';
+            } /*else {
+                alert("请选择搜索项.");
+            }*/
+        }
+
+        function hideAll() {
+            if (searchForm.rcond[0].checked) {
+                pre.style.display = 'none';
+                key.style.display = 'none';
+            }
+        }
+
+        function showPre() {
+            if (searchForm.rcond[1].checked) {
+                pre.style.display = '';
+                key.style.display = 'none';
+            } else {
+                pre.style.display = 'none';
+            }
+        }
+
+        function showKey() {
+            if (searchForm.rcond[2].checked) {
+                key.style.display = '';
+                pre.style.display = 'none';
+            }
+        }
+	</script>
+</head>
+<form action="" method="post" name="searchForm" onclick="fsubmit()">
+
+	<label>
+		<input name="rcond" onclick="hideAll()" type="radio">
+	</label>查看所有图书 <p></p>
+	<label>
+		<input name="rcond" onclick="showPre()" type="radio">
+	</label>精确搜索 <p></p>
+	<table id="pre" style="display: none">
+		<tr>
+			<td>书名:</td>
+			<td>
+				<label>
+					<input name="title" type="text">
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<td>作者:</td>
+			<td>
+				<label>
+					<input name="author" type="text">
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<td>出版社:</td>
+			<td>
+				<label>
+					<input name="bookconcern" type="text">
+				</label>
+			</td>
+		</tr>
+	</table>
+	<p></p>
+	<label>
+		<input name="rcond" onclick="showKey()" type="radio">
+	</label>关键字搜索 <p></p>
+	<table id="key" style="display: none">
+		<tr>
+			<td>请输入关键字:</td>
+			<td>
+				<label>
+					<input name="keyword" type="text">
+				</label>
+			</td>
+		</tr>
+	</table>
+	<p></p>
+
+	<input type="reset" value="重新输入">
+	<input type="submit" value="搜索">
+
+</form>
+
+
+<body>
+
+</body>
+</html>

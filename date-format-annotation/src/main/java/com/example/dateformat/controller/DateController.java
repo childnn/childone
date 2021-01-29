@@ -29,7 +29,6 @@ public class DateController {
      *
      * @param entity com.example.mybatispluschild.entity
      * @return 返回的日期格式不是格式化过的, 还是 {@link Date} 的默认格式
-     *
      * @see DateTimeFormat 只负责 入参 字符串转化为 {@code Date} 类型
      */
     @GetMapping("test")
@@ -42,10 +41,9 @@ public class DateController {
     /**
      * @param vo vo
      * @return 返回的是格式化过的 {@code Date}
-     *
      * @see JsonFormat#pattern()  将 {@link Date} 格式化为指定的 格式 输出
      */
-//    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    //    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @RequestMapping("vo")
     public DateVo date(DateVo vo) {
         System.out.println("vo = " + vo);
@@ -70,5 +68,11 @@ public class DateController {
     public ListDate list(ListDate list) {
         list.getDateList().forEach(System.err::println);
         return list;
+    }
+
+    @GetMapping("websocket")
+    public String ws(String msg) {
+        System.out.println(msg);
+        return "Hello World";
     }
 }

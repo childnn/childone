@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="../lib/js/jquery-3.3.1.min.js"></script>
+	<script>
+        $(document).ready(function () {
+            $("#btn1").click(function () {
+                $("#test1").text("Hello world!");
+            });
+            $("#btn2").click(function () {
+                $("#test2").html("<b>Hello world!</b>");
+            });
+            $("#btn3").click(function () {
+                $("#test3").val("Dolly Duck");
+            });
+            $("#btn4").click(function () {
+                $("#w3s").attr("href", "http://www.w3school.com.cn/jquery").text('http://www.w3school.com.cn/jquery');
+            });
+            $("#btn5").click(function () {
+                $("#w3s1").attr({
+                    "href": "http://www.w3school.com.cn/jquery/",
+                    "title": "W3School jQuery 教程" // <a> 标签的 title 值.
+                });
+            });
+            // -----------
+            // 回调函数由两个参数：被选元素列表中当前元素的下标，以及原始（旧的）值。然后以函数新值返回您希望使用的字符串。
+            $("#btn6").click(function () {
+                $("#w3s2").attr("href", function (i, origValue) {
+                    return origValue + "/jquery";
+                });
+            });
+
+        });
+	</script>
+</head>
+<body>
+
+<p id="test1">这是段落。</p>
+<p id="test2">这是另一个段落。</p>
+<p>Input field: <input id="test3" type="text" value="Mickey Mouse"></p>
+<button id="btn1">设置文本</button>
+<button id="btn2">设置 HTML</button>
+<button id="btn3">设置值</button>
+<hr/>
+<p><a href="http://www.w3school.com.cn" id="w3s">W3School.com.cn</a></p>
+<button id="btn4">改变 href 值</button>
+<p>请把鼠标指针移动到链接上，或者点击该链接，来查看已经改变的 href 值。</p>
+
+<hr/>
+<p><a href="http://www.w3school.com.cn" id="w3s1">W3School.com.cn</a></p>
+<button id="btn5">改变 href 和 title 值</button>
+<p>请把鼠标指针移动到链接上，或者点击该链接，来查看已经改变的 href 值和已经设置的 title 值。</p>
+
+<hr/>
+<p><a href="http://www.w3school.com.cn" id="w3s2">w3school.com.cn</a></p>
+<button id="btn6">改变 href 值</button>
+<p>请把鼠标指针移动到链接上，或者点击该链接，来查看已经改变的 href 值。</p>
+
+</body>
+</html>
