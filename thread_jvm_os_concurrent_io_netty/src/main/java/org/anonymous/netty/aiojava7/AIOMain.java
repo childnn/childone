@@ -50,6 +50,15 @@ package org.anonymous.netty.aiojava7;
  * BIO, NIO 的非阻塞形式 都属于 同步 IO!!!
  */
 public class AIOMain {
-
-
+    private AIOMain instance;
+    public AIOMain newInstance() {
+        if (instance == null) {
+            synchronized (AIOMain.class) {
+                if (instance == null) {
+                    instance = new AIOMain();
+                }
+            }
+        }
+        return instance;
+    }
 }

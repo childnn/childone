@@ -23,6 +23,7 @@ import static com.rabbitmq.client.ConnectionFactory.DEFAULT_VHOST;
  *
  * @author MiaoOne
  * @since 2019/11/12 16:16
+ * direct 模式必须先启动 consumer 吗?
  */
 public class DirectTest {
 

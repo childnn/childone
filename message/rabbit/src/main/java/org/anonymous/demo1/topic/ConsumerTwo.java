@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
+import static org.anonymous.demo1.topic.TopicProducer.QUEUE_TOPIC_2;
+
 public class ConsumerTwo {
 
     /***
      * 订阅模式消息消费者-Topic
-     * @param args
      */
     public static void main(String[] args) throws IOException, TimeoutException {
         //创建链接对象
@@ -28,7 +29,7 @@ public class ConsumerTwo {
          * 参数4：是否在不使用的时候自动删除队列
          * 参数5：队列其它参数
          */
-        channel.queueDeclare("topic_queue_2", true, false, false, null);
+        channel.queueDeclare(QUEUE_TOPIC_2, true, false, false, null);
 
         //创建消费者；并设置消息处理
         DefaultConsumer defaultConsumer = new DefaultConsumer(channel) {
@@ -46,7 +47,7 @@ public class ConsumerTwo {
         };
 
         //消息监听
-        channel.basicConsume("topic_queue_2", true, defaultConsumer);
+        channel.basicConsume(QUEUE_TOPIC_2, true, defaultConsumer);
 
         //关闭资源
         //channel.close();

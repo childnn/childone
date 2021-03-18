@@ -11,10 +11,126 @@
 	id: 接口调用方法的 方法名
  -->
 <mapper namespace="org.anonymous.dao.ContactDao">
+
+    <cache type="" size="" readOnly="" flushInterval="" eviction="" blocking="">
+        <!-- org.apache.ibatis.mapping.CacheBuilder.setCacheProperties -->
+        <property name="" value=""/>
+    </cache>
+    <!-- 引入其他 xml/mapper.class 的 cache -->
+    <cache-ref namespace=""/>
+
+    <sql id="" databaseId="" lang="" >
+        # 参考示例 ssm.SSM_Mybatis 中的笔记.
+        # override 表示移除紧跟 prefix/suffix 之前/之后的一个 关键字.
+        <trim prefix="where" prefixOverrides="AND | OR" suffix="group by" suffixOverrides="">
+            # 可以写 sql 标签中的所有标签
+        </trim>
+        # case...default
+        <choose>
+            <when test="">
+
+            </when>
+            <when test="">
+
+            </when>
+            <otherwise>
+
+            </otherwise>
+        </choose>
+         # 引入其他 sql
+        <include refid="">
+            <property name="" value=""/>
+        </include>
+        <where>
+           # &lt;!ELEMENT where (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
+        </where>
+        <foreach collection="" index="" close="" item="" open="" separator="">
+            # &lt;!ELEMENT foreach (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
+        </foreach>
+        <bind value="" name=""/>
+
+    </sql>
+
+
     <!-- select 查询 -->
-    <select id="findAll" resultType="org.anonymous.domain.Contact">
+    <select id="findAll" resultType="org.anonymous.domain.Contact"
+            useCache="" flushCache="" statementType="PREPARED" parameterMap="" lang=""
+            resultMap="" databaseId="" fetchSize="" parameterType="" resultOrdered=""
+            resultSets="" resultSetType="" timeout="">
         SELECT *
         FROM contact
     </select>
+    <insert id="" flushCache="" parameterMap="" statementType="" lang="" parameterType=""
+        timeout="" databaseId="" keyColumn="" keyProperty="" useGeneratedKeys="">
+        <selectKey keyColumn="" keyProperty="" databaseId=""
+            statementType="" resultType="" order="">
+            /* DB 相关的生成 id 的 sql */
+            select last_insert_id(); /* mysql */
+            SELECT SEQ_USER.NEXTVAL as userId from DUAL; /* Oracle */
+        </selectKey>
+        <set></set>
+        <choose>
+            <when test=""></when>
+            <otherwise></otherwise>
+        </choose>
+        <foreach collection="" separator=""></foreach>
+    </insert>
+    <delete id="" flushCache="" databaseId="" timeout=""
+            parameterType="" lang="" parameterMap="" statementType="">
+        <set></set>
+        <choose>
+            <when test=""></when>
+            <otherwise></otherwise>
+        </choose>
+        <foreach collection=""></foreach>
+        <include refid=""></include>
+    </delete>
+    <update id="" flushCache="" statementType="" parameterMap="" lang="" parameterType=""
+        timeout="" databaseId="" useGeneratedKeys="" keyProperty="" keyColumn="">
+        <selectKey></selectKey>
+        <include refid=""></include>
+        <foreach collection=""></foreach>
+        <choose>
+            <when test=""></when>
+            <otherwise></otherwise>
+        </choose>
+        <trim></trim>
+        <where></where>
+    </update>
+
+
+    <parameterMap id="" type="map">
+        <parameter property="" javaType="" typeHandler="" jdbcType="" mode="" resultMap="" scale=""/>
+    </parameterMap>
+
+    <resultMap id="" type="map" autoMapping="" extends="">
+        <id jdbcType="" typeHandler="" javaType="" property="" column=""/>
+        <association property="" column="" javaType="" typeHandler="" jdbcType=""
+                     resultMap="" autoMapping="" columnPrefix="" fetchType=""
+                     foreignColumn="" notNullColumn="" resultSet="" select=""/>
+        <result jdbcType="" typeHandler="" javaType="" column="" property=""/>
+        <constructor>
+            <arg column="" javaType="" typeHandler="" jdbcType=""
+                 select="" columnPrefix="" resultMap="" name=""/>
+            <idArg name="" resultMap="" columnPrefix="" select=""
+                   jdbcType="" typeHandler="" javaType="" column=""/>
+        </constructor>
+        <collection property="" column="" javaType="" typeHandler=""
+                    jdbcType="" select="" columnPrefix="" resultMap=""
+                    resultSet="" notNullColumn="" foreignColumn=""
+                    fetchType="" autoMapping="" ofType=""/>
+        <discriminator javaType="">
+            <case value="" resultMap="" resultType="">
+                <!--  case (constructor?,id*,result*,association*,collection*, discriminator?) -->
+                <discriminator javaType="">
+                    <case value=""></case>
+                </discriminator>
+                <!-- ... -->
+            </case>
+        </discriminator>
+    </resultMap>
+
+
+
 
 </mapper>

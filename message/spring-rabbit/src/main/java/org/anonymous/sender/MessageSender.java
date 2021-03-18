@@ -25,7 +25,8 @@ public class MessageSender {
     public void send(Object msg) {
         // 参数一: 交换器名称.
         // 参数二: 路由 key.
-        rabbitTemplate.convertAndSend(EXCHANGE_NAME_OF_DELAYED_MESSAGE, ROUTING_KEY_OF_DELAYED_MESSAGE, msg, message -> {
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME_OF_DELAYED_MESSAGE,
+                ROUTING_KEY_OF_DELAYED_MESSAGE, msg, message -> {
             System.out.println("消息发送时间: " + LocalDateTime.now());
             byte[] body = message.getBody();
             System.out.println("msg = " + new String(body, StandardCharsets.UTF_8));

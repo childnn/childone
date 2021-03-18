@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,6 +14,18 @@
     </properties>
 
     <dependencies>
+
+
+
+
+        <!-- graphql -->
+        <!-- https://mvnrepository.com/artifact/com.graphql-java/graphql-java -->
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java</artifactId>
+            <version>2021-02-28T11-48-01-dc2cdda7</version>
+        </dependency>
+
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>catalina</artifactId>
@@ -38,39 +50,6 @@
             <artifactId>emoji-java</artifactId>
             <version>5.1.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
-
-
-        <!-- apache - begin -->
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
-        <!-- Apache Commons Text is a library focused on algorithms working on strings. -->
-
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
-        <!-- The Apache Commons Object Pooling Library. -->
-
-
-        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
-        <!-- Apache Commons BeanUtils provides an easy-to-use but flexible wrapper around reflection and introspection. -->
-
-
-        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-        <!-- The Apache Commons Codec package contains simple encoder and decoders
-        for various formats such as Base64 and Hexadecimal.
-        In addition to these widely used encoders and decoders,
-        the codec package also maintains a collection of phonetic encoding utilities.-->
-
-
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-        <!-- The Apache Commons IO library contains utility classes,
-        stream implementations, file filters, file comparators, endian transformation classes, and much more. -->
-
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-        <!-- Apache Commons Lang, a package of Java utility classes
-        for the classes that are in java.lang's hierarchy,
-        or are considered to be so standard as to justify existence in java.lang. -->
-
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
         <!-- The Apache Commons Collections package contains types that extend and augment the Java Collections Framework. -->
@@ -91,13 +70,6 @@
         </dependency>
 
         <!-- apache - end -->
-
-        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
-
-
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-
-
         <!-- 经纬度 -->
         <!-- https://mvnrepository.com/artifact/org.gavaghan/geodesy -->
         <dependency>
@@ -128,8 +100,6 @@
             <version>2.2.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
-
 
         <!-- https://mvnrepository.com/artifact/org.joda/joda-money -->
         <dependency>
@@ -137,9 +107,6 @@
             <artifactId>joda-money</artifactId>
             <version>1.0.1</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -158,7 +125,6 @@
             <artifactId>commons-text</artifactId>
             <version>1.9</version>
         </dependency>
-
 
         <dependency>
             <groupId>commons-codec</groupId>

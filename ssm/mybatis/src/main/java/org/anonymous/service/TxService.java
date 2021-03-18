@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -42,9 +41,11 @@ public class TxService implements ApplicationContextAware {
      * sqlSession.commit(true);
      * }
      */
-    @Transactional
+    // @Transactional
     public void execute() {
         // UserDao mapper = ctx.getBean(UserDao.class);
+        // 如果不开启事务, 每次执行方法后都会 commit, 即关闭当前的 SqlSession, 每次都重新获取 SqlSession.
+        // 因此一级缓存立即失效.
         User u1 = mapper.findById(1);
         System.err.println(u1);
         User u2 = mapper.findById(1);

@@ -1,0 +1,14 @@
+server:
+  port: 50060
+spring:
+  application:
+    name: spring-cloud-alibaba-service-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8888
+#        group: discovery_group
+#        namespace: 2607931d-fa37-4743-81b5-ebdc39781c54
+logging:
+  level:
+    root: info

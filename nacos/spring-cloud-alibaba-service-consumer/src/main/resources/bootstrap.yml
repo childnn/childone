@@ -1,0 +1,10 @@
+server:
+  port: 50061
+spring:
+  application:
+    name: spring-cloud-alibaba-service-consumer
+  cloud:
+    nacos:
+      discovery:
+        # 集群启动多个 nacos 注册中心会有问题
+        server-addr: localhost:8888,localhost:8858

@@ -33,7 +33,7 @@ public class WorkProducer {
         channel.queueDeclare("work_queue", true, false, false, null);
 
         //创建消息
-        String message = "hello!welcome to itheima!";
+        String message = "hello!welcome to AMQP-RabbitMQ!";
 
         /**
          * 消息发送

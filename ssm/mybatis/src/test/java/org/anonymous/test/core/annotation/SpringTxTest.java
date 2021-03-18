@@ -9,11 +9,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
  * @author MiaoOne
- * @see org.anonymous.se.Demo
+ * @since 2020/12/15 8:29
+ * 正确方式参见:
+ * @see MyBatisSpring
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.transaction.TransactionalTestExecutionListener
- * @since 2020/12/15 8:29
- * 正确方式:
  */
 public class SpringTxTest {
 

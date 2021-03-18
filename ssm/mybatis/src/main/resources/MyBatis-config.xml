@@ -48,6 +48,9 @@
     <reflectorFactory type=""/>
 
     <plugins>
+        <plugin interceptor="">
+            <property name="" value=""/>
+        </plugin>
         <plugin interceptor=""/>
     </plugins>
 
@@ -58,8 +61,15 @@
         </environment>
     </environments>
 
+    <!-- 如果在同一项目涉及不同的数据库, 则 可以配置多个 SqlMapConfig.xml
+     一个 SqlMapConfig.xml 只能设置一个 databaseIdProvider
+     -->
+    <!-- org.apache.ibatis.builder.xml.XMLConfigBuilder.databaseIdProviderElement -->
+    <!--<databaseIdProvider type="org.apache.ibatis.mapping.VendorDatabaseIdProvider"/>-->
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="MySql" value="mysqlDBId"/>
+    </databaseIdProvider>
 
-    <databaseIdProvider type=""/>
 
     <mappers>
         <package name=""/>

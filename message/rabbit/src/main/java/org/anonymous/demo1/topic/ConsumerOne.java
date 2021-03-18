@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
+import static org.anonymous.demo1.topic.TopicProducer.QUEUE_TOPIC_1;
+
 public class ConsumerOne {
 
     /***
      * 订阅模式消息消费者-Topic
-     * @param args
      */
     public static void main(String[] args) throws IOException, TimeoutException {
         //创建链接对象
@@ -28,12 +29,13 @@ public class ConsumerOne {
          * 参数4：是否在不使用的时候自动删除队列
          * 参数5：队列其它参数
          */
-        channel.queueDeclare("topic_queue_1", true, false, false, null);
+        channel.queueDeclare(QUEUE_TOPIC_1, true, false, false, null);
 
         //创建消费者；并设置消息处理
         DefaultConsumer defaultConsumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                // System.out.println(channel.);
                 //路由key
                 System.out.println("路由key为：" + envelope.getRoutingKey());
                 //交换机
@@ -46,7 +48,7 @@ public class ConsumerOne {
         };
 
         //消息监听
-        channel.basicConsume("topic_queue_1", true, defaultConsumer);
+        channel.basicConsume(QUEUE_TOPIC_1, true, defaultConsumer);
 
         //关闭资源
         //channel.close();

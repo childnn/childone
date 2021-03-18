@@ -17,8 +17,11 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * 长连接
+ * @see org.anonymous.netty.ChatServer
  */
 public class MyServer {
+
+
     public static void main(String[] args) throws Exception {
 
         //创建两个线程组

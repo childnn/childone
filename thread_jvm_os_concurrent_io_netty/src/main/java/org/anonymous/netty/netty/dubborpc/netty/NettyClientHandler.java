@@ -20,7 +20,6 @@ public class NettyClientHandler extends /*ChannelHandlerAdapter*/ ChannelInbound
     }
 
     //收到服务器的数据后，调用方法 (4)
-    //
     @Override
     public synchronized void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println(" channelRead 被调用  ");

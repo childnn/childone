@@ -8,6 +8,8 @@ import org.apache.ibatis.executor.SimpleExecutor;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -15,13 +17,17 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.TransactionIsolationLevel;
 import org.apache.ibatis.transaction.Transaction;
+import org.apache.ibatis.type.TypeAliasRegistry;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -70,12 +76,64 @@ public class ExecutorTest {
         // org.apache.ibatis.builder.xml.XMLConfigBuilder.environmentsElement
         // org.apache.ibatis.builder.xml.XMLConfigBuilder.transactionManagerElement
         tx = config.getEnvironment().getTransactionFactory()
-                .newTransaction(config.getEnvironment().getDataSource(), TransactionIsolationLevel.READ_COMMITTED, false); // autoCommit 默认 false
+                .newTransaction(config.getEnvironment().getDataSource(),
+                        TransactionIsolationLevel.READ_COMMITTED,
+                        false); // autoCommit 默认 false
     }
 
     @Test
+    public void config() {
+
+        Map<String, ParameterMap> parameterMaps = new HashMap<>();
+
+        final Collection<String> parameterMapNames = config.getParameterMapNames();
+        final Collection<ParameterMap> maps = config.getParameterMaps();
+
+        System.out.println("ParameterMaps....");
+        parameterMapNames.forEach(id -> {
+            maps.forEach(m -> {
+                if (m.getId().equals(id)) {
+                    parameterMaps.put(id, m);
+                }
+            });
+        });
+        parameterMaps.forEach((k, v) -> System.out.println(k + ": " + v.getParameterMappings()));
+
+        System.out.println("ResultMap...");
+
+
+        Map<String, ResultMap> resultMapMap = new HashMap<>();
+        final Collection<String> resultMapNames = config.getResultMapNames();
+        final Collection<ResultMap> resultMaps = config.getResultMaps();
+        resultMapNames.forEach(k -> resultMaps.stream().filter(v -> v.getId().equals(k)).findAny().ifPresent(v -> resultMapMap.put(k, v)));
+
+        resultMapMap.forEach((k, v) -> {
+            System.out.println("k = " + k);
+            System.out.println("v.getIdResultMappings() = " + v.getIdResultMappings());
+            System.out.println("v.getConstructorResultMappings() = " + v.getConstructorResultMappings());
+            System.out.println("v.getResultMappings() = " + v.getResultMappings());
+            System.out.println("v.getPropertyResultMappings() = " + v.getPropertyResultMappings());
+            System.out.println();
+        });
+
+        System.out.println("TypeHandler...");
+        final TypeHandlerRegistry typeHandlerRegistry = config.getTypeHandlerRegistry();
+        typeHandlerRegistry.getTypeHandlers().forEach(System.out::println);
+
+        System.out.println("TypeAlias...");
+        final TypeAliasRegistry typeAliasRegistry = config.getTypeAliasRegistry();
+        typeAliasRegistry.getTypeAliases().forEach((k, v) -> System.out.println(k + ": " + v));
+
+    }
+
+    /**
+     * @see #reuseExecutor()
+     */
+    @Test
     public void simpleExecutor() throws SQLException {
         SimpleExecutor se = new SimpleExecutor(config, tx);
+        // ExecutorType executorType = ExecutorType.SIMPLE;
+        // BaseExecutor se = config.newExecutor(tx, executorType);
 
         MappedStatement ms = config.getMappedStatement("org.anonymous.dao.annotation.UserDao.findById");
         Object param = 1;
@@ -93,6 +151,7 @@ public class ExecutorTest {
     }
 
     /**
+     * @see #simpleExecutor()
      * 相同的 sql, 单次预编译
      *
      * @see org.apache.ibatis.executor.ReuseExecutor#prepareStatement(org.apache.ibatis.executor.statement.StatementHandler, org.apache.ibatis.logging.Log)
@@ -111,7 +170,7 @@ public class ExecutorTest {
         System.out.println("bs.getParameterMappings() = " + bs.getParameterMappings());
         System.out.println("bs.getParameterObject() = " + bs.getParameterObject());
 
-        // sql 重用. 但查询结果非同一个对象
+        // sql 重用. 但查询结果非同一个对象. 并没有缓存
         List<Object> list = re.doQuery(ms, param, rb, rh, bs);
         List<Object> list1 = re.doQuery(ms, param, rb, rh, bs);
         System.out.println(list.get(0) == list1.get(0));

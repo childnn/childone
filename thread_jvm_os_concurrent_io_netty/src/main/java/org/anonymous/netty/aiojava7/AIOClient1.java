@@ -63,6 +63,7 @@ public class AIOClient1 {
             public void failed(Throwable exc, String attachment) {
                 throw new RuntimeException(exc);
             }
+
         });
     }
 
@@ -75,8 +76,9 @@ public class AIOClient1 {
 
         future.get(); // 阻塞 等待结果
         // if (future.isDone()) { // 不能使用 if, 否则 未结束则直接跳过, 不会有输出
-        final Future<Integer> read = client.read(buf);
+        final Future<Integer> read = client.read(buf); // 异步: 实际的 IO 交给操作系统完成, 完毕后操作系统通知源程序.
 
+        // read 本身是 non-blocking, 但 Future.get() block
         read.get(); // 阻塞
         // if (read.isDone()) {
         buf.flip();

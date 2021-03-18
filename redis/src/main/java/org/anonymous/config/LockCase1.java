@@ -10,6 +10,7 @@ import redis.clients.jedis.params.SetParams;
  * @since 2019/12/10 13:49
  */
 public class LockCase1 extends RedisLock {
+
     public LockCase1(Jedis jedis, String key) {
         super(jedis, key);
     }
@@ -34,6 +35,5 @@ public class LockCase1 extends RedisLock {
         Jedis jedis = new Jedis();
         LockCase1 lock = new LockCase1(jedis, "lockName");
         lock.lock();
-
     }
 }

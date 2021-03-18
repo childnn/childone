@@ -198,7 +198,7 @@
             <param name="" value=""/>
         </level>-->
         <level value="TRACE"/>
-        <appender-ref ref="fileAppender"/>
+        <!--<appender-ref ref="fileAppender"/>-->
         <appender-ref ref="console"/>
 
     </logger>

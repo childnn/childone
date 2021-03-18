@@ -94,7 +94,13 @@
         ofType: 集合泛型
         -->
         <collection property="accounts" javaType="list" ofType="account"
-                    select="org.anonymous.dao.AccountDao.findAccountByUId" column="id"/>
+                    select="org.anonymous.dao.AccountDao.findAccountByUId" column="id" fetchType="lazy"/>
     </resultMap>
+
+    <parameterMap id="userParamMap" type="user">
+        <parameter property="id"/>
+        <!-- org.apache.ibatis.mapping.ParameterMapping.Builder.validate -->
+        <parameter property="accounts" resultMap="account" javaType="java.sql.ResultSet"/>
+    </parameterMap>
 
 </mapper>

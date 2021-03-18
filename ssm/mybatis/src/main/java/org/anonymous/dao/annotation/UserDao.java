@@ -1,5 +1,6 @@
 package org.anonymous.dao.annotation;
 
+import org.anonymous.config.mybatis.spring.annotation.MyMapper;
 import org.anonymous.domain.User;
 import org.anonymous.util.SqlUtils;
 import org.apache.ibatis.annotations.CacheNamespace;
@@ -25,9 +26,11 @@ import java.util.Map;
  * 二级缓存全局配置 SqlMapConfig.xml - <setting name="cacheEnabled" value="true"/> 默认开启
  * @see org.apache.ibatis.annotations.CacheNamespace 配置 Mapper 级别的二级缓存, 需要手动加
  * @see org.apache.ibatis.annotations.Options#useCache() 配置方法级别的二级缓存, 默认开启
- * @see org.apache.ibatis.annotations.Options.FlushCachePolicy#TRUE 强制刷新一级缓存
+ * @see org.apache.ibatis.annotations.Options.FlushCachePolicy#TRUE 强制刷新二级缓存
  */
-@CacheNamespace // 二级缓存
+// 这里指定的 implementation 属性, 如果自定义 cache, 必须存在 id 参数的构造.
+@CacheNamespace // 二级缓存: 对应 mapper.xml 中的 <cache/> 标签.
+@MyMapper // @org.apache.ibatis.annotations.Mapper,
 public interface UserDao {
 
     //-------------------------------------------------------------------------------------------
@@ -44,6 +47,7 @@ public interface UserDao {
      * @param ids
      * @return
      */
+    // @SelectProvider(type = SqlUtils.class, method = "selectSql") // 测试 @SelectProvider/@Select 重复使用时报错
     // @Select("select * from user where id in (${_parameter})")
     @Select("select * from user, (select * from user where id in (${ids})) t where t.id in (${param1})")
     // Parameter 'aaa' not found. Available parameters are [ids, param1]
@@ -92,7 +96,7 @@ public interface UserDao {
      * 1. mapper: <select flushCache="true"/> 刷新一级缓存
      * 2. config: <setting name="localCacheScope" value="STATEMENT"/>
      * 注解: flushCache = Options.FlushCachePolicy.TRUE 刷新一级缓存
-     *
+     * @see org.apache.ibatis.annotations.Options
      * @see org.apache.ibatis.builder.xml.XMLStatementBuilder#parseStatementNode()
      */
     // @Options(useCache = true, flushCache = Options.FlushCachePolicy.TRUE)

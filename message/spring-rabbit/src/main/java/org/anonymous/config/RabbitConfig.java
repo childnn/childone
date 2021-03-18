@@ -36,7 +36,8 @@ public class RabbitConfig {
     public CustomExchange delayExchange() {
         // 参数一: 交换器名称. 自定义.
         // 参数二: 交换器类型. 固定.
-        return new CustomExchange(EXCHANGE_NAME_OF_DELAYED_MESSAGE, EXCHANGE_TYPE_OF_DELAYED_MESSAGE, true, false,
+        return new CustomExchange(EXCHANGE_NAME_OF_DELAYED_MESSAGE,
+                EXCHANGE_TYPE_OF_DELAYED_MESSAGE, true, false,
                 Collections.singletonMap("x-delayed-type", "direct"));
     }
 

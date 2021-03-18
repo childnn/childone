@@ -44,7 +44,7 @@ public class RouteKeyProducer {
         channel.queueBind("direct_queue_update", "direct_exchange", "update");
 
         //消息-direct_queue_insert
-        String message_insert = "发布订阅模式-RouteKey-Insert:欢迎来到传深圳黑马训练营程序员中心！";
+        String message_insert = "发布订阅模式-RouteKey-Insert:欢迎来到AMQP-RabitMQ！";
         /**
          * 消息发送
          * 参数1：交换机名称，如果没有指定则使用默认Default Exchage
@@ -55,7 +55,7 @@ public class RouteKeyProducer {
         channel.basicPublish("direct_exchange", "insert", null, message_insert.getBytes());
 
         //消息-direct_queue_update
-        String message_update = "发布订阅模式-RouteKey-Update:欢迎来到传深圳黑马训练营程序员中心！";
+        String message_update = "发布订阅模式-RouteKey-Update:欢迎来到AMQP-RabitMQ！";
         channel.basicPublish("direct_exchange", "update", null, message_update.getBytes());
 
         //关闭资源

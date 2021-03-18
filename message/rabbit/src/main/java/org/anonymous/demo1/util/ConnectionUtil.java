@@ -19,22 +19,21 @@ public class ConnectionUtil {
         ConnectionFactory connectionFactory = new ConnectionFactory();
 
         //设置RabbitMQ服务主机地址,默认localhost
-        connectionFactory.setHost("localhost");
+        connectionFactory.setHost(ConnectionFactory.DEFAULT_HOST);
 
         //设置RabbitMQ服务端口,默认5672
-        connectionFactory.setPort(5672);
+        connectionFactory.setPort(ConnectionFactory.DEFAULT_AMQP_PORT);
 
         //设置虚拟主机名字，默认/
-        connectionFactory.setVirtualHost("/szitheima");
+        connectionFactory.setVirtualHost(ConnectionFactory.DEFAULT_VHOST);
 
         //设置用户连接名，默认guest
-        connectionFactory.setUsername("admin");
+        connectionFactory.setUsername(ConnectionFactory.DEFAULT_USER);
 
         //设置链接密码，默认guest
-        connectionFactory.setPassword("admin");
+        connectionFactory.setPassword(ConnectionFactory.DEFAULT_PASS);
 
         //创建链接
-        Connection connection = connectionFactory.newConnection();
-        return connection;
+        return connectionFactory.newConnection();
     }
 }
