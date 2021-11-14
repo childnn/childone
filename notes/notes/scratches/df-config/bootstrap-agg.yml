@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: agg-jianchagl
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        #                refreshable-dataids: agg-common.yaml
+        server-addr: 192.168.1.213:8848
+        #                shared-dataids: agg-common.yaml
+        namespace: child
+        shared-configs:
+          - data-id: mic-common.yaml
+            refresh: true
+
+logging:
+  level:
+    com.alibaba.cloud.nacos.client.NacosPropertySourceBuilder: trace
+    org.springframework.web.servlet.DispatcherServlet: trace
+#        org.hibernate.type.descriptor.sql.BasicBinder: trace
+#        org.hibernate.SQL: debug
+
+#springfox:
+#  documentation:
+#    swagger:
+#      v2:
+#        host: localhost:${server.port}
+#        basePath: /
+#        path: /swagger.json
+
+#seata:
+#  tx-service-group: ${spring.application.name}
+#  service:
+#    vgroup-mapping:
+#      agg-jianchagl: default
