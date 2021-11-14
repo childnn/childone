@@ -1,0 +1,77 @@
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:tns="http://serv.pacs.senyint.com/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="pacsChannel"
+                  targetNamespace="http://serv.pacs.senyint.com/">
+
+<!--
+1. 找方法 ：搜索<wsdl:message,且其中name属性的值没有response结尾，如name="getCatsByUserResponse"不符合；其他的就是这个接口的方法
+2. 找参数：找<wsdl:message的子元素<wsdl:part，<wsdl:part中的name的属性值就是在wsdl:types定义，去wsdl:types可以找到参数名和参数类型
+3. 找接口信息：搜索 <wsdl:portType 其中的name属性就是接口的最终路径，如<wsdl:portType name=“HelloWorld”>
+        这个MyWebService和http://localhost:8080/helloWorld?wsdl=HelloWorld.wsdl最后的HelloWorld(第二个HelloWorld)一致
+4. 找传入传出信息: <wsdl:portType的子元素<wsdl:operation 代表该接口的方法名(@WebMethod上注解的)。
+        <wsdl:operation的子元素<wsdl:input 是表示输入信息，如 <wsdl:input message=“ns1:sayHi” name=“sayHi”>，
+        这个message的属性值sayHi又与<wsdl:message的这个对应起来。相同的，输出信息<wsdl:output message和输入信息是一样的分析原理。
+
+-->
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://serv.pacs.senyint.com/"
+                   attributeFormDefault="unqualified" elementFormDefault="unqualified"
+                   targetNamespace="http://serv.pacs.senyint.com/">
+            <xs:element name="invoke" type="tns:invoke"/>
+            <xs:element name="invokeResponse" type="tns:invokeResponse"/>
+            <xs:complexType name="invoke">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="method" type="xs:string"/>
+                    <xs:element minOccurs="0" name="input" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="invokeResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="DocumentException" type="tns:DocumentException"/>
+            <xs:complexType name="DocumentException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="invoke">
+        <wsdl:part element="tns:invoke" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="invokeResponse">
+        <wsdl:part element="tns:invokeResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="DocumentException">
+        <wsdl:part element="tns:DocumentException" name="DocumentException"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="pacsChannel">
+        <wsdl:operation name="invoke">
+            <wsdl:input message="tns:invoke" name="invoke"></wsdl:input>
+            <wsdl:output message="tns:invokeResponse" name="invokeResponse"></wsdl:output>
+            <wsdl:fault message="tns:DocumentException" name="DocumentException"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="pacsChannelSoapBinding" type="tns:pacsChannel">
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="invoke">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="invoke">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="invokeResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="DocumentException">
+                <soap12:fault name="DocumentException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="pacsChannel">
+        <wsdl:port binding="tns:pacsChannelSoapBinding" name="pacsChannelImpPort">
+            <soap12:address location="http://192.168.10.80:8183/pacsChannel"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

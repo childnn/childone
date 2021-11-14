@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
+import static com.rabbitmq.client.ConnectionFactory.*;
+
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
@@ -47,6 +49,12 @@ public class TopicTest {
     public void producer() throws IOException, TimeoutException {
         // 创建连接工厂.
         ConnectionFactory factory = new ConnectionFactory();
+        // 设置 RabbitMQ 相关信息.
+        factory.setHost(DEFAULT_HOST);
+        factory.setUsername(DEFAULT_USER);
+        factory.setPassword(DEFAULT_PASS);
+        factory.setVirtualHost(DEFAULT_VHOST);
+        factory.setPort(DEFAULT_AMQP_PORT);
         // 设置连接属性...这里使用默认值
         Connection conn = factory.newConnection();
         // 创建通道.
@@ -78,6 +86,12 @@ public class TopicTest {
 
         // 创建连接工厂.
         ConnectionFactory factory = new ConnectionFactory();
+        // 设置 RabbitMQ 相关信息.
+        factory.setHost(DEFAULT_HOST);
+        factory.setUsername(DEFAULT_USER);
+        factory.setPassword(DEFAULT_PASS);
+        factory.setVirtualHost(DEFAULT_VHOST);
+        factory.setPort(DEFAULT_AMQP_PORT);
         // 获取连接.
         Connection conn = factory.newConnection();
         // 创建信道.
@@ -87,8 +101,11 @@ public class TopicTest {
         // 获取临时队列.
         String queueName = channel.queueDeclare().getQueue();
 
+        System.out.println("queueName = " + queueName);
+
         // 接收 USA 信息.
         channel.queueBind(queueName, EXCHANGE_NAME, ROUTING_KEY_USA);
+        // channel.queueDeclare(queueName, EXCHANGE_NAME, ROUTING_KEY_USA);
         System.out.println(name + " 等待接收信息...");
 
         // 告诉服务器我们需要哪个频道的消息, 如果频道中有消息, 就会执行回调函数 handle.
@@ -112,6 +129,12 @@ public class TopicTest {
 
         // 创建连接工厂.
         ConnectionFactory factory = new ConnectionFactory();
+        // 设置 RabbitMQ 相关信息.
+        factory.setHost(DEFAULT_HOST);
+        factory.setUsername(DEFAULT_USER);
+        factory.setPassword(DEFAULT_PASS);
+        factory.setVirtualHost(DEFAULT_VHOST);
+        factory.setPort(DEFAULT_AMQP_PORT);
         // 获取连接.
         Connection conn = factory.newConnection();
         // 创建信道.

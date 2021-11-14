@@ -25,6 +25,7 @@ public class TestStreamChild {
         final AtomicInteger combineCount = new AtomicInteger(0);
 
         List<Integer> list = /*Arrays.asList(1000, 2000)*/new ArrayList<>(); // 如果集合有数据, 结果会有问题??? don't know why.
+        list.add(1);
         List<Integer> reduce = IntStream.range(0, 100).parallel().boxed().reduce(
                 list,
 //                new BiFunction<List<Integer>, Integer, List<Integer>>() {
@@ -37,7 +38,7 @@ public class TestStreamChild {
                 (lst, i) -> {
                     int a = accumulateCount.incrementAndGet();// ++i;
 //                    accumulateCount.getAndIncrement(); // i++;
-                    System.err.println(String.format("thread name: %s, lst: %s, i: %s", Thread.currentThread(), lst, i));
+                    System.err.printf("thread name: %s, lst: %s, i: %s%n", Thread.currentThread(), lst, i);
 //                    lst.add(i); // 直接 add, 这里会
                     // 不改变初始的集合, 返回一个新的集合.
                     List<Integer> newLst = new ArrayList<>(lst);
@@ -47,7 +48,7 @@ public class TestStreamChild {
                 },
                 (a, b) -> {
                     int i = combineCount.incrementAndGet();
-                    System.out.println(String.format("thread name: %s, a = %s, b = %s", Thread.currentThread().getName(), a, b));
+                    System.out.printf("thread name: %s, a = %s, b = %s%n", Thread.currentThread().getName(), a, b);
                     a.addAll(b);
                     return a;
                 }

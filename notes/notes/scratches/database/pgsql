@@ -1,0 +1,3 @@
+pgsql 将指定 schema 权限赋值给 df_zhushuju， 在对应的用户下执行以下两条命令
+GRANT USAGE ON SCHEMA 指定schema TO df_zhushuju;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA 指定schema  TO df_zhushuju;

@@ -10,46 +10,46 @@
 1)	框架相关:  SSM 框架， Spring Boot， Spring Data JPA， Spring Security
 2)	数据库:  MySQL，Oracle, Redis，MongoDB
 3)	中间件:  ActiveMQ,， Dubbo
-4)	搜索：Solr
+4)	搜索: Solr
 5)	前端相关:  AngularJS， FreeMarker
 6)	服务相关:  Linux， Nginx,  FastDFS， Tomcat， ZooKeeper
 其他了解的技术
 Spring Cloud， Vue.js， RabbitMQ， Docker， ElasticSearch， Thymeleaf
 
-git 冲突：
+git 冲突: 
   1. 无法避免, 只能减少
   2. 每次准备修改代码之前 必须先 pull 最新的代码
   3. 修改完毕, 立即提交: commit, push
 
-angularJS：
+angularJS: 
  mvc
  双向绑定
  依赖注入
  模块化
 
 database:
-聚合函数： count， sum， min/max， avg， if， ifnull，
+聚合函数:  count， sum， min/max， avg， if， ifnull，
 	select if(1 > 2, 'yes', 'no'): 三目运算符
 
-索引： 结合 java 中数组, ArrayList 集合的索引.
+索引:  结合 java 中数组, ArrayList 集合的索引.
 	索引在数据库中的作用时快速查找某一行数据,
 	索引大大减少了MySQL服务器需要扫描的数据量。
 	索引可以帮助服务器避免排序和临时表。
 	索引可以将随机I/O变为顺序I/O。
 
-排序：
-集合：
-jvm：栈，堆，方法区，本地方法栈，寄存器
+排序: 
+集合: 
+jvm: 栈，堆，方法区，本地方法栈，寄存器
 线程池
-linux：ll，vi， chmod， tar -zxvf, rm -rf, cat, ps -ef | grep nginx,
+linux: ll，vi， chmod， tar -zxvf, rm -rf, cat, ps -ef | grep nginx,
 	ifconfig, kill -9 pid,
 
 
 项目名,项目产生的背景,项目各个模块(功能,技术),
 项目进行过程的问题,收获(体会)
 
-redis： 缓存穿透， 缓存雪崩， 缓存击穿
-穿透：查询一个数据库一定不存在的数据
+redis:  缓存穿透， 缓存雪崩， 缓存击穿
+穿透: 查询一个数据库一定不存在的数据
 	如果不加改进, 对一个不存在的数据进行重复查询, 假如有恶意攻击
 	会对数据库产生巨大压力.
 	优化: 如果查询的数据为空, 可以将 null 放入缓存, 设定缓存过期时间

@@ -48,7 +48,7 @@ public class RabbitConfig {
         return new Queue(QUEUE_NAME_OF_DELAYED_MESSAGE);
     }
 
-    // 延时 binding: 将延时队列绑定到延时交换器.
+    // 延时 binding: 将延时队列 通过路由 key 绑定到延时交换器.
     @Bean
     public Binding binding(/*@Qualifier("queue") Queue queue, @Qualifier("delayExchange") Exchange exchange*/) {
         return BindingBuilder.bind(queue()).to(delayExchange()).with(ROUTING_KEY_OF_DELAYED_MESSAGE).noargs();

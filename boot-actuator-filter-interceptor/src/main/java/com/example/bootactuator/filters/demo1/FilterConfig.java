@@ -14,12 +14,17 @@ import javax.servlet.DispatcherType;
  */
 @Configuration
 public class FilterConfig {
+
+    // 使用 FilterRegistrationBean 注入 filter
     @Bean
     public FilterRegistrationBean<Filter1> filterRegistrationBean() {
         FilterRegistrationBean<Filter1> registrationBean = new FilterRegistrationBean<>(filter1());
         registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(1);
-        registrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.INCLUDE);
+        registrationBean.setAsyncSupported(true);
+        registrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.INCLUDE,
+                // Async support must be enabled on a servlet and for all filters involved in async request processing.
+                DispatcherType.ASYNC);
         return registrationBean;
     }
 

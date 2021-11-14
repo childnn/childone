@@ -1,4 +1,4 @@
-package cn.itheima;
+package collection;
 
 public class VarParameter {
     public static void main(String[] args) {

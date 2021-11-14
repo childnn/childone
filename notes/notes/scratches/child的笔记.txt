@@ -13,3 +13,6 @@ Child123
 
 http://39.100.255.114:8080/xqlive/api-auth/oauth/token?
 auth_type=GLOBAL_SHOP_SMS&client_secret=webApp&client_id=webApp&grant_type=password&username=13163249276&password=780983
+
+
+mvn deploy:deploy-file -Dmaven.test.skip=true -Dfile=E:\mvn-repo\caches\modules-2\files-2.1\com.oracle.database.jdbc\ojdbc8-production\19.12.0.0\a7ba6f246a61b6fe4bef65f0b472b777b27c1c95\ojdbc8-production-19.12.0.0.pom -DgroupId=com.oracle.database.jdbc -DartifactId=ojdbc8-production -Dversion=19.12.0.0 -Dpackaging=pom -DrepositoryId=release -Durl=https://repo.rdc.aliyun.com/repository/70357-release-VGR1pE/

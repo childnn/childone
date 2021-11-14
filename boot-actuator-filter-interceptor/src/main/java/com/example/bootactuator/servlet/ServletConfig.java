@@ -18,6 +18,7 @@ public class ServletConfig {
         ServletRegistrationBean<MyServlet> myServlet = new ServletRegistrationBean<>();
         myServlet.setLoadOnStartup(1);
         myServlet.setServlet(myServlet());
+        myServlet.setAsyncSupported(true);
         myServlet.addUrlMappings("/myServlet");
         //myServlet.
         return myServlet;

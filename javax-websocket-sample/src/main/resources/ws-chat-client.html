@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+    window.onload = function () {
+      // 关心一些 UI 细节
+      var nick = prompt('Enter your nickname'); // 获取用户昵称
+      var input = document.getElementById('input'); // 查找 input 字段
+      input.focus(); // 设置光标
+
+      // 打开一个 WebSocket, 用于发送和接收聊天消息
+      // 假设下载的 HTTP 服务器作为 WebSocket 服务器运作, 并且使用同样的主机名和端口
+      // 只是协议由 http:// 变成 ws://
+      // var socket = new WebSocket('ws://' + location.host + ":8080/test/ws/jack");
+      var url = 'ws://localhost:8080/test/ws/' + nick;
+      var socket = new WebSocket(url);
+
+      // 等价于 socket.addEventListener('message'..)
+      // 下面展示了如何通过 WebSocket 从服务器获取消息
+      socket.onmessage = function (event) { // 当收到一条新消息
+        var msg = event.data; // 从事件对象中获取消息内容
+        var node = document.createTextNode(msg); // 将它标记为一个文本节点
+        var div = document.createElement('div'); // 创建一个 <div>
+        div.appendChild(node); // 将文本节点添加到该 div 中
+        document.body.insertBefore(div, input); // 在 input 前添加该 div
+        input.scrollIntoView(); // 确保输入框可见
+      };
+
+      // 下面展示了如何通过 WebSocket 发送消息给服务器端
+      input.onchange = function () {
+        var msg = /*nick + ': ' + */input.value; // 当用户敲击回车键
+        socket.send(msg); // 通过套接字传递该内容
+        input.value = '';  // 等待更多内容的输入
+      };
+
+      socket.addEventListener("open", function (event) {
+        socket.send("Hello Server! I'm " + nick);
+      });
+
+      socket.addEventListener("close", function (event) {
+        socket.send(nick + ' is leave!')
+      });
+
+      socket.addEventListener('message', function (event) {
+        console.log(event);
+      });
+
+    };
+  </script>
+</head>
+<body>
+
+<!-- 聊天窗口: 一个文本输入域 -->
+<!-- 新的聊天消息会插入在该元素中 -->
+<input type="text" id="input" style="width: 100%">
+
+</body>
+</html>

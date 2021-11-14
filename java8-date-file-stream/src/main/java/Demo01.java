@@ -1,5 +1,3 @@
-package cn.itheima;
-
 /*
   Object类：类 Object 是类层次结构的根类。每个类都使用 Object 作为超类。所有对象（包括数组）都实现这个类的方法。
            String toString()：返回该对象的字符串表示。 // 引用数据类型默认比较地址值，没有意义，必须重写
@@ -13,9 +11,27 @@ package cn.itheima;
                        中国东八区，加八小时
  */
 
+import org.junit.Test;
+
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Demo01 {
+
+    @Test
+    public void test() {
+        String x = "1*2|2*3";
+
+        Map<String, String> collect = Arrays.stream(x.split("\\|"))
+                .collect(Collectors.toMap(s -> s.split("\\*")[0], s -> s.split("\\*")[1]/*, (s1, s2) -> s1*/));
+        System.out.println("collect = " + collect);
+
+        List<List<String>> list = Arrays.stream(x.split("\\|")).map(s -> Arrays.asList(s.split("\\*"))).collect(Collectors.toList());
+
+    }
 
     public static void main(String[] args) {
         Date date = new Date();

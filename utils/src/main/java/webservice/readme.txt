@@ -1,0 +1,1 @@
+wsimport -s . http://192.168.10.80:8183/pacsChannel?wsdl -extension

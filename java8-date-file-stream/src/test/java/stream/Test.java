@@ -1,6 +1,9 @@
 package stream;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Test {
     public static void main(String[] args) throws Exception {
@@ -26,5 +29,11 @@ public class Test {
         set.add("重地");
         set.add("通话");
         System.out.println(set);
+
+
+
+        String x = "1|2|3|4";
+        System.out.println(Arrays.asList(x.split("\\|")));
+        System.out.println(Stream.of(x.split("\\|")).collect(Collectors.toList()));
     }
 }

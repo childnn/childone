@@ -1,5 +1,8 @@
 package stream;
 
+import org.junit.Test;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -20,6 +23,17 @@ public class MapCollector {
                         .collect(
                                 Collectors.toMap(Pair::getI, Pair::getC));
         System.out.println(map);
+    }
+
+    @Test
+    public void test() {
+        HashMap<Object, Object> collect = Stream.of(1, 3, 4)/*.parallel()*/
+                .collect(HashMap::new, (m, i) -> m.put(i, "xxx" + i), (m1, m2) -> {
+                    System.out.println("m1 = " + m1);
+                    System.out.println("m2 = " + m2);
+                    m1.putAll(m2);
+                });
+        System.out.println("collect = " + collect);
     }
 }
 

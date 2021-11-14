@@ -1,12 +1,12 @@
 一.概念和区别： (https://blog.csdn.net/weixin_41829196/article/details/79641911)
 1.关于rest
-rest  :representational state transfer      表述性状态转移,是一种架构风格。
+rest :representational state transfer  表述性状态转移,是一种架构风格。
 rest原则：
-   <1>网络上的所有事物都被抽象为资源
-   <2> 每个资源都有一个唯一的资源标识符
-   <3> 同一个资源具有多种表现形式(xml,json等)
-   <4>  对资源的各种操作不会改变资源标识符
-   <5> 所有的操作都是无状态的
+ <1>网络上的所有事物都被抽象为资源
+ <2> 每个资源都有一个唯一的资源标识符
+ <3> 同一个资源具有多种表现形式(xml,json等)
+ <4> 对资源的各种操作不会改变资源标识符
+ <5> 所有的操作都是无状态的
 
 2.关于restful
 restful: 遵守了rest 原则 的web服务
@@ -19,16 +19,16 @@ restful是由rest派生出来的。
 
 二.restful用法：
 在Restful之前的操作：
-http://127.0.0.1/user/query/1 GET  根据用户id查询用户数据
+http://127.0.0.1/user/query/1 GET 根据用户id查询用户数据
 http://127.0.0.1/user/save POST 新增用户
 http://127.0.0.1/user/update POST 修改用户信息
 http://127.0.0.1/user/delete GET/POST 删除用户信息
 
 RESTful用法：
-http://127.0.0.1/user/1 GET  根据用户id查询用户数据
-http://127.0.0.1/user  POST 新增用户
-http://127.0.0.1/user  PUT 修改用户信息
-http://127.0.0.1/user  DELETE 删除用户信息
+http://127.0.0.1/user/1 GET 根据用户id查询用户数据
+http://127.0.0.1/user POST 新增用户
+http://127.0.0.1/user PUT 修改用户信息
+http://127.0.0.1/user DELETE 删除用户信息
 
 之前的操作是没有问题的,大神认为是有问题的,有什么问题呢? 
 你每次请求的接口或者地址,都在做描述,例如查询的时候用了query,新增的时候用了save,

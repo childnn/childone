@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dateformat
+#server:
+#  port: 4321
+---
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: trace
+#    root: trace
+spring:
+  mvc:
+    log-request-details: true
+  # org.springframework.boot.context.config.ConfigDataEnvironment
+  # Property 'spring.profiles' imported from location 'class path resource [application.yml]' is invalid and
+  # should be replaced with 'spring.config.activate.on-profile' [origin: class path resource [application.yml] - 17:13]
+  config:
+    activate:
+      on-profile: dateformat
+#  config:
+#    activate:
+#      on-profile: datefomat
+#  http:
+#    # org.springframework.boot.autoconfigure.http.HttpProperties
+#    log-request-details: true
+server:
+  port: 9991
+---

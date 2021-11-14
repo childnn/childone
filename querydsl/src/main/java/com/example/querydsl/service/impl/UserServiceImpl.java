@@ -4,7 +4,14 @@ import com.example.querydsl.dao.UserJPA;
 import com.example.querydsl.entity.QUser;
 import com.example.querydsl.entity.User;
 import com.example.querydsl.service.UserService;
+import com.querydsl.core.alias.Alias;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.sql.OracleTemplates;
+import com.querydsl.sql.SQLTemplates;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +39,11 @@ public class UserServiceImpl implements UserService, InitializingBean {
 
     @Override
     public List<User> queryAll() {
+        User u = Alias.alias(User.class, "u");
+        Object o = queryFactory.query().from(Alias.$(u))
+                .where(Alias.$(u.getId()).eq(1L))
+                .fetchOne();
+        System.out.println("o = " + o);
         final QUser qUser = QUser.user;
 
         return queryFactory
@@ -43,6 +55,22 @@ public class UserServiceImpl implements UserService, InitializingBean {
     @Override
     public User detail(Long id) {
         final QUser qUser = QUser.user;
+
+        List<User> fetch = JPAExpressions.selectFrom(qUser)
+                .fetch();
+        // SQLExpressions.selectFrom(qUser)
+        //         .fetch();
+        SQLTemplates sqlt = OracleTemplates
+                .builder()
+                .quote()
+                .newLineToSingleSpace()
+                .printSchema()
+                .build();
+
+        Expression<Integer> constant = Expressions.constant(1);
+        NumberExpression<Integer> ne = Expressions.asNumber(1);
+
+
         return queryFactory
                 .selectFrom(qUser)
                 .where(qUser.id.eq(id))
@@ -60,11 +88,10 @@ public class UserServiceImpl implements UserService, InitializingBean {
      * 此处的 getOne 与以上的查询方法不一样, 必须在
      * User 上加 {@link com.fasterxml.jackson.annotation.JsonIgnoreProperties}
      * 应为结果对象的生成方式不同, 暂不明具体原因
-     * @param id
-     * @return
      */
     @Override
     public User detail3(Long id) {
+        // em.getReference
         return userJPA.getOne(id);
     }
 

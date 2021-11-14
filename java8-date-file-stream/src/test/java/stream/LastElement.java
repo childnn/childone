@@ -19,7 +19,16 @@ public class LastElement {
         // Non-numeric object:
         Optional<String> lastobj =
                 Stream.of("one", "two", "three")
-                        .reduce((n1, n2) -> n2);
+                        .reduce((n1, n2) -> n1 + n2);
+        String reduce = Stream.of("one", "two", "three")
+                // n1: 上一次计算的值,
+                // n2: stream 中的当前元素
+                .reduce("", (n1, n2) -> {
+                    System.out.println("n1 = " + n1);
+                    System.out.println("n2 = " + n2);
+                    return n1 + n2;
+                });
+        System.out.println("reduce = " + reduce);
         System.out.println(
                 lastobj.orElse("Nothing there!"));
     }

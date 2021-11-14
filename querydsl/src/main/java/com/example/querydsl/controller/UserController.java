@@ -37,8 +37,6 @@ public class UserController {
     }
 
     /**
-     * @param id
-     * @return
      * @see com.example.querydsl.entity.User
      * @see com.fasterxml.jackson.annotation.JsonIgnoreProperties
      */

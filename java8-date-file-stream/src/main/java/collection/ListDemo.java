@@ -1,4 +1,4 @@
-package cn.itheima;
+package collection;
 
 import java.util.ArrayList;
 import java.util.Iterator;

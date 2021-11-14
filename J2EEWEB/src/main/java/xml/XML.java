@@ -3,6 +3,12 @@ package xml;
 /**
  * @author child
  * 2019/5/1 11:58
+ *
+ * 标记语言: 可以用标签为数据赋予意义的语言.
+ * HTML 是用于编写网页的标记语言. XML 是用于定义任意标记语言的元语言.
+ * 通常把用于定义新语言的语言称作元语言. 通过使用 XML 可以定义出各种各样的新语言.
+ *
+ *
  * <p>
  * sgml: standard generalized markup language 标准通用标记语言
  * xml 与 html 都是其衍生语言。
@@ -90,7 +96,7 @@ package xml;
  * 1. 限制 xml 可以出现哪些标签,不能出现哪些标签
  * 2.
  * 分类: dtd, schema
- * dtd 约束: 内部方式 外部方式(.dtd)   document type definition
+ * dtd 约束: 内部方式 外部方式(.dtd)   document type definition. 文档类型描述.
  * 内部方式:
  * 直接在 xml 文档中书写
  * 格式: <!DOCTYPE 根标签 [要约束的内容]>

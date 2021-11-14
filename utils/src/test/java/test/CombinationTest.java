@@ -1,6 +1,6 @@
 package test;
 
-import org.anonymous.util.CombinationUtil;
+import util.CombinationUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

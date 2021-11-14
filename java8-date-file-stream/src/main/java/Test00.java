@@ -1,5 +1,3 @@
-package cn.itheima;
-
 import java.util.ArrayList;
 
 /**

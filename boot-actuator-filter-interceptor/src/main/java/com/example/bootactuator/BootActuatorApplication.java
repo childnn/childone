@@ -2,6 +2,7 @@ package com.example.bootactuator;
 
 import com.example.bootactuator.filters.demo2.Filter2;
 import com.example.bootactuator.servlet.MyServlet;
+import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.beans.BeansEndpoint;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,13 +21,36 @@ import java.util.Map;
  * http://localhost:9000/actuator
  *
  * @see ServletComponentScan 扫描 {@link WebFilter} {@link WebServlet} {@link WebListener}
+ * @see org.springframework.boot.context.event.ApplicationStartingEvent
+ * @see org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent
+ * @see org.springframework.boot.context.event.ApplicationContextInitializedEvent
+ * @see org.springframework.boot.context.event.ApplicationPreparedEvent
+ * @see org.springframework.boot.context.event.ApplicationStartedEvent
+ * @see org.springframework.boot.availability.AvailabilityChangeEvent
+ * @see org.springframework.boot.context.event.ApplicationReadyEvent
+ * @see org.springframework.boot.availability.AvailabilityChangeEvent
+ * @see org.springframework.boot.context.event.ApplicationFailedEvent
+ *
  */
+@EnableAdminServer
+// todo: servlet/filter 与 actuator 整合时有点问题
+// 提示 Async support must be enabled on a servlet and for all filters involved in async request processing.
+// 但实际上 spring 默认就是 async 的, 不清楚原因
 @ServletComponentScan(basePackageClasses = {Filter2.class, MyServlet.class})
 @RestController
-@SpringBootApplication
+@SpringBootApplication/*(exclude = SecurityAutoConfiguration.class)*/
 public class BootActuatorApplication {
 
     public static void main(String[] args) {
+        // args: --server.port=9000
+        // new SpringApplicationBuilder() // 构造也可以指定 main-class
+        //         .main(BootActuatorApplication.class)
+        //         .child()
+        //         .addCommandLineProperties(false) // 不接受 CML, 默认 true
+        //         //...
+        //         .build(args).run();
+
+
         ConfigurableApplicationContext ctx = SpringApplication.run(BootActuatorApplication.class, args);
         BeansEndpoint endpoint = ctx.getBean(BeansEndpoint.class);
         BeansEndpoint.ApplicationBeans beans = endpoint.beans();
@@ -55,7 +79,7 @@ public class BootActuatorApplication {
      * @apiSuccess (success 2000) {String}   res.prevCode    上级行政编码
      * @apiSuccess (success 2000) {String}   res.allName    全称
      */
-    @RequestMapping("/")
+    @RequestMapping("/name")
     public String hello(HttpServletRequest req) {
         System.out.println(req.getParameter("name"));
         return "hello";

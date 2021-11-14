@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Mapping DTO//EN"
+        "http://www.hibernate.org/xsd/hibernate-configuration">
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- hibernate 前缀可以不要 -->
+        <!-- org.hibernate.cfg.AvailableSettings -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql:///jpa</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+    <!-- show and print nice SQL on stdout -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+
+    <!--  list of XML mapping files  -->
+        <mapping resource="customrer.xml"/>
+    </session-factory>
+</hibernate-configuration>

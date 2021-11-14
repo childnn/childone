@@ -19,3 +19,15 @@ sc create 服务名称 binpath="服务EXE文件所在的目录"
 sc delete 服务名称
 添加 redis 服务
 redis-server.exe --service-install redis.windows.conf --loglevel verbose
+***************************************************************************
+cmd 编码:
+    chcp 65001
+  永久修改
+    win-r regedit
+      计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Command Processor
+      右键新建 "字符串值": autorun  chcp 65001
+=======================================================================
+mklink /j  C:\Users\Child\AppData\Roaming\DingTalk E:\Software\DingDing\caches
+   将源文件夹复制到目标文件夹, 删除源文件夹, 执行命令
+mklink /d E:\Software\DingDing\caches  C:\Users\Child\AppData\Roaming\DingTalk
+   可以认为是上述命令的逆操作

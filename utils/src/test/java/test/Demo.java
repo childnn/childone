@@ -2,8 +2,12 @@ package test;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -24,6 +28,19 @@ public class Demo {
     public void test() {
         int a = 0x20;
         System.out.println("a = " + a);
+    }
+
+    public static void main(String[] args) {
+        // divide-scale: 保留小数位数
+        BigDecimal divide = BigDecimal.valueOf(1.5).divide(BigDecimal.valueOf(2), 0, RoundingMode.FLOOR);
+        System.out.println("divide = " + divide);
+        System.out.println(divide.equals(BigDecimal.ZERO));
+    }
+
+    @Test
+    public void test1() {
+        String s = "1313";
+        System.out.println(Arrays.stream(s.split(",")).collect(Collectors.toList()));
     }
 
 }

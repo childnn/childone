@@ -6,6 +6,15 @@
 4.testImplementation，这种依赖在测试编译时和运行时可见，类似于Maven的test作用域。
 5.testCompileOnly和testRuntimeOnly，这两种类似于compileOnly和runtimeOnly，但是作用于测试编译时和运行时。
 * */
+/**
+ * mvn 上传指定 jar 到私服
+ * > mvn deploy:deploy-file -Dmaven.test.skip=true
+ *  -Dfile=E:\mvn-repo\caches\modules-2\files-2.1\com.oracle.database.jdbc\ojdbc8\19.12.0.0\e36d2100830e2cf7c63e9972e84ecf35e26f7bc0\ojdbc8-19.12.0.0.jar
+ *  -DgroupId=com.oracle.database.jdbc -DartifactId=ojdbc8 -Dversion=19.12.0.0 -Dpackaging=jar
+ *  -DrepositoryId=release -Durl=https://repo.rdc.aliyun.com/repository/70357-release-VGR1pE/
+ *  注:
+ *  repositoryId 需要在  mvn settings.xml 中的 server 标签下配置对应的 id/username/pwd
+ */
 
 plugins {
     id 'java'
@@ -26,6 +35,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.oracle.database.jdbc:ojdbc8-production:19.12.0.0'
 //    compile group: 'junit', name: 'junit', version: '4.12'
     compile 'io.netty:netty-all:4.1.52.Final'
     // compile 'io.netty:netty-all:4.0.56.Final'

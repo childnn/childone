@@ -3,6 +3,7 @@ package test;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :)
@@ -24,4 +25,12 @@ public class BigDecimalTest {
         BigDecimal b2 = new BigDecimal(Double.toString(0.1D));
         System.out.println("b2 = " + b2);
     }
+
+    public static void main(String[] args) {
+        BigDecimal b = BigDecimal.valueOf(1.9)
+                // 参数一: 小数位数
+                .setScale(2, RoundingMode.FLOOR);
+        System.out.println("b = " + b);
+    }
+
 }

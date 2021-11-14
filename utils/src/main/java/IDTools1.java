@@ -1,5 +1,6 @@
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import util.HttpUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class IDTools1 {
              * 相应的依赖请参照
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
-            HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+            HttpResponse response = HttpUtils.doGet(host, path, headers, querys);
             System.out.println(response.toString());
             //获取response的body
             System.out.println(EntityUtils.toString(response.getEntity()));

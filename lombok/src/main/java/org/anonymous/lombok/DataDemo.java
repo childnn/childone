@@ -1,6 +1,8 @@
 package org.anonymous.lombok;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
+import org.anonymous.lombok.builder.BuilderDemo;
 
 import java.time.LocalDate;
 
@@ -21,4 +23,15 @@ public class DataDemo {
     String firstName;
     String lastName;
     LocalDate dateOfBirth;
+
+    public static void main(String[] args) {
+        BuilderDemo demo = BuilderDemo.builder()
+                .firstName("Child")
+                .lastName("Jack")
+                .email("27497963@qq.com")
+                .build();
+
+        String s = JSON.toJSONString(demo);
+        System.out.println("s = " + s);
+    }
 }

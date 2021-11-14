@@ -1,4 +1,6 @@
+import config.MyConfig;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -21,5 +23,11 @@ public class SpelTest {
         System.out.println("valueType = " + valueType);
 //        Object value = ex.getValue();
 //        System.out.println("value = " + value);
+    }
+
+    @Test
+    public void test1() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext("config");
+        System.out.println("ctx.getBean(MyConfig.class).getName() = " + ctx.getBean(MyConfig.class).getName());
     }
 }

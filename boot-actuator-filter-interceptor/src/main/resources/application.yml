@@ -2,9 +2,15 @@
 # 2. 开放节点
 
 
+my:
+  prop:
+    name: prop-name
+    address: localhost
+
 
 management:
   endpoint:
+#    某一个指定 endpoint 的信息
     env:
       enabled: true
     shutdown:
@@ -13,20 +19,33 @@ management:
       show-details: always
   endpoints:
     web:
+      base-path: /actuator  # 默认为 actuator
       exposure:
         include: '*'  # 默认只开放, info 节点, "*"
+    enabled-by-default: true # 默认启用所有端点
 
 spring:
-  security:
-    user:
-      name: child # 默认 user.
-      password: child  # 不设值就自动生成 UUID.
+#  security:
+
+#    user:
+#      name: child # 默认 user.
+#      password: child  # 不设值就自动生成 UUID.
+  output:
+    ansi:
+      enabled: always
 
 server:
   port: 9000
 
+# logging.level.*
 logging:
   level:
     root: info
+    org.springframework.web: info
+#  config: # 指定 log-config 文件位置, 如 classpath:log4j.properties, logback.xml
+#  file:
+#    path:
+#    name:
 
+#security: org.springframework.boot.autoconfigure.security.SecurityProperties
 

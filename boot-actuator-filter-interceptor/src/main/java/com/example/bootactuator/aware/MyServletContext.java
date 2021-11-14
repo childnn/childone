@@ -17,14 +17,17 @@ import java.util.Set;
  * @see ServletContextInitializer
  * @see org.springframework.web.SpringServletContainerInitializer
  * @see org.springframework.web.WebApplicationInitializer
- * @see
  * @since 2020/10/29 23:28
  */
 @Component
-public class MyServletContext implements ServletContextAware, ServletContextInitializer, ServletContainerInitializer/*, WebApplicationInitializer*/ {
+public class MyServletContext implements ServletContextAware,
+        ServletContextInitializer,
+        ServletContainerInitializer/*, WebApplicationInitializer*/ {
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         //servletContext.setInitParameter("name", "jack"); // Initialization parameters cannot be set after the context has been initialized
+        servletContext.setAttribute("async-supported", true);
     }
 
     @Override

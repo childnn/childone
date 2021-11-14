@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  * @author MiaoOne
  * @since 2019/11/14 17:51
  * 广播模式, 一个生产者会把消息发送给所有对应的在监听的监听者.
- * 注: 先启动消费者, 在启动生产者.
+ * 注: 先启动消费者, 再启动生产者.
  */
 public class FanoutTest {
     public final static String EXCHANGE_NAME = "test_fanout_exchange";

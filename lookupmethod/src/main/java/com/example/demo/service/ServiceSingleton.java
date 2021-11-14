@@ -21,6 +21,8 @@ public abstract class ServiceSingleton {
         this.servicePrototype = servicePrototype;
     }
 
+    // the container will generate
+    // runtime subclasses of the method's containing class via CGLIB
     @Lookup // 查找方法, 对于多例对象, 每次获取的不同.
     public abstract ServicePrototype0 getServiceProtoType0();
 

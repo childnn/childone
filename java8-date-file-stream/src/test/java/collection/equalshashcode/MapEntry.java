@@ -4,10 +4,15 @@ package collection.equalshashcode;// equalshashcode/MapEntry.java
 // Visit http://OnJava8.com for more book information.
 // A simple Map.Entry for sample Map implementations
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MapEntry<K, V> implements Map.Entry<K, V> {
+
+
+    // junit: Test class can only have one constructor
+    public MapEntry() {
+    }
+
     private K key;
     private V value;
 

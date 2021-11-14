@@ -14,6 +14,12 @@ import java.util.Objects;
  * @since 2019/11/16 16:02
  */
 public class Utils {
+
+    public static void main(String[] args) {
+        System.out.println();
+    }
+
+
     @Test
     public void test$() {
         String arr = "1, 2, 3,,,";
@@ -42,6 +48,5 @@ public class Utils {
             }
         }
     }
-
 
 }

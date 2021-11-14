@@ -60,7 +60,7 @@ public class IDTools {
             System.out.println("URL地址错误");
         } catch (Exception e) {
             // 打开注释查看详细报错异常信息
-            // e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
