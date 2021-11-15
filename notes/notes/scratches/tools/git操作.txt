@@ -10,6 +10,10 @@
    注: 最好新建一个 changelist(可以命名 commit, 把此 changelist 设置为 active 状态: 右键设置 "Set Active Changelist"),
        把 需要提交到 master 的文件拖到(直接鼠标左键按住就可以拖动) commit-changelist 中, 然后再执行 commit-push 操作.
 
+关联远程仓库
+$ git push --set-upstream origin master
+
+
 git pull = fetch + merge
 
 $ git checkout -b <local_branch> <remote_id>/<remote_branch>  # 从远程指定分支切换并创建本地分支
