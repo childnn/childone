@@ -6,6 +6,7 @@ import java.util.Arrays;
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
  * @author MiaoOne
+ * @see java.util.Collection#forEach 命令模式的一种实现
  * @since 2021/1/6 20:43
  */
 public interface Command {

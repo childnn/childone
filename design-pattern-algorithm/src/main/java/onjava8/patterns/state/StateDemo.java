@@ -1,15 +1,5 @@
 package onjava8.patterns.state;
 
-interface StateBase {
-    void f();
-
-    void g();
-
-    void h();
-
-    void changeImp(StateBase newImp);
-}
-
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
@@ -29,6 +19,16 @@ public class StateDemo {
         b.changeImp(new Implementation2());
         test(b);
     }
+}
+
+interface StateBase {
+    void f();
+
+    void g();
+
+    void h();
+
+    void changeImp(StateBase newImp);
 }
 
 class State implements StateBase {

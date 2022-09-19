@@ -10,7 +10,7 @@ public class StudentTest {
         System.out.println(stu.name); // null
         System.out.println(stu.c); // 空字符
         System.out.println(stu.dou); // 0.0
-        System.out.println(stu.stu); // null
+        // System.out.println(stu.stu); // null
 
         stu.age = 24;
         stu.name = "缪万";

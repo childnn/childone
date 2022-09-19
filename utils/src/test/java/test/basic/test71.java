@@ -1,9 +1,5 @@
 package test.basic;
 
-import test.TPhone;
-
-import java.util.ArrayList;
-
 /**
  * 第一题:
  1.创建TPhone类，包含如下属性
@@ -17,25 +13,25 @@ import java.util.ArrayList;
  */
 public class test71 {
 
-    public static void main(String[] args) {
-        test.TPhone a = new TPhone("华为", 1200, 4);
-        TPhone b = new TPhone("苹果", 9000, 1);
-        TPhone c = new TPhone("锤子", 3000, 3);
-        TPhone d = new TPhone("小米", 1800, 2);
-        ArrayList<TPhone> list = new ArrayList<TPhone>();
-        list.add(a);
-        list.add(b);
-        list.add(c);
-        list.add(d);
-//        for (Object o : list) {
-//
-//        }
-        for (int i = 0; i < list.size(); i++) {
-//            System.out.println(list.get(i));
-            if (list.get(i).getAge() < 2 || list.get(i).getPrice() < 2000) {
-                System.out.println(list.get(i).getName() + "-" + list.get(i).getPrice() + "-" + list.get(i).getAge());
-            }
-        }
-    }
+    //     public static void main(String[] args) {
+    //         test.TPhone a = new TPhone("华为", 1200, 4);
+    //         TPhone b = new TPhone("苹果", 9000, 1);
+    //         TPhone c = new TPhone("锤子", 3000, 3);
+    //         TPhone d = new TPhone("小米", 1800, 2);
+    //         ArrayList<TPhone> list = new ArrayList<TPhone>();
+    //         list.add(a);
+    //         list.add(b);
+    //         list.add(c);
+    //         list.add(d);
+    // //        for (Object o : list) {
+    // //
+    // //        }
+    //         for (int i = 0; i < list.size(); i++) {
+    // //            System.out.println(list.get(i));
+    //             if (list.get(i).getAge() < 2 || list.get(i).getPrice() < 2000) {
+    //                 System.out.println(list.get(i).getName() + "-" + list.get(i).getPrice() + "-" + list.get(i).getAge());
+    //             }
+    //         }
+    //     }
 
 }

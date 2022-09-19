@@ -1,6 +1,9 @@
 package entity;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+
+import java.util.ArrayList;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :)
@@ -11,4 +14,9 @@ import lombok.Data;
 @Data
 public class Address {
     private String city;
+
+    public static void main(String[] args) {
+        System.out.println(JSONObject.toJSONString(new ArrayList<>()));
+    }
+
 }

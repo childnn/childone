@@ -1,11 +1,9 @@
 package org.anonymous.swing;
 
+import org.anonymous.util.AwtUtil;
 import org.junit.Test;
 
-import java.awt.Button;
-import java.awt.Frame;
-import java.awt.Panel;
-import java.awt.TextField;
+import java.awt.*;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :)
@@ -102,7 +100,8 @@ public class AWTFramework {
         f.setBounds(230, 230, 400, 400);
 
         f.setVisible(true);
-        // f.
+
+        AwtUtil.closeWindow(f);
     }
 
 

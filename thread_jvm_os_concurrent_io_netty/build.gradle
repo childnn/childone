@@ -37,12 +37,13 @@ repositories {
 dependencies {
     implementation 'com.oracle.database.jdbc:ojdbc8-production:19.12.0.0'
 //    compile group: 'junit', name: 'junit', version: '4.12'
-    compile 'io.netty:netty-all:4.1.52.Final'
+//     compile 'io.netty:netty-all:4.1.52.Final'
+    implementation 'io.netty:netty-all:4.1.30.Final'
     // compile 'io.netty:netty-all:4.0.56.Final'
-    compile 'com.google.protobuf:protobuf-java:3.11.4'
+    implementation 'com.google.protobuf:protobuf-java:3.11.4'
 //    compile 'com.google.protobuf:protobuf-java:44.0.0-rc-2'
-    compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
-    compile group: 'cglib', name: 'cglib', version: '3.3.0'
+    implementation group: 'com.google.collections', name: 'google-collections', version: '1.0'
+    implementation group: 'cglib', name: 'cglib', version: '3.3.0'
 //    implementation ''
     implementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     // https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server
@@ -55,6 +56,9 @@ dependencies {
     // implementation group: 'org.mortbay.jetty.npn', name: 'npn-boot', version: '8.1.2.v20120308'
     // https://mvnrepository.com/artifact/spy/memcached
     implementation group: 'spy', name: 'memcached', version: '2.4rc1'
+
+    implementation 'com.hazelcast:hazelcast:3.8'
+    // implementation 'com.hazelcast:hazelcast:5.1.2'
 
 }
 

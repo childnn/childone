@@ -1,9 +1,5 @@
 package onjava8.patterns.adapt;
 
-interface WhatIWant {
-    void f();
-}
-
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
@@ -39,6 +35,10 @@ public class Adapter {
         WhatIHave3 whatIHave3 = new WhatIHave3();
         whatIUse.op(whatIHave3.whatIWant());
     }
+}
+
+interface WhatIWant {
+    void f();
 }
 
 class WhatIHave {

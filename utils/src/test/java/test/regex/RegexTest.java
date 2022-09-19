@@ -188,9 +188,16 @@ public class RegexTest {
         String s = "123aa-5423zx-642oi-00";
         Matcher m = p.matcher(s);
         while (m.find()) {
-//            p(m.group(0)); // 等价于 m.group()
-//            p(m.group(1));
+            //            p(m.group(0)); // 等价于 m.group()
+            //            p(m.group(1));
             p(m.group(2));
         }
+    }
+
+    @Test
+    public void test8() {
+        String s = "0xCAFEBABE";
+        System.out.println(s);
+
     }
 }

@@ -1,0 +1,82 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'maven'
+apply plugin: 'java'
+
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+group 'com.df.cbhis'
+version '2.0.0-SNAPSHOT'
+description ''
+
+ext {
+    SNAPSHOT_URL = 'https://repo.rdc.aliyun.com/repository/70357-snapshot-ULS65V/'
+    SNAPSHOT_USERNAME = 'IJSftS'
+    SNAPSHOT_PASSWORD = 'QMw0kmCO0L'
+
+    RELEASE_URL = 'https://repo.rdc.aliyun.com/repository/70357-release-VGR1pE/'
+    RELEASE_USERNAME = 'IJSftS'
+    RELEASE_PASSWORD = 'QMw0kmCO0L'
+}
+
+dependencies {
+    compile 'com.df.cbhis:lombok:1.0.1-SNAPSHOT'
+    annotationProcessor 'com.df.cbhis:lombok:1.0.1-SNAPSHOT'
+    compile 'com.alibaba:fastjson:1.2.46'
+    compile 'cn.hutool:hutool-all:4.5.4'
+    compile 'com.baomidou:mybatis-plus:3.3.0'
+    compile 'org.slf4j:slf4j-api:1.7.26'
+    compile 'org.apache.commons:commons-pool2:2.6.2'
+}
+
+// 打包源码与 javadoc.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        snapshotRepository(url: SNAPSHOT_URL) {
+            authentication(userName: SNAPSHOT_USERNAME, password: SNAPSHOT_PASSWORD)
+        }
+        repository(url: RELEASE_URL) {
+            authentication(userName: RELEASE_USERNAME, password: RELEASE_PASSWORD)
+        }
+        pom.project {
+            version "${project.version}"
+            groupId "${project.group}"
+            packaging 'jar'
+            description "${project.description}"
+        }
+    }
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}

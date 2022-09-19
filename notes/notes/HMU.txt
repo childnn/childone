@@ -1,0 +1,10 @@
+TCT检查:
+   thinprep cytologic test 液基薄层细胞检测
+PACS:
+   picture arching and communication system 影像归档和通信系统
+LIS:
+   laboratory information system 实验室信息系统
+CIS:
+   clinical information system 临床信息系统
+RIS:
+   radiology information system 放射学信息系统

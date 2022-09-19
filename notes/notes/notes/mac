@@ -1,0 +1,63 @@
+查找端口：
+ $ sudo lsof -i :8080
+ 强杀指定 pid
+ $ sudo kill -9 <pid>
+
+直接修改 nacos-startup.sh 文件中的 JAVA_HOME 值
+ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_311.jdk/Contents/Home \
+ && sh startup.sh -m standalone
+
+ https://github.com/alibaba/nacos/issues/4336
+
+git clone https://github.com/alibaba/nacos.git
+cd nacos/
+mvn -Prelease-nacos -Dmaven.test.skip=true clean install -U
+ls -al distribution/target/
+
+// change the $version to your actual path
+cd distribution/target/nacos-server-$version/nacos/bin
+
+
+请打开终端执行以下命令安装一下 Rosetta 2：
+/usr/sbin/softwareupdate --install-rosetta --agree-to-license
+
+ 如果安装成功会提示
+
+softwareupdate --install-rosetta --agree-to-license
+By using the agreetolicense option, you are agreeing that you have run this tool with the license only option and have read and agreed to the terms.
+If you do not agree, press CTRL-C and cancel this process immediately.
+Package reference com.apple.pkg.RosettaUpdateAuto is missing installKBytes attribute
+Install of Rosetta 2 finished successfully
+
+------------------------------
+arch -x86_64 $SHELL
+X86 版 Homebrew 无法在 ARM 环境下安装。为此，需要先启动一个 X86 环境的终端。网络上传播较广的方法是创建一个 Terminal.app 的副本，然后令其在 Rosetta 兼容模式下运行，显得有些麻烦。
+
+其实，注意到在任何命令前增加 arch -x86_64，就可以以 X86 模式运行该命令。因此，运行：
+
+arch -x86_64 $SHELL
+
+就可以启动一个 X86 模式终端，使得之后运行的命令都在 X86 模式下运行。
+
+此时，运行 Homebrew 的官方安装脚本
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+就可以完成 X86 版 Homebrew 的安装。
+------------------------------
+
+历史上，/usr/local 主要用于放置在本地编译并另行安装的程序，避免和 /usr 下的系统自带版本冲突；而 /opt 则用于安装非系统自带的、第三方预先编译并发行的独立软件包。
+
+
+m1:
+安装 brew-intel
+https://indiespark.top/software/run-command-line-apple-silicon/
+kettle
+https://blog.csdn.net/ColeMEI/article/details/118616719
+
+多版本 jdk
+https://blog.csdn.net/qq_39992641/article/details/117048076
+
+多版本 brew
+https://www.zhihu.com/question/20873070
+
+

@@ -5,10 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-interface Algorithm {
-    Result algorithm(List<Double> line);
-}
-
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
@@ -33,6 +29,10 @@ public class ChainOfResponsibility {
         else
             System.out.println("No algorithm found");
     }
+}
+
+interface Algorithm {
+    Result algorithm(List<Double> line);
 }
 
 class Result {

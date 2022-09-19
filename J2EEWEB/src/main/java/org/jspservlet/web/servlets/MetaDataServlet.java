@@ -12,12 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +53,14 @@ public class MetaDataServlet extends MySqlServlet {
         try (
                 final Connection conn = getConn()
         ) {
+            boolean autoCommit = conn.getAutoCommit();
+            try {
+                conn.setAutoCommit(false);
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+            }
+            conn.setAutoCommit(autoCommit);
 
             String tableName = req.getParameter("tableName");
 

@@ -1,8 +1,8 @@
 package org.anonymous.swing.layout;
 
-import java.awt.Button;
-import java.awt.FlowLayout;
-import java.awt.Frame;
+import org.anonymous.util.AwtUtil;
+
+import java.awt.*;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -17,7 +17,10 @@ public class FlowLayoutTest {
      */
     public static void main(String[] args) {
         Frame f = new Frame("Flow");
-        f.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        f.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+
+        // 这里设置的只有 x/y 生效, width/height 无效
+        f.setBounds(300, 300, 0, 0);
 
         for (int i = 0; i < 10; i++) {
             f.add(new Button("btn" + i));
@@ -29,6 +32,7 @@ public class FlowLayoutTest {
         // f.setBounds(400, 400, 50, 400); // 手动设置大小
 
         f.setVisible(true);
+        AwtUtil.closeWindow(f);
     }
 
 }

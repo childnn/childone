@@ -4,6 +4,10 @@ interface Resource {
     int getValue();
 
     void setValue(int x);
+
+    // 继承 Object#clone 方法
+    Object clone() throws CloneNotSupportedException;
+
 }
 
 /**
@@ -21,7 +25,7 @@ public class SingletonPattern {
         System.out.println(r.getValue());
         try {
             // 不能这么做，会发生：compile-time error（编译时错误）.
-            // Singleton s3 = (Singleton)s2.clone();
+            Singleton s3 = (Singleton) s2.clone();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -53,10 +57,15 @@ final class Singleton {
         public synchronized void setValue(int x) {
             i = x;
         }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
     }
 
     private static class ResourceHolder {
-        private static Resource resource = new ResourceImpl(47);
+        private static final Resource resource = new ResourceImpl(47);
     }
 
 }
