@@ -1,7 +1,5 @@
 package test.basic;
 
-import test.Triangle;
-
 public class TestTriangle {
 
     public static void main(String[] args) {

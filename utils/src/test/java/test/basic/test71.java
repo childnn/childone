@@ -1,7 +1,5 @@
 package test.basic;
 
-import test.TPhone;
-
 import java.util.ArrayList;
 
 /**
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 public class test71 {
 
     public static void main(String[] args) {
-        test.TPhone a = new TPhone("华为", 1200, 4);
+        TPhone a = new TPhone("华为", 1200, 4);
         TPhone b = new TPhone("苹果", 9000, 1);
         TPhone c = new TPhone("锤子", 3000, 3);
         TPhone d = new TPhone("小米", 1800, 2);

@@ -1,0 +1,10 @@
+servlet 五个方法
+init, service, destroy 是 servlet 生命周期方法.
+在 servlet 初始化之后, init 方法将会被 servlet 容器所调用. servlet 容器只调用一次, 以此表明 servlet
+已经被加载进服务中. init 方法必须在 servlet 可以接受任何请求之前成功运行完毕。 一个 servlet 程序员可以通过覆盖这个方法来写那些仅仅
+只要运行一次的初始化代码, 例如加载数据库驱动, 值初始化等.
+在 servlet 生命周期中, service 方法将被调用多次.
+当从服务中移除一个 servlet 实例的时候, servlet 容器调用 destroy 方法. 这通常发生在容器正在被关闭或者
+servlet 容器需要一些空闲内存的时候. 仅仅在所有 destroy 线程的 service 方法已经退出或者超时淘汰的时候, 这个方法才被调用.
+在 servlet 容器已经调用完 destroy 方法之后, 在同一个 servlet 里边将不会再调用 service 方法. destroy 方法提供了
+一个机会来清理任何已经被占用的资源.

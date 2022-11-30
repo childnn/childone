@@ -29,13 +29,18 @@ public class FanoutTest {
     @Test
     public void producer() throws IOException, TimeoutException {
         // 创建连接工厂. -- 全部使用默认的属性.
+        // guest/guest
+        // vhost: /
+        // host: localhost
+        // port: 5672
         ConnectionFactory factory = new ConnectionFactory();
         // 创建连接.
         Connection conn = factory.newConnection();
         // 创建信道.
         Channel channel = conn.createChannel();
         // 声明交换机.
-        AMQP.Exchange.DeclareOk declareOk = channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
+        AMQP.Exchange.DeclareOk declareOk =
+                channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT, false, true, null);
 
         for (int i = 0; i < 100; i++) {
             String msg = "fanout " + i;
@@ -46,9 +51,9 @@ public class FanoutTest {
             System.out.println("发送消息: " + msg);
         }
 
-        System.in.read();
-        // channel.close();
-        // conn.close();
+        // System.in.read();
+        channel.close();
+        conn.close();
     }
 
     @Test
@@ -63,7 +68,7 @@ public class FanoutTest {
         // 创建信道.
         Channel channel = conn.createChannel();
         // 声明交换机.
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT, false, true, null);
         // 获取一个临时队列.
         String queueName = channel.queueDeclare().getQueue();
         // 队列与交换机绑定(指定 队列名称, 交换机名称, routingKey 忽略)
@@ -97,7 +102,7 @@ public class FanoutTest {
         // 创建信道.
         Channel channel = conn.createChannel();
         // 声明交换机.
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT, false, true, null);
         // 获取一个临时队列.
         String queueName = channel.queueDeclare().getQueue();
         // 队列与交换机绑定(指定 队列名称, 交换机名称, routingKey 忽略)

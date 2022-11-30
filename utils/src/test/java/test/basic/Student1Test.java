@@ -1,7 +1,5 @@
 package test.basic;
 
-import java.util.ArrayList;
-
 /**
  * 第六题:
  * 1.创建Student类，包含如下属性
@@ -16,21 +14,21 @@ import java.util.ArrayList;
 public class Student1Test {
 
     public static void main(String[] args) {
-        Student1 stu = new Student1("小红", 12, "小学");
-        Student1 stu1 = new Student1("小米", 21, "大学");
-        Student1 stu2 = new Student1("小明", 14, "初中");
-        ArrayList<Student1> list = new ArrayList<>();
-        list.add(stu);
-        list.add(stu1);
-        list.add(stu2);
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).age < 15) {
-                list.get(i).gra = "幼儿园";
-
-            }
-//            System.out.println(list.get(i).name + "-" + list.get(i).age + "-" + list.get(i).gra);
-        }
-        System.out.println(list);
+        // Student12 stu = new Student12("小红", 12, "小学");
+        // Student12 stu1 = new Student12("小米", 21, "大学");
+        // Student12 stu2 = new Student12("小明", 14, "初中");
+        // ArrayList<Student12> list = new ArrayList<>();
+        // list.add(stu);
+        // list.add(stu1);
+        // list.add(stu2);
+        // for (int i = 0; i < list.size(); i++) {
+        //     if (list.get(i).age < 15) {
+        //         list.get(i).gra = "幼儿园";
+        //
+        //     }
+        //    System.out.println(list.get(i).name + "-" + list.get(i).age + "-" + list.get(i).gra);
+        // }
+        // System.out.println(list);
     }
 
 }

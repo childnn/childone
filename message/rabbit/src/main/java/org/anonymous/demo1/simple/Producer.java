@@ -11,15 +11,12 @@ public class Producer {
 
     /***
      * 消息生产者
-     * @param args
-     * @throws IOException
-     * @throws TimeoutException
      */
     public static void main(String[] args) throws IOException, TimeoutException {
-        //创建链接
+        // 创建链接
         Connection connection = ConnectionUtil.getConnection();
 
-        //创建频道
+        // 创建信道
         Channel channel = connection.createChannel();
 
         /**
@@ -32,20 +29,21 @@ public class Producer {
          * **/
         channel.queueDeclare("simple_queue", true, false, false, null);
 
-        //创建消息
+        // 创建消息
         String message = "hello!welcome to itheima!";
 
         /**
          * 消息发送
-         * 参数1：交换机名称，如果没有指定则使用默认Default Exchage
+         * 参数1：交换机名称，如果没有指定则使用默认Default Exchange
          * 参数2：路由key,简单模式可以传递队列名称
          * 参数3：消息其它属性
          * 参数4：消息内容
          */
         channel.basicPublish("", "simple_queue", null, message.getBytes());
 
-        //关闭资源
+        // 关闭资源
         channel.close();
         connection.close();
     }
+
 }

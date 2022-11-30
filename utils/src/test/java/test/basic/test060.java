@@ -36,7 +36,7 @@ package test.basic;
 class test06$ {
 
     public static void main(String[] args) {
-        Student1 s = new Student1("关晓彤", 15);
+        Student12 s = new Student12("关晓彤", 15);
         s.studying(new Learn());
     }
 
@@ -101,7 +101,7 @@ class Phone2 {
 
 }
 
-class Student1 {
+class Student12 {
 
     private String name;
     private int age;
@@ -113,10 +113,10 @@ class Student1 {
         le.stu(new Phone2("华为", 1999));
     }
 
-    public Student1() {
+    public Student12() {
     }
 
-    public Student1(String name, int age) {
+    public Student12(String name, int age) {
 
         this.name = name;
         this.age = age;

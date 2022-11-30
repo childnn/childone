@@ -1,0 +1,1 @@
+与 chapter05 区别: 各个类实现 Lifecycle 接口

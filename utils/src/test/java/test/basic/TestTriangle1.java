@@ -8,9 +8,9 @@ public class TestTriangle1 {
         int c = 5;
 //        Triangle.ZhouChang(a, b, c); // error
         Triangle.Area(a, b, c);*/
-        test.Triangle.Area(3, 4, 5);
+        Triangle.Area(3, 4, 5);
 
-        test.Triangle1 x = new test.Triangle1(1); // 为什么？【this】
+        Triangle1 x = new Triangle1(1); // 为什么？【this】
         B i = new B(1);
 
     }

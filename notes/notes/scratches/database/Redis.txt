@@ -185,7 +185,7 @@ package org.anonymous.Redis;
  *          #   after 60 sec if at least 10000 keys changed  -- 如果一分钟后有一万个 key 改变,则保存数据到硬盘
  *   2. aof(配置文件命令方式)
  *      默认不开启  redis.windows.conf  -- 查 appendonly
- *          appendonly no --> appendonlu yes
+ *          appendonly no --> appendonly yes
  *      保存策略:
  *          # appendfsync always  每次都写入
  *          # appendfsync everysec  每秒写入

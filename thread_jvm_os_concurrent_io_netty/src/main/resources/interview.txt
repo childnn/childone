@@ -8617,16 +8617,16 @@ e.合理利用内存，有的数据要缓存
 一、SpringMVC 
 1. SpringMVC 的工作原理（2017-11-13-lyq） 
 	a.	用户向服务器发送请求，请求被 springMVC 前端控制器 DispatchServlet 捕获；  
-	b.	DispatcherServle 对请求 URL 进行解析，得到请求资源标识符（URL），然后根据该URL 调用 HandlerMapping 将请求映射到处理器 HandlerExcutionChain； 
+	b.	DispatcherServlet 对请求 URL 进行解析，得到请求资源标识符（URL），然后根据该URL 调用 HandlerMapping 将请求映射到处理器 HandlerExecutionChain；
 	c.	DispatchServlet 根据获得 Handler 选择一个合适的 HandlerAdapter 适配器处理； 
 	d.	Handler 对数据处理完成以后将返回一个 ModelAndView（）对象给 DisPatchServlet; 
-	e.	Handler 返回的 ModelAndView()只是一个逻辑视图并不是一个正式的视图，DispatcherSevlet 通过
+	e.	Handler 返回的 ModelAndView()只是一个逻辑视图并不是一个正式的视图，DispatcherServlet 通过
 ViewResolver 试图解析器将逻辑视图转化为真正的视图 View; 
-h. DispatcherServle 通过 model 解析出 ModelAndView()中的参数进行解析最终展现出完整的 view 并返回给客户端;  
+h. DispatcherServlet 通过 model 解析出 ModelAndView()中的参数进行解析最终展现出完整的 view 并返回给客户端;
 
 
 2. SpringMVC 常用注解都有哪些？（2017-11-24-gxb） 
-@requestMapping 用于请求 url 映射。  
+@requestMapping 用于请求 url 映射。
 @RequestBody 注解实现接收 http 请求的 json 数据，将 json 数据转换为 java 对象。  
 @ResponseBody 注解实现将 controller 方法返回对象转化为 json 响应给客户。  
 3. 如何开启注解处理器和适配器？（2017-11-24-gxb） 
@@ -8658,7 +8658,7 @@ CGLIB 方式实现动态代理。
 单例模式——在 spring 的配置文件中设置 bean 默认为单例模式。 
 	b.	模板方式模式——用来解决代码重复的问题。 
 比如：RestTemplate、JmsTemplate、JpaTemplate 
-	d.	前端控制器模式——spring 提供了前端控制器 DispatherServlet 来对请求进行分发。 
+	d.	前端控制器模式——spring 提供了前端控制器 DispatcherServlet 来对请求进行分发。
 	e.	试图帮助（view helper）——spring 提供了一系列的 JSP 标签，高效宏来帮助将分散的代码整合在试图中。 
 	f.	依赖注入——贯穿于 BeanFactory/ApplacationContext 接口的核心理念。 
 	g.	工厂模式——在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用同一个接口来
@@ -11148,10 +11148,6 @@ main 方法 	抽象方法可以有 main 方法并且我们可以运行 接口没
 口。因此你就可以使用接口来解决它。 
 如果基本功能在不断改变，那么就需要使用抽象类。如果不断改变基本功能并且使用接口，那么就需要改变所有实现
 了该接口的类。 
-3.2、sleep（）和 wait（）有什么不同点？ 
-主要区别在于： 
-sleep 表示睡眠，wait 表示等待 sleep 需要手动唤醒线程，而 wait 不需要手动唤醒等待结束后自动执行。 
-原文链接：https://www.zhihu.com/question/23328075 
 
 3.3、TreeMap 和 HashMap 有什么不同点？ 
 第一点：HashMap：基于哈希表实现。使用 HashMap 要求添加的键类明确定义了 hashCode()和 equals()[可以重写 hashCode()和 equals()]，为了优化 HashMap 空间的使用，您可以调优初始容量和负载因子。  

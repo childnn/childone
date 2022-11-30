@@ -25,4 +25,30 @@ public class Bed extends Point {
     public void setEmpty(boolean empty) {
         isEmpty = empty;
     }
+
+
+    public static void main(String[] args) {
+        Integer i1 = 1000;
+        Integer i2 = 1000;
+        System.out.println(i1 == i2);
+
+        i1 = 100;
+        i2 = 100;
+        System.out.println(i1 == i2);
+
+        System.out.println(hash("sdfaf"));
+        System.out.println(0 & hash("sdfaf"));
+        System.out.println(1 & hash("sdfaf"));
+        System.out.println(2 & hash("aaaa"));
+        System.out.println(hash("通话"));
+        System.out.println(hash("重地"));
+
+    }
+
+
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+    }
+
 }

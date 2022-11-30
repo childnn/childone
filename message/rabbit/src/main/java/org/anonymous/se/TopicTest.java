@@ -1,20 +1,11 @@
 package org.anonymous.se;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.BuiltinExchangeType;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.*;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
-
-import static com.rabbitmq.client.ConnectionFactory.*;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -32,6 +23,7 @@ public class TopicTest {
             "usa.weather",
             "europe.news",
             "europe.weather",
+            "routing.topic"
     };
 
     public final static String ROUTING_KEY_USA = "usa.*";
@@ -43,24 +35,28 @@ public class TopicTest {
             "美国天气",
             "欧洲新闻",
             "欧洲天气",
+            "发布订阅"
     };
 
     @Test
-    public void producer() throws IOException, TimeoutException {
+    public void producer() throws IOException, TimeoutException, InterruptedException {
         // 创建连接工厂.
         ConnectionFactory factory = new ConnectionFactory();
         // 设置 RabbitMQ 相关信息.
-        factory.setHost(DEFAULT_HOST);
-        factory.setUsername(DEFAULT_USER);
-        factory.setPassword(DEFAULT_PASS);
-        factory.setVirtualHost(DEFAULT_VHOST);
-        factory.setPort(DEFAULT_AMQP_PORT);
+        // factory.setHost(DEFAULT_HOST);
+        // factory.setUsername(DEFAULT_USER);
+        // factory.setPassword(DEFAULT_PASS);
+        // factory.setVirtualHost(DEFAULT_VHOST);
+        // factory.setPort(DEFAULT_AMQP_PORT);
         // 设置连接属性...这里使用默认值
         Connection conn = factory.newConnection();
         // 创建通道.
         Channel channel = conn.createChannel();
 
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+        // ack
+        channel.confirmSelect();
+
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, false, true, null);
 
         for (int i = 0; i < ROUTING_KEYS.length; i++) {
             String routingKey = ROUTING_KEYS[i];
@@ -71,7 +67,11 @@ public class TopicTest {
             System.out.printf("发送消息到路由: %s, 内容是: %s%n ", routingKey, msg);
         }
 
-        System.in.read();
+        if (channel.waitForConfirms()) {
+            System.out.println("全部消费成功！");
+        }
+
+        // System.in.read();
 
         // 关闭通道和连接.
         channel.close();
@@ -87,17 +87,17 @@ public class TopicTest {
         // 创建连接工厂.
         ConnectionFactory factory = new ConnectionFactory();
         // 设置 RabbitMQ 相关信息.
-        factory.setHost(DEFAULT_HOST);
-        factory.setUsername(DEFAULT_USER);
-        factory.setPassword(DEFAULT_PASS);
-        factory.setVirtualHost(DEFAULT_VHOST);
-        factory.setPort(DEFAULT_AMQP_PORT);
+        // factory.setHost(DEFAULT_HOST);
+        // factory.setUsername(DEFAULT_USER);
+        // factory.setPassword(DEFAULT_PASS);
+        // factory.setVirtualHost(DEFAULT_VHOST);
+        // factory.setPort(DEFAULT_AMQP_PORT);
         // 获取连接.
         Connection conn = factory.newConnection();
         // 创建信道.
         Channel channel = conn.createChannel();
         // 声明交换机.
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, false, true, null);
         // 获取临时队列.
         String queueName = channel.queueDeclare().getQueue();
 
@@ -130,19 +130,21 @@ public class TopicTest {
         // 创建连接工厂.
         ConnectionFactory factory = new ConnectionFactory();
         // 设置 RabbitMQ 相关信息.
-        factory.setHost(DEFAULT_HOST);
-        factory.setUsername(DEFAULT_USER);
-        factory.setPassword(DEFAULT_PASS);
-        factory.setVirtualHost(DEFAULT_VHOST);
-        factory.setPort(DEFAULT_AMQP_PORT);
+        // factory.setHost(DEFAULT_HOST);
+        // factory.setUsername(DEFAULT_USER);
+        // factory.setPassword(DEFAULT_PASS);
+        // factory.setVirtualHost(DEFAULT_VHOST);
+        // factory.setPort(DEFAULT_AMQP_PORT);
         // 获取连接.
         Connection conn = factory.newConnection();
         // 创建信道.
         Channel channel = conn.createChannel();
         // 声明交换机.
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, false, true, null);
         // 获取临时队列.
         String queueName = channel.queueDeclare().getQueue();
+
+        System.out.println("queueName = " + queueName);
 
         // 接收 USA 信息.
         channel.queueBind(queueName, EXCHANGE_NAME, ROUTING_KEY_NEWS);
@@ -161,4 +163,30 @@ public class TopicTest {
 
         System.in.read();
     }
+
+    @Test
+    public void consumerTopic() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        Connection conn = factory.newConnection();
+        Channel channel = conn.createChannel();
+
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, false, true, null);
+
+        String queue = "queue.topic";
+        channel.queueDeclare(queue, false, false, true, null);
+
+        channel.queueBind(queue, EXCHANGE_NAME, "routing.topic");
+
+        channel.basicConsume(queue, true, new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                System.out.println("consumerTag = " + consumerTag);
+                System.out.println("envelope = " + envelope);
+                System.out.println("body = " + new String(body));
+            }
+        });
+
+        System.in.read();
+    }
+
 }
