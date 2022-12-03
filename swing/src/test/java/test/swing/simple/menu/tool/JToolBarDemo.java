@@ -1,8 +1,7 @@
 package test.swing.simple.menu.tool;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -20,7 +19,7 @@ public class JToolBarDemo extends JPanel implements ActionListener {
     private static final String OPEN = "OPEN";
     private static final String SAVE = "SAVE";
     private static final String NEW = "NEW";
-    private JTextArea textArea;
+    private final JTextArea textArea;
 
     public JToolBarDemo() {
         super(new BorderLayout());
@@ -76,7 +75,7 @@ public class JToolBarDemo extends JPanel implements ActionListener {
             bt.setIcon(new ImageIcon(imgURL));
         } else {
             bt.setText(altText);
-            System.err.println(String.format("Resource [%s] not found", imgName));
+            System.err.printf("Resource [%s] not found%n", imgName);
         }
         return bt;
     }

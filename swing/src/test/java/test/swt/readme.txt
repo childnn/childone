@@ -1,0 +1,1 @@
+mac-apple silicon 不支持

@@ -65,7 +65,7 @@ public class MyServer {
             });
 
             //启动服务器
-            ChannelFuture channelFuture = serverBootstrap.bind(7000).sync();
+            ChannelFuture channelFuture = serverBootstrap.bind(9876).sync();
             channelFuture.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();

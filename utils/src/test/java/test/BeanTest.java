@@ -1,11 +1,11 @@
 package test;
 
+import beans.cglib.CglibBeanUtil;
 import entity.Person;
 import entity.Person1;
 import entity.Stu;
 import entity.Stu1;
 import net.sf.cglib.core.DebuggingClassWriter;
-import util.BeanUtil;
 import org.junit.jupiter.api.Test;
 
 import java.beans.BeanInfo;
@@ -52,11 +52,11 @@ public class BeanTest {
 
         System.out.println("============= copy bean ===============");
         Stu child = new Stu(111, "child", true, BigDecimal.valueOf(1321.213123), arr);
-        Person person = BeanUtil.copy(child, Person.class);
+        Person person = CglibBeanUtil.copy(child, Person.class);
         System.out.println("person = " + person);
 
         System.out.println("============= copy bean list ===============");
-        List<Person> people = BeanUtil.copyBeanCollection(Arrays.asList(child, child, child), Person.class, "age");
+        List<Person> people = CglibBeanUtil.copyBeanCollection(Arrays.asList(child, child, child), Person.class, "age");
         System.out.println("people = " + people);
 
         System.out.println("============= bean2map =================");
@@ -64,11 +64,11 @@ public class BeanTest {
         stu.setAge(12);
         stu.setName("jack");
         stu.setDef(true);
-        Map<String, Object> map = BeanUtil.bean2Map(stu);
+        Map<String, Object> map = CglibBeanUtil.bean2Map(stu);
         map.forEach((k, v) -> System.out.printf("k: %s -- v: %s%n", k, v));
 
         System.out.println("============= map2bean ===============");
-        Stu1 bean = BeanUtil.map2Bean(map, Stu1.class);
+        Stu1 bean = CglibBeanUtil.map2Bean(map, Stu1.class);
         System.out.println("bean = " + bean);
         System.out.println("bean class = " + bean.getClass());
 
@@ -77,11 +77,11 @@ public class BeanTest {
                 new Stu(13, "jack", true, BigDecimal.valueOf(1321.213123), arr),
                 new Stu(16, "rose", true, BigDecimal.valueOf(1321.213123), arr)
         );
-        List<Map<String, Object>> maps = BeanUtil.objectsToMaps(list);
+        List<Map<String, Object>> maps = CglibBeanUtil.objectsToMaps(list);
         maps.forEach(m -> m.forEach((k, v) -> System.out.println(k + ": " + v)));
 
         System.out.println("============== maps2objs ==============");
-        List<Stu1> stus = BeanUtil.maps2Objects(maps, Stu1.class);
+        List<Stu1> stus = CglibBeanUtil.maps2Objects(maps, Stu1.class);
         stus.forEach(System.out::println);
 
         System.out.println("---------- 不同类型copy ----------------------");
@@ -89,7 +89,7 @@ public class BeanTest {
         System.out.println("---------- foo to bar----------------------");
 
         Stu foo = new Stu(1, "2", true, BigDecimal.valueOf(1321.213123), arr);
-        Stu1 bar = BeanUtil.copy(foo, Stu1.class);
+        Stu1 bar = CglibBeanUtil.copy(foo, Stu1.class);
         System.out.println("bar = " + bar);
 
 
@@ -111,7 +111,7 @@ public class BeanTest {
         }});
 
         p.setStu(new Stu(33, "Rose", true, BigDecimal.valueOf(41321L), arr));
-        Person1 copy = BeanUtil.copy(p, Person1.class, /*"age", */true, "name");
+        Person1 copy = CglibBeanUtil.copy(p, Person1.class, /*"age", */true, "name");
         System.out.println("copy = " + copy);
         Stu1 stu11 = copy.getChildren().get(0);
         System.out.println(stu11.getClass()); // 如果没有转换类型: java.lang.ClassCastException

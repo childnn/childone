@@ -3,7 +3,6 @@ package org.anonymous.dao;
 import org.anonymous.beans.Admin;
 import org.anonymous.beans.Contact;
 import org.anonymous.beans.SqlBean;
-import org.anonymous.util.JdbcTemplateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +15,7 @@ import java.util.List;
  * 2019/4/1 18:30
  */
 public class ContactDao1 {
-    private static final JdbcTemplate jdbcTemplate = new JdbcTemplate(JdbcTemplateUtils.getDataSource());
+    private static final JdbcTemplate jdbcTemplate = new JdbcTemplate(null/*JdbcTemplateUtils.getDataSource()*/);
 
     //校验用户名,密码
     public static Admin checkAdmin(Admin admin) {

@@ -13,12 +13,16 @@ import java.awt.event.MouseEvent;
  * 右键
  */
 public class JPopupMenuDemo extends JFrame {
+    private static final long serialVersionUID = 7611771225920065230L;
 
     private static final JPopupMenu popupMenu = new JPopupMenu();
-    private JMenu fileMenu;
-    private JMenuItem openFile, closeFile, exit;
-    private JRadioButtonMenuItem copyFile, pasteFile;
-    private ButtonGroup btGroup;
+    private final JMenu fileMenu;
+    private final JMenuItem openFile;
+    private final JMenuItem closeFile;
+    private final JMenuItem exit;
+    private final JRadioButtonMenuItem copyFile;
+    private final JRadioButtonMenuItem pasteFile;
+    private final ButtonGroup btGroup;
 
     public JPopupMenuDemo(String title) {
         super(title);
@@ -59,7 +63,7 @@ public class JPopupMenuDemo extends JFrame {
 
             private void showPopupMenu(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    System.out.println(String.format("x: %s, y: %s", e.getX(), e.getY()));
+                    System.out.printf("x: %s, y: %s%n", e.getX(), e.getY());
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -75,6 +79,6 @@ public class JPopupMenuDemo extends JFrame {
     }
 
     public static void main(String[] args) {
-        new JPopupMenuDemo("POPUP");
+        new JPopupMenuDemo("POPUP-鼠标右键");
     }
 }

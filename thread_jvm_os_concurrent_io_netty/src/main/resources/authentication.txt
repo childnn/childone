@@ -1,3 +1,32 @@
+同源:
+ a 网页设置的 cookie, b 网页不可打开.
+ 协议, 域名, 端口 三者完全一致.
+ 目的: 保证用户信息安全, 防止恶意的网站窃取数据.
+ a 网站是一家银行, 用户登录以后, 又去浏览其他网站. 如果其他网站可以读取 a 网站的 cookie, 会发生什么?
+ 如果 cookie 包含隐私, 这些信息就会泄漏. 而且, cookie 往往用来保存用户的登陆状态, 如果用户没有推出,
+ 其他网站可以冒充用户. 因为浏览器同时还规定, 提交表单不受同源策略限制.
+ 由此可见, 同源政策是必须的, 否则 cookie 可以共享, 互联网毫无安全可言.
+
+虽则互联网发展, 同源策略越来越严格. 目前非同源受限的行为:
+ 1. cookie, local-storage, index-db 无法读取,
+ 2. dom 无法获取;
+ 3. ajax 请求不可发送.
+
+虽然这些限制是必要的, 但有时很不方便, 合理的使用也收到影响. 解决方案见下.
+1. cookie:
+  cookie 是服务器写入浏览器的一小段信息, 只有同源的网页才能共享. 但是, 两个网页一级域名相同, 只是二级域名不同, 浏览器允许
+  通过 document.domain 共享 cookie.
+ eg: a 网页 http://w1.example.com/a.html, b 网页 http://w2.example.com/b.html, 那么只要设置相同的 document.domain, 两个网页就可以共享 cookie.
+    document.domain = 'example.com'
+  现在, 通过 a 网页设置一个 cookie, 则 b 网页可以读取这个 cookie.
+    var allCookie = document.cookie
+  注意, 这种方法只适用于 cookie 和 iframe 窗口, local-storage、index-db 无法通过此种方式, 需要使用下文的 PostMessage-API
+  另: 服务器也可以在设置 cookie 时, 指定 cookie 的所属域名为 一级域名.
+  eg:
+   Set-Cookie: key=value; domain=example.com; path=/
+
+
+
 Authentication 认证
     验证当前用户身份(服务器认证用户).
     实现方式:

@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
@@ -42,7 +44,7 @@ public class EmailApplicationTests {
     }
 
     @Test
-    public void sendMail() throws MessagingException {
+    public void sendMail() throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
         System.err.println(sender);
@@ -50,6 +52,7 @@ public class EmailApplicationTests {
         helper.setTo("274979673@qq.com");
         helper.setSubject("月色真美");
         helper.setText("月の光が美しい");
+        helper.addAttachment("file.yml", new ClassPathResource("application.yml"));
         javaMailSender.send(mimeMessage);
     }
 }

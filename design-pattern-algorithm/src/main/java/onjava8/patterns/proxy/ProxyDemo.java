@@ -1,13 +1,5 @@
 package onjava8.patterns.proxy;
 
-interface ProxyBase {
-    void f();
-
-    void g();
-
-    void h();
-}
-
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
@@ -25,8 +17,17 @@ public class ProxyDemo {
 
 }
 
+interface ProxyBase {
+    void f();
+
+    void g();
+
+    void h();
+}
+
+// 静态实现的一种方式
 class Proxy implements ProxyBase {
-    private ProxyBase implementation;
+    private final ProxyBase implementation;
 
     Proxy() {
         implementation = new Implementation();

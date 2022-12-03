@@ -1,0 +1,22 @@
+1. base: 基础, 集合, stream, java.time, functional programming/java.util.function
+2. JPA, nacos, querydsl, Distribution Transaction, graphql
+3. 设计模式
+4. volatile, synchronized, ThreadLocal
+
+1、 自我介绍：
+2、 技术栈：
+3、 微服务的理解：
+4、 单机事务和分布式事务：
+5、 分布式锁、缓存：
+6、 数据库：
+7、 消息中间件：
+8、 Spring bean注入过程：
+9、 Aop应用：
+10、 反射：
+11、 设计模式接口开发的意义与应用：
+12、 ThreadLocal与多线程：
+13、 上一家公司业务积累：
+14、 离职原因：
+15、 薪酬：
+16、 半年内规划：
+17、 加班：

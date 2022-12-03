@@ -1,9 +1,5 @@
 package onjava8.patterns.state;
 
-interface State0 {
-    void run();
-}
-
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
@@ -14,6 +10,10 @@ public class StateMachineDemo {
     public static void main(String[] args) {
         new Washer();
     }
+}
+
+interface State0 {
+    void run();
 }
 
 abstract class StateMachine {
@@ -59,7 +59,7 @@ class Washer extends StateMachine {
     private int i = 0;
 
     // The state table:
-    private State0[] states = {new Wash(), new Spin(), new Rinse(), new Spin(),};
+    private final State0[] states = {new Wash(), new Spin(), new Rinse(), new Spin(),};
 
     Washer() {
         runAll();

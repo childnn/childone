@@ -1,0 +1,7 @@
+
+-- 将一个表的字段更新到另一个表
+update df_cdr.yj_jianchabg b
+set yizhuid = (select yizhubh
+               from df_shenqingdan.yj_jianchasqd s
+               where jianchasqdid = b.shenqingdanid
+)

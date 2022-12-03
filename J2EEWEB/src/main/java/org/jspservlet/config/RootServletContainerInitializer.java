@@ -1,6 +1,6 @@
 package org.jspservlet.config;
 
-import org.anonymous.web.listener.MyServletContextListener;
+// import org.anonymous.web.listener.MyServletContextListener;
 import org.jspservlet.web.servlets.DynamicServlet;
 
 import javax.servlet.ServletContainerInitializer;
@@ -79,6 +79,6 @@ public class RootServletContainerInitializer implements ServletContainerInitiali
     }
 
     private void registerListeners(ServletContext ctx) {
-        ctx.addListener(MyServletContextListener.class);
+        // ctx.addListener(MyServletContextListener.class);
     }
 }

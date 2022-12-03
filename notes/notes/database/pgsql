@@ -1,0 +1,15 @@
+pgsql 将指定 schema 权限赋值给 df_zhushuju， 在对应的用户下执行以下两条命令
+GRANT USAGE ON SCHEMA 指定schema TO df_zhushuju;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA 指定schema  TO df_zhushuju;
+
+多行分组后字段拼接
+pgsql
+    select jiuzhenid, string_agg(z.zhenduanlb, ',') lb, string_agg(z.zhenduanmc, ',')
+    from df_lc_menzhen.zj_zhenduan z
+    group by jiuzhenid;
+
+oracle
+    select jiuzhenid, listagg(z.zhenduanlb, ',') within group (order by JIUZHENID ) lb,
+           listagg(z.ZHENDUANMC, ',') within group (order by JIUZHENID ) mc
+    from df_lc_menzhen.zj_zhenduan z
+    group by jiuzhenid

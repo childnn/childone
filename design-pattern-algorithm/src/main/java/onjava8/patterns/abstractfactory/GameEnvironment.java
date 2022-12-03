@@ -23,8 +23,8 @@ interface Player {
  */
 public class GameEnvironment {
 
-    private Player p;
-    private Obstacle ob;
+    private final Player p;
+    private final Obstacle ob;
 
     public GameEnvironment(GameElementFactory factory) {
         p = factory.player.get();

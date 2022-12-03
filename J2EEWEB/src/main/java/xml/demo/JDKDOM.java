@@ -1,11 +1,7 @@
 package xml.demo;
 
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -89,7 +85,7 @@ public class JDKDOM {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(new File(FILE_PATH));
-        //得到跟标签: persons
+        //得到根标签: persons
         Element root = document.getDocumentElement();
         NodeList childNodes = root.getChildNodes();
         int length = childNodes.getLength();

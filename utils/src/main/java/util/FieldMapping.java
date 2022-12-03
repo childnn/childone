@@ -41,6 +41,7 @@ public class FieldMapping {
 
     }
 
+
     @Deprecated
     static class IndexEntity {
 

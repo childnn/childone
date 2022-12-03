@@ -5,11 +5,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -21,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -72,14 +69,14 @@ public class HttpUtils {
      *
      * @param host
      * @param path
-     * @param method
+     * .@param method
      * @param headers
      * @param querys
      * @param bodys
      * @return
      * @throws Exception
      */
-    public static HttpResponse doPost(String host, String path, String method,
+    public static HttpResponse doPost(String host, String path, /*String method,*/
                                       Map<String, String> headers,
                                       Map<String, String> querys,
                                       Map<String, String> bodys)
@@ -136,6 +133,11 @@ public class HttpUtils {
         return httpClient.execute(request);
     }
 
+    @Test
+    public void post() {
+
+    }
+
 
     public static void main(String[] args) throws Exception {
         String host = "http://192.168.180.51:7000";
@@ -143,7 +145,8 @@ public class HttpUtils {
         String method = "POST";
         CloseableHttpClient ch = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(host + path);
-        post.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyI3OTA5ODE0Nzg5ODMxOTI1NzYiXSwiZXhwIjoxNjE5NTk1MTU1LCJqdGkiOiIyZDM5ZmZlMy1hN2JlLTQ0OWQtYTk3Yi0zNzNjNmUwNmQ2M2YiLCJjbGllbnRfaWQiOiJoYUt0VDhpMmF3RnZtRmhyIn0.ghq0EIYsyMpx-UpLbEB1aVKV8Kq78ywmHTA6dfozYf4");
+        post.addHeader("Authorization",
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyI3OTA5ODE0Nzg5ODMxOTI1NzYiXSwiZXhwIjoxNjE5NTk1MTU1LCJqdGkiOiIyZDM5ZmZlMy1hN2JlLTQ0OWQtYTk3Yi0zNzNjNmUwNmQ2M2YiLCJjbGllbnRfaWQiOiJoYUt0VDhpMmF3RnZtRmhyIn0.ghq0EIYsyMpx-UpLbEB1aVKV8Kq78ywmHTA6dfozYf4");
         post.addHeader("Content-Type", "application/json;charset=utf-8");
 
         CloseableHttpResponse resp = ch.execute(post);
@@ -186,14 +189,14 @@ public class HttpUtils {
      *
      * @param host
      * @param path
-     * @param method
+     * .@param method
      * @param headers
      * @param querys
      * @param body
      * @return
      * @throws Exception
      */
-    public static HttpResponse doPost(String host, String path, String method,
+    public static HttpResponse doPost(String host, String path, /*String method,*/
                                       Map<String, String> headers,
                                       Map<String, String> querys,
                                       byte[] body)

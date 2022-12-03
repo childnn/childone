@@ -18,12 +18,13 @@ public class BigDecimalTest {
 
     @Test
     public void test() {
-        BigDecimal b = new BigDecimal(0.1D);
+        // BigDecimal b = new BigDecimal(0.1D);
+        BigDecimal b = new BigDecimal("0.1");
         System.out.println("b = " + b);
         BigDecimal b1 = BigDecimal.valueOf(0.1D);
         System.out.println("b1 = " + b1);
-        BigDecimal b2 = new BigDecimal(Double.toString(0.1D));
-        System.out.println("b2 = " + b2);
+        // BigDecimal b2 = new BigDecimal(Double.toString(0.1D));
+        // System.out.println("b2 = " + b2);
     }
 
     public static void main(String[] args) {

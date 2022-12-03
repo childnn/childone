@@ -1,11 +1,7 @@
 package org.anonymous.netty.netty.groupchat;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -21,7 +17,7 @@ public class GroupChatServer {
     }
 
     public static void main(String[] args) throws Exception {
-        new GroupChatServer(7000).run();
+        new GroupChatServer(7777).run();
     }
 
     //编写run方法，处理客户端的请求

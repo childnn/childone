@@ -31,7 +31,7 @@ public class NettyClient {
             //创建客户端启动对象
             //注意客户端使用的不是 ServerBootstrap 而是 Bootstrap
             Bootstrap bootstrap = new Bootstrap()
-                    .group(group) //设置线程组
+                    .group(group) // 设置线程组
                     .channel(NioSocketChannel.class) // 设置客户端通道的实现类(反射)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
@@ -44,7 +44,7 @@ public class NettyClient {
 
             //启动客户端去连接服务器端
             //关于 ChannelFuture 要分析，涉及到netty的异步模型
-            ChannelFuture channelFuture = bootstrap.connect(BIOServer.HOST, 6668).sync();
+            ChannelFuture channelFuture = bootstrap.connect(BIOServer.HOST, 9081).sync();
             //给关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
