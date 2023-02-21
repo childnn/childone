@@ -8,6 +8,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  *
  * @author MiaoOne
  * @since 2021/4/26 17:19
+ * 基于 javax-socket 的实现
  */
 // @Configuration
 // @EnableWebSocket

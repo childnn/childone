@@ -17,12 +17,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
  * @author MiaoOne
+ * @see org.springframework.web.socket.WebSocketHandler 的各个方法对应 javax-websocket 的各个注解
  * @since 2021/4/26 18:44
  * 消息处理器, 收发消息
  */
 public class MyMsgHandler extends TextWebSocketHandler {
 
-    // 如果同一个人可以多点登录, 这里 value 可以用 Set 存储 session
+    // 如果同一个人可以多地登录, 这里 value 可以用 Set 存储 session
     private static final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
     @Override
@@ -47,6 +48,7 @@ public class MyMsgHandler extends TextWebSocketHandler {
 
     String getName(WebSocketSession session) throws UnsupportedEncodingException {
         URI u = session.getUri();
+        // System.out.println("u = " + u);
         if (u == null) {
             return null;
         }
@@ -69,7 +71,10 @@ public class MyMsgHandler extends TextWebSocketHandler {
         String id = session.getId();
         // String uri = session.getUri().toString();
         // System.out.println("uri = " + uri);
-        String name = getName(session);//uri.substring(uri.lastIndexOf("/") + 1);
+        String name = getName(session); // uri.substring(uri.lastIndexOf("/") + 1);
+        System.out.println("session.getUri() = " + session.getUri());
+        System.out.println("session.getAttributes() = " + session.getAttributes());
+
         System.out.println(name + " " + id + " 连接成功!");
         sessions.put(id, session);
         Map<String, Object> attrs = session.getAttributes();
@@ -88,9 +93,9 @@ public class MyMsgHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         // super.afterConnectionClosed(session, status);
-        System.out.println("断开连接...");
+        System.out.println(session.getId() + "断开连接..." + status);
         // 移除 对应的 session
     }
 

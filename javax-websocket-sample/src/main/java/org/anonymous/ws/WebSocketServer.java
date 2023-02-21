@@ -1,23 +1,18 @@
 package org.anonymous.ws;
 
-import javax.websocket.CloseReason;
-import javax.websocket.EndpointConfig;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.PathParam;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
  *
  * @author MiaoOne
- * @since 2021/4/26 16:45
  * @see javax.websocket.OnOpen
  * @see javax.websocket.OnMessage
  * @see javax.websocket.OnClose
  * @see javax.websocket.OnError
+ * @see javax.websocket.Endpoint
+ * @since 2021/4/26 16:45
  */
 // @Component
 // @ServerEndpoint("/test/ws/{name}")

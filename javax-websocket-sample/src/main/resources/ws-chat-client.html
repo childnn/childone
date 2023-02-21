@@ -14,7 +14,7 @@
       // 假设下载的 HTTP 服务器作为 WebSocket 服务器运作, 并且使用同样的主机名和端口
       // 只是协议由 http:// 变成 ws://
       // var socket = new WebSocket('ws://' + location.host + ":8080/test/ws/jack");
-      var url = 'ws://localhost:8080/test/ws/' + nick;
+      var url = 'ws://localhost:8080/test/ws2/' + nick + '?key=aaaaa';
       var socket = new WebSocket(url);
 
       // 等价于 socket.addEventListener('message'..)

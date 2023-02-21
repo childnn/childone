@@ -16,15 +16,15 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
  */
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+public class BootWebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(myHandler(), "/test/ws/{name}") // @ServerEndpoint("/test/ws/{name}") 如果没有动态参数, 必须以 / 结尾
+        registry.addHandler(myHandler(), "/test/ws2/{name}") // @ServerEndpoint("/test/ws/{name}") 如果没有动态参数, 必须以 / 结尾
                 .setAllowedOrigins("*") // 支持跨域
                 // .setHandshakeHandler()
                 .addInterceptors(handshakeInterceptor()); // 拦截器
-                // .withSockJS(); // 支持 socket.js
+        // .withSockJS(); // 支持 socket.js
     }
 
     @Bean
