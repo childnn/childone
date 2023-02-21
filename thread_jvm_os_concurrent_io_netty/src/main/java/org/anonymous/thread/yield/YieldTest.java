@@ -1,4 +1,4 @@
-package org.anonymous.thread;
+package org.anonymous.thread.yield;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -9,7 +9,7 @@ package org.anonymous.thread;
  * 线程调度器又将其调度出来重新执行.
  * 实际上, 当某个线程调用 yeild() 方法暂停后, 只有优先级与当前线程相同或优先级更高的处于 RUNNABLE 状态的线程才会
  * 获得执行的机会.
- * @see SleepTest
+ * @see org.anonymous.thread.sleep.SleepTest
  * @since 2021/1/25 15:27
  */
 public class YieldTest extends Thread {
@@ -36,6 +36,7 @@ public class YieldTest extends Thread {
             System.out.println(getName() + " " + i);
 
             if (20 == i) {
+                // 让出 cpu 执行时间
                 Thread.yield();
             }
         }

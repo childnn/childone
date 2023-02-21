@@ -12,6 +12,7 @@ import java.util.logging.Logger;
  * 2019/6/19 8:43
  */
 public class SetTest {
+
     public static void main(String[] args) {
         Logger logger = Logger.getLogger("org.anonymous.demo");
         logger.setLevel(Level.FINEST);
@@ -27,4 +28,5 @@ public class SetTest {
 
         System.err.println(parts);
     }
+
 }

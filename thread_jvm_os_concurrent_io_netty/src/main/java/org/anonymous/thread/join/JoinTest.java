@@ -19,7 +19,7 @@ public class JoinTest {
                 System.out.println(Thread.currentThread().getName() + " " + i);
             }
         };
-        new Thread(task, "子线程").start();
+        // new Thread(task, "子线程").start();
 
         for (int i = 0; i < 100; i++) {
             if (20 == i) {

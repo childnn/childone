@@ -56,9 +56,11 @@ import org.springframework.core.env.PropertySourcesPropertyResolver;
 @MapperScan("org.anonymous.dao")
 @SpringBootApplication
 public class MyApp {
+
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(MyApp.class, args);
         String name = ctx.getApplicationName();
         System.out.println("name = " + name);
     }
+
 }
