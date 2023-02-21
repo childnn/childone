@@ -120,3 +120,16 @@ https://docs.docker.com/engine/install/centos/
 
 docker 虚悬镜像
   仓库名, 标签为 none
+
+
+
+  docker run --name=mynginx -p 8888:880 -p 5555:54321 \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/sources_wdd/zjlprofile:/usr/share/nginx/html \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/Atlassian/Confluence/confluence:/usr/share/nginx/confluence \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/sources_wdd/trunk/web:/usr/share/nginx/web \
+  -v /Users/onechild/Documents/support/nginx/nginx.conf:/etc/nginx/nginx.conf \
+  -d nginx
+
+  docker run --name=mynginx -p 4321:80 \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/sources_wdd/zjlprofile:/usr/share/nginx/html \
+  -d nginx

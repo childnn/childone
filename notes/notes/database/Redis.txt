@@ -6,7 +6,7 @@ package org.anonymous.Redis;
  *
  * 启动 redis, 目录下 cmd $ redis-server redis.windows.conf
  * windows 注册 redis 服务.
- * $ redis‐server ‐‐service‐install redis.windows‐service.conf ‐‐loglevel verbose
+ * $ redis‐server ‐‐service‐install redis.windows‐service.conf ‐‐loglevel verbose
  * 常用的redis服务命令如下：
  * 进入redis安装目录：
  * 卸载服务：redis-server.exe --service-uninstall

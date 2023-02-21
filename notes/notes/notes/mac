@@ -49,6 +49,7 @@ arch -x86_64 $SHELL
 
 
 m1:
+m1-brew: /bin/bash -c "$(curl -fsSL https://gitee.com/ineo6/homebrew-install/raw/master/install.sh)"
 安装 brew-intel
 https://indiespark.top/software/run-command-line-apple-silicon/
 kettle
@@ -58,6 +59,23 @@ https://blog.csdn.net/ColeMEI/article/details/118616719
 https://blog.csdn.net/qq_39992641/article/details/117048076
 
 多版本 brew
+https://zhuanlan.zhihu.com/p/335634215
 https://www.zhihu.com/question/20873070
+
+
+
+
+卸载 node
+sudo npm uninstall npm -g
+sudo rm -rf /usr/local/lib/node /usr/local/lib/node_modules /var/db/receipts/org.nodejs.*
+sudo rm -rf /usr/local/include/node /Users/$USER/.npm
+sudo rm /usr/local/bin/node
+sudo rm /usr/local/share/man/man1/node.1
+sudo rm /usr/local/lib/dtrace/node.d
+
+
+---
+mac .pdm 查看
+http://www.dmanywhere.cn/
 
 
