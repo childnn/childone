@@ -11,7 +11,13 @@
                     url: "./readme.txt",
                     async: false
                 });
-                $("#myDiv").html(htmlobj.responseText);
+				// console.log(htmlobj)
+				// console.log(htmlobj.responseText)
+				var rt = htmlobj.responseText;
+				console.log(rt)
+                $("#myDiv").html(rt);
+				var txt3 = document.createElement("p");
+				txt3.innerHTML = "Text.";
             });
         });
 	</script>

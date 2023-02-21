@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>videojs播放器</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+    <link href="https://cdn.bootcss.com/video.js/7.7.6/video-js.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/video.js/7.7.6/video.min.js"></script>
+    <script src="https://cdn.bootcss.com/videojs-flash/2.2.1/videojs-flash.min.js"></script>
+
+</head>
+<body>
+	<!--播放容器-->
+    <video id='myvideo' width=960 height=540 class="video-js vjs-default-skin" controls></video>
+    <input type="button" value="关闭播放器" id="closeBtn"/>
+
+    <script>
+    	//初始化视频播放器
+        var video = videojs('myvideo',{},function () {
+            this.src({
+                src: "rtmp://127.0.0.1:1935/myapp/room",
+                type:'rtmp/flv'
+            });
+            this.play();
+        });
+
+        $("#closeBtn").click(function () {
+            video.dispose();
+        });
+    </script>
+</body>
+</html>
