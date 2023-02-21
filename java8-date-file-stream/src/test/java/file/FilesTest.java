@@ -21,6 +21,13 @@ import java.util.stream.Stream;
  * @since 2020/1/4 13:57
  */
 public class FilesTest {
+
+    @Test
+    public void test1() throws IOException {
+        Path file = Files.createFile(Paths.get("files-child.txt"));
+        System.out.println("file = " + file.toAbsolutePath());
+    }
+
     @Test
     public void test() throws IOException {
         Path path = Paths.get("user/test/aaa");
