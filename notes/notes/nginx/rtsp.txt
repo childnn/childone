@@ -23,21 +23,42 @@ ffplay rtmp://127.0.0.1:1935/myapp/room  // 嵌入 web 需要依赖 flash
 // hls -- http 访问
 ffmpeg.exe -rtsp_transport tcp -buffer_size 4096000 -i "rtsp://admin:Wdd123123!@10.41.59.24:554/Streaming/Channels/101?transportmode=unicast" -vcodec copy -acodec copy -f flv "rtmp://127.0.0.1:1935/hls/live"
 
-
+海康摄像机rtsp地址格式
 https://blog.csdn.net/qq_31720305/article/details/105823158?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-105823158-blog-124612458.pc_relevant_3mothn_strategy_recovery&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-105823158-blog-124612458.pc_relevant_3mothn_strategy_recovery&utm_relevant_index=2
 
 https://blog.51cto.com/shenshen/1760399
 
-https://blog.csdn.net/Miracle_ps/article/details/127726666
-https://blog.csdn.net/tian_tang_g/article/details/109773845
-https://www.dapan.cc/article/2022/11/18841/
+Windows 源码编译 nginx （加入nginx-http-flv-module）
+        https://blog.csdn.net/Miracle_ps/article/details/127726666
+        https://blog.csdn.net/tian_tang_g/article/details/109773845
+
 https://zhuanlan.zhihu.com/p/33751738
-https://blog.csdn.net/lyd0813/article/details/126733348
-https://bbs.csdn.net/topics/605905099
-https://blog.csdn.net/err_demo/article/details/128217180
+
+nginx-http-flv-module(windows版)下载
+        https://bbs.csdn.net/topics/605905099
+        https://blog.csdn.net/err_demo/article/details/128217180
 
 
 
+---
+Nginx: http://nginx.org
+模块:nginx_mod_h264_streaming(支持h264编码的视频)
+模块:http_flv_module 支持flv
+模块:http_mp4_module 支持mp4
+模块:nginx-rtmp-module 支持rtmp
+---
+mac
+下载 nginx 源码包解压, 在目录下执行命令
+1. ./configure --prefix=/Users/onechild/Documents/support/nginx --add-module=../nginx-rtmp-module --with-pcre=../pcre-8.45 --with-openssl=../openssl-3.1.0-alpha1 --with-http_ssl_module
+
+        prefix: nginx 安装目录, 不要指定当前 nginx 的解压目录
+        add-module: 为 nginx-rtmp-module 的相对路径
+        with-pcre: 为 pcre 相对路径
+        with-openssl: 为 openssl 相对路径
+2. configure 成功后
+    执行 make && make install
+   执行完毕在 prefix 所指定的目录下会有 nginx 生成
+3. 修改 nginx 配置文件, 增加 rtmp 选项
 
 windows:
 
