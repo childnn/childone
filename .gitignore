@@ -45,3 +45,6 @@ package-lock.json
 *.iml
 .idea
 .idea/
+out
+.gradle
+target
