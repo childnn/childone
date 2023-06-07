@@ -60,6 +60,20 @@ mac
    执行完毕在 prefix 所指定的目录下会有 nginx 生成
 3. 修改 nginx 配置文件, 增加 rtmp 选项
 
+------
+linux:
+编译OpenSSL时报错，Can‘t locate IPC/Cmd.pm in @INC
+# 进入perl shell中
+yum install -y perl-CPAN
+perl -MCPAN -e shell
+# 进入后第一步选yes
+  第二步选manual
+  第三步选yes
+cpan[1]> install IPC/Cmd.pm
+
+
+
+------
 windows:
 
 1. nginx 源码: http://hg.nginx.org/nginx

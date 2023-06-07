@@ -3,6 +3,21 @@
  强杀指定 pid
  $ sudo kill -9 <pid>
 
+brew 启动服务
+ brew services start/stop/restart redis
+
+ mac 远程连 linux
+ ssh root@ip
+ 上传文件
+ sftp root@ip
+ sftp 命令下, 在普通文件操作命令前加 l, 即表示本地文件系统, local
+ 比如, lls -la, lcd
+在 mac 指定目录下, 执行 put 文件名, 可将文件上传至 linux
+put -r *, 即当前文件下所有文件
+
+另: scp 命令也可
+
+
 直接修改 nacos-startup.sh 文件中的 JAVA_HOME 值
  export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_311.jdk/Contents/Home \
  && sh startup.sh -m standalone

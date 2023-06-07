@@ -1,0 +1,38 @@
+达梦锁表
+
+-- 查询占有锁的事务: tx
+SELECT *
+FROM
+v$lock
+WHERE
+trx_id <> 0;
+
+-- 查询事务的会话: session
+SELECT
+sess_id,
+sql_text,
+state,
+trx_id
+FROM
+v$sessions
+WHERE
+trx_id IN (SELECT trx_id
+FROM
+v$lock
+WHERE
+trx_id <> 0);
+
+
+
+SELECT *
+  FROM
+      v$trxwait;
+
+
+-- 结束会话: 指定会话ID
+SP_CLOSE_SESSION('15012880696')
+
+
+达梦优化
+select 'DBMS_STATS.GATHER_SCHEMA_STATS('''||name||''''||','||'100,TRUE,'||''''||'FOR ALL COLUMNS SIZE AUTO'||''''||');' from SYS.SYSOBJECTS where  SYSOBJECTS."TYPE$"='SCH'
+在达梦执行这个语句，把结果集复制出来在数据库执行，更新整库统计信息

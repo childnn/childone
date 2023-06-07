@@ -9,7 +9,7 @@ import lombok.Data;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -56,6 +56,38 @@ public class GenericSeria {
             // mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL); // 低版本
             mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         }
+    }
+
+    @Test
+    public void test2() throws JsonProcessingException {
+        autoConfig(true);
+        // R<X> xr = new R<>();
+        // xr.setName("jack");
+        // xr.setId("aaa");
+        // X x = new X();
+        // x.setDate(new Date());
+        // x.setSex(1);
+        // xr.setData(x);
+
+        Map<String, Object> x = new HashMap<>();
+        x.put("date", new Date());
+        x.put("sex", 1);
+
+        Map<String, List<Map<String, Object>>> map = new HashMap<>();
+        List<Map<String, Object>> xs = new ArrayList<>();
+        xs.add(x);
+        map.put("aaa", xs);
+
+        String s = mapper.writeValueAsString(map);
+        System.out.println(s);
+
+        // TypeFactory typeFactory = mapper.getTypeFactory();
+        // JavaType simpleType = typeFactory.constructSimpleType(String.class, null);
+        // JavaType listType = typeFactory.constructParametricType(List.class, X.class);
+        //
+        // JavaType javaType = typeFactory.constructParametricType(Map.class, simpleType, listType);
+        // Object o = mapper.readValue(s, javaType);
+        // System.out.println("o = " + o);
     }
 
     @Test

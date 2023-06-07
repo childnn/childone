@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
  * 注解注入
  */
 @WebFilter(urlPatterns = "/*", filterName = "filter2",
-    dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.INCLUDE,
-            // Async support must be enabled on a servlet and for all filters involved in async request processing.
-            DispatcherType.ASYNC})
+           dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.INCLUDE,
+                   // Async support must be enabled on a servlet and for all filters involved in async request processing.
+                   /*DispatcherType.ASYNC*/})
 public class Filter2 implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

@@ -1,0 +1,14 @@
+-- oracle 锁表查询
+
+select * from v$locked_object;
+
+select a.OS_USER_NAME, c.owner, c.object_name, b.sid, b.serial#, logon_time
+  from v$locked_object a, v$session b, dba_objects c
+ where a.session_id = b.sid
+   and a.object_id = c.object_id
+ order by b.logon_time;
+
+-- 其中1025为sid,41为serial#
+alter system kill session '4,326';
+
+alter system kill session '1025,41' immediate;

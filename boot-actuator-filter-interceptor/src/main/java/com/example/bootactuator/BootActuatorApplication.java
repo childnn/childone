@@ -1,15 +1,20 @@
 package com.example.bootactuator;
 
+import com.example.bootactuator.config.MyProperties;
 import com.example.bootactuator.filters.demo2.Filter2;
 import com.example.bootactuator.servlet.MyServlet;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.beans.BeansEndpoint;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebListener;
@@ -39,6 +44,7 @@ import java.util.Map;
 @ServletComponentScan(basePackageClasses = {Filter2.class, MyServlet.class})
 @RestController
 @SpringBootApplication/*(exclude = SecurityAutoConfiguration.class)*/
+@EnableConfigurationProperties(MyProperties.class)
 public class BootActuatorApplication {
 
     public static void main(String[] args) {
@@ -83,6 +89,15 @@ public class BootActuatorApplication {
     public String hello(HttpServletRequest req) {
         System.out.println(req.getParameter("name"));
         return "hello";
+    }
+
+
+    @Bean
+    public ServletRegistrationBean dispatcherServlet() {
+        ServletRegistrationBean registration = new ServletRegistrationBean(
+                new DispatcherServlet(), "/");
+        registration.setAsyncSupported(true);
+        return registration;
     }
 
 }

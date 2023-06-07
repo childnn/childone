@@ -1,3 +1,12 @@
 $ mvn dependency:tree
    依赖下载
 $ mvn spring-boot:run
+
+
+mvn clean install -Dcheckstyle.skip -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -f pom.xml
+
+
+mvn clean source:jar install -Dcheckstyle.skip -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -f pom.xml
+
+
+java 源码编译加密插件: allatori, 对抗反编译

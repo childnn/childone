@@ -43,6 +43,7 @@ public class Bed extends Point {
         System.out.println(hash("通话"));
         System.out.println(hash("重地"));
 
+
     }
 
 

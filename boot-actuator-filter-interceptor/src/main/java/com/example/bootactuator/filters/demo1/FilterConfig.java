@@ -22,9 +22,9 @@ public class FilterConfig {
         registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(1);
         registrationBean.setAsyncSupported(true);
-        registrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.INCLUDE,
+        registrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.INCLUDE
                 // Async support must be enabled on a servlet and for all filters involved in async request processing.
-                DispatcherType.ASYNC);
+                /*DispatcherType.ASYNC*/);
         return registrationBean;
     }
 
