@@ -1,0 +1,56 @@
+# 进到下载的rpm文件所在文件夹（这里换成你自己的）
+cd /home/pkgs/postgresql96
+
+# http://fr2.rpmfind.net/linux/rpm2html/search.php?query=libicu&submit=Search+...
+# 可以用下面注释这一句代替下面未注释的四句（前提一定要cd到对应目录且目录下只有这四个rpm文件，不符合这种情况可以自行grep一下）：
+# ls｜xargs rpm -ivh --force --nodeps
+rpm -ivh postgresql96-9.6-1PGDG.rhel7.x86_64.rpm --force --nodeps
+rpm -ivh postgresql96-libs-9.6-1PGDG.rhel7.x86_64.rpm --force --nodeps
+rpm -ivh postgresql96-contrib-9.6-1PGDG.rhel7.x86_64.rpm --force --nodeps
+rpm -ivh postgresql96-server-9.6-1PGDG.rhel7.x86_64.rpm --force --nodeps
+
+# 创建数据库data和log文件夹（考虑到数据库文件需要较大存储空间，建议创建在大容量路径下）
+mkdir -p /home/pgsql_data
+mkdir -p /home/pgsql_log
+
+# 创建日志文件
+touch /home/pgsql_log/pgsql.log
+
+# 授权给安装数据时自动创建的postgres用户
+chown -R postgres:postgres /home/pgsql_data
+chown -R postgres:postgres /home/pgsql_log
+
+# （非10版本的不需要执行这一步）10版本的需要用root用户安装libicu后再执行后续操作
+yum install libicu
+
+# （非15版本的不需要执行这一步）15版本的需要用root用户安装libzstd后再执行后续操作
+yum install libzstd
+
+# 切换到安装数据时自动创建的postgres用户，初始化数据库到新建数据目录
+su - postgres
+/usr/pgsql-9.6/bin/initdb -D  /home/pgsql_data/
+
+# 启动服务器（初始化数据库日志文件）
+/usr/pgsql-9.6/bin/pg_ctl -D  /home/pgsql_data/ -l /home/pgsql_log/pgsql.log start
+
+# 切换到管理员身份下，修改相关配置，然后安装就完成了，管理员postgres，默认密码123456
+su root
+
+# 修改配置文件实现远程访问
+vim /home/pgsql_data/postgresql.conf
+# 修改监听地址
+# #listen_addresses= 'localhost' 取消注释，改为 listen_addresses = '*'
+# 修改最大连接数（按需）
+# max_connections = 100 改为 max_connections = 1000
+# 保存并退出修改
+
+# 修改可访问的用户IP段
+vim /home/pgsql_data/pg_hba.conf
+# IPv4下修改为或新增
+# host    all             all             0.0.0.0/0               trust
+# 保存并退出修改
+
+# 切换到postgres身份下
+su - postgres
+# 重启数据库服务
+/usr/pgsql-9.6/bin/pg_ctl -D  /home/pgsql_data/ -l /home/pgsql_log/pgsql.log restart

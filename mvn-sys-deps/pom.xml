@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.example</groupId>
+  <artifactId>mvn-sys-deps</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>demo</groupId>
+      <artifactId>demo</artifactId>
+      <version>3</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/hello.jar</systemPath>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!--
+         maven-jar-plugin用于生成META-INF/MANIFEST.MF文件的部分内容，
+         com.xx.Main指定MANIFEST.MF中的Main-Class，
+         true会在MANIFEST.MF加上Class-Path项并配置依赖包，lib/指定依赖包所在目录。
+
+         只是生成MANIFEST.MF文件还不够，maven-dependency-plugin插件用于将依赖包拷贝到${project.build.directory}/lib指定的位置，即lib目录下。
+         -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>BOOT-INF/lib/</classpathPrefix>
+              <mainClass>org.example.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <!--
+               outputDirectory指定了要将所依赖的jar包copy到哪个目录。
+               要与maven-jar-plugin中的classpathPrefix一致。
+               -->
+              <!--指定打包出来的jar包目录 -->
+              <outputDirectory>${project.build.directory}/BOOT-INF/lib</outputDirectory>
+              <!--这里指定包含 system scope -->
+              <includeScope>system</includeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>
+                    org.example.Main
+                  </mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <!-- <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <compilerArguments>
+            &lt;!&ndash; 编译时使用 lib 目录下的外部 jar 包 &ndash;&gt;
+            <extdirs>${project.basedir}/lib</extdirs>
+          </compilerArguments>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin> -->
+
+
+    </plugins>
+
+    <resources>
+      <resource>
+        <directory>lib</directory>
+        <targetPath>BOOT-INF/lib/</targetPath>
+        <includes>
+          <include>**/*.jar</include>
+        </includes>
+      </resource>
+    </resources>
+
+  </build>
+
+</project>

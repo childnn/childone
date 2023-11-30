@@ -55,7 +55,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.mortbay.jetty.npn/npn-boot // jdk 1.6
     // implementation group: 'org.mortbay.jetty.npn', name: 'npn-boot', version: '8.1.2.v20120308'
     // https://mvnrepository.com/artifact/spy/memcached
-    implementation group: 'spy', name: 'memcached', version: '2.4rc1'
+//    implementation group: 'spy', name: 'memcached', version: '2.4rc1'
 
     implementation 'com.hazelcast:hazelcast:3.8'
     // implementation 'com.hazelcast:hazelcast:5.1.2'

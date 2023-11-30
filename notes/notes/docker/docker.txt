@@ -1,0 +1,135 @@
+在 centos 上安装 docker
+https://docs.docker.com/engine/install/centos/
+
+1. uninstall
+ sudo yum remove docker \
+                   docker-client \
+                   docker-client-latest \
+                   docker-common \
+                   docker-latest \
+                   docker-latest-logrotate \
+                   docker-logrotate \
+                   docker-engine
+2. 虚拟机联网
+  前置环境准备:
+  $ yum install gcc
+  $ yum install gcc-c++
+  $ sudo yum install -y yum-utils
+  $ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+  $ yum makecache fast
+3. sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+4. systemctl start docker   # 启动 docker
+   systemctl stop docker    # 停止
+   systemctl restart docker # 重启
+   systemctl status docker
+   systemctl enable docker  # 开机启动
+   docker [cmd_name] --help
+   docker info
+
+    docker version
+    docker images   # 查看镜像
+    docker images -qa  # q 镜像id, a all
+    docker search <image_name> --limit n  # 查找仓库
+    docker pull <image-name>[:<version>  # 下载镜像
+    docker run [参数列表] <image-name>   # 启动镜像, 生成容器
+    docker ps [-a]            # 查看容器
+    docker rm <container-id>  # 移除容器
+    docker rmi <image-name>  # 移除镜像
+5. 配置 阿里云镜像加速器
+ https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
+ 通过修改daemon配置文件 /etc/docker/daemon.json 来使用加速器
+ 以 centos 为例。
+6. docker run -it <image_name>[:version]   # 交互式运行
+   docker run -d <image_name>[:version]    # 后台运行
+   docker start <container_name/id>     # 启动停止的容器
+   docker rename <container_name/id> <new_name>  # 重命名容器
+   docker logs <container_name/id>      # 指定容器日志
+
+7. exec 与 attach
+  docker exec -it con_id /bin/bash
+     # exec 是在容器中打开新的终端, 并且可以启动新的进程, 用 exit 退出, 不会导致容器的停止
+  docker attach con_id
+     # 直接进入容器启动命令的终端, 不会启动新的进程, 用 exit 退出, 会导致容器的停止
+
+8. 启动 docker redis 容器后, 如何在容器内操作 redis?
+   docker start con_id    # 启动 redis
+   docker exec -it con_id /bin/bash    # 进入容器
+   redis-cli -p 6379  # 交互式 redis 客户端, 此后即可执行 redis 命令
+   或者
+   docker exec -it con_id redis-cli
+   一般用 -d 后台启动的程序, 再用 exec 进入对应的容器实例
+
+9. 容器 -> 主机 拷贝
+  docker cp con_id:容器内路径 目的主机路径
+  docker cp bdd5d03d1e51:/data/temp.txt /home/child
+  # 将容器 bdd5d03d1e51 中的文件 /data/temp.txt 复制到 主机 /home/child 目录下
+  参数顺序更换:
+  docker cp 外部主机路径 con_id:容器内路径
+
+10. 导出/导入
+  docker export bdd5d03d1e51 > redis-con.tar
+  # 将容器 bdd5d03d1e51 导出到当前主机目录, 文件名为 redis-con.tar
+  cat redis-con.tar | docker import - child/redis-con:0.0.1
+      将当前目录文件 redis-con.tar 导入为镜像 child/redis-con 版本为 0.0.1
+      注意, 导入的是镜像, 使用 docker images 可查看
+      使用 docker run -it img_id
+11. 端口映射:
+  docker run --name=mynginx -d -p 88:80 nginx
+  -d: 后台运行
+  -p: 将外部主机(公网)的 88 端口映射到 docker-nginx 的 80 端口
+  比如主机 IP 为 192.168.27.128, 则启动 nginx 后, 在外部可通过 192.168.27.128:88 访问到 nginx
+  然后可以通过交互模式进入 nginx
+  docker exec -it mynginx /bin/bash
+  修改 docker-nginx 的默认访问目录, 可以在 dockerhub 官网查看 nginx 静态文件的配置地址
+  https://hub.docker.com/_/nginx
+  目录: /usr/share/nginx/html
+  -- 文件挂载: 将容器内的文件和外部主机建立联系, 类似端口映射
+  使用 -v 参数
+  docker run --name=mynginx -d -p 88:80 -v 主机目录:容器目录:ro nginx
+  ro: readonly
+  rw: readwrite
+
+
+12. 提交镜像的修改, 保留配置等信息  docker commit
+  docker commit --help
+
+  Usage:  docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+
+  Create a new image from a container's changes
+
+  Options:
+    -a, --author string    Author (e.g., "John Hannibal Smith <hannibal@a-team.com>")
+    -c, --change list      Apply Dockerfile instruction to the created image
+    -m, --message string   Commit message
+    -p, --pause            Pause container during commit (default true)
+
+ docker commit -a child -m 'nginx配置修改' mynginx(或者容器id)  mynginx:v1.1.1
+ 执行完毕上述命令后, 再执行 docker images, 即可看到本地的新镜像, 名为 mynginx, 版本为 v1.1.1
+
+13. 在容器中安装 vim: 必须通过交互命令进入指定的容器
+  apt-get update
+  apt-get -y install vim
+  安装完毕即可使用 vim 命令.
+
+14. 保存镜像
+  docker save -o 镜像保存的文件名(tar文件) 镜像名:版本
+  加载镜像
+  docker load -i 镜像tar文件名
+  -i  input(stdin)
+
+
+docker 虚悬镜像
+  仓库名, 标签为 none
+
+
+
+  docker run --name=mynginx -p 8888:880 -p 5555:54321 \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/sources_wdd/zjlprofile:/usr/share/nginx/html \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/Atlassian/Confluence/confluence:/usr/share/nginx/confluence \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/sources_wdd/trunk/web:/usr/share/nginx/web \
+  -v /Users/onechild/Documents/support/nginx/nginx.conf:/etc/nginx/nginx.conf \
+  -d nginx
+
+  docker run --name=mynginx -p 4321:80 \
+  -v /Users/onechild/Documents/creator/backend/jx/wdd-svn-CJ201909/sources_wdd/zjlprofile:/usr/share/nginx/html \
+  -d nginx

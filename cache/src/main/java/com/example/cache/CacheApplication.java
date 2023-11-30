@@ -22,6 +22,8 @@ public class CacheApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(CacheApplication.class, args);
         cache(ctx);
+
+        // ctx.getBean(SingletonService.class).test(); // outside a servlet
     }
 
     //

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Created-By: 1.8.0_332 (BellSoft)
+Comment: "注意冒号后面有一个空格，整个文件最后有一行空行"
+Main-Class: Hello

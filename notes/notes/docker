@@ -1,8 +1,0 @@
-状态有7种：
-    created（已创建）
-    restarting（重启中）
-    running 或 Up（运行中）
-    removing（迁移中）
-    paused（暂停）
-    exited（停止）
-    dead（死亡）

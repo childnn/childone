@@ -58,7 +58,7 @@ public abstract class ServiceSingleton {
         // System.out.println("serviceSingleton.getClass() = " + serviceSingleton.getClass());
         System.out.println("AopUtils.getTargetClass(serviceSingleton) = " + AopUtils.getTargetClass(serviceSingleton));
 
-        myObjectFactory.
+        // myObjectFactory.
     }
 
 }

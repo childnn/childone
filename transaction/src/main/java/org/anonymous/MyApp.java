@@ -1,6 +1,5 @@
 package org.anonymous;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
@@ -12,6 +11,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
+
+import java.util.Arrays;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)
@@ -53,11 +54,12 @@ import org.springframework.core.env.PropertySourcesPropertyResolver;
  * .@see ComponentScanAnnotationParser#parse(org.springframework.core.annotation.AnnotationAttributes, java.lang.String)
  */
 //@EnableWebMvc
-@MapperScan("org.anonymous.dao")
+// @MapperScan("org.anonymous.dao")
 @SpringBootApplication
 public class MyApp {
 
     public static void main(String[] args) {
+        System.out.println("Arrays.asList(args) = " + Arrays.asList(args));
         ConfigurableApplicationContext ctx = SpringApplication.run(MyApp.class, args);
         String name = ctx.getApplicationName();
         System.out.println("name = " + name);

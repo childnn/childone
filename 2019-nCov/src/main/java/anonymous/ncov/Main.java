@@ -1,6 +1,7 @@
 package anonymous.ncov;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -15,9 +16,10 @@ public class Main {
     private static int hospitalWidth;
 
     public static void main(String[] args) {
-        initHospital();
-        initPanel();
-        initInfected();
+        System.out.println("args = " + Arrays.asList(args));
+        // initHospital();
+        // initPanel();
+        // initInfected();
     }
 
     /**

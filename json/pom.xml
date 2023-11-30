@@ -14,6 +14,7 @@
         <module>json-simple-google</module>
         <module>json-jackson</module>
         <module>json-lib</module>
+        <module>json-fastjson2</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,7 +42,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>1.18.28</version>
         </dependency>
     </dependencies>
 

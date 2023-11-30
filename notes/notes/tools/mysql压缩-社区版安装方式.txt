@@ -9,6 +9,7 @@
 	找到: 2019-05-14T01:23:09.825409Z 5 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: __k:6C(Uo=v,
 		# 直接复制冒号后面的, 就是 mysql 自动生成的 密码
 7. 使用 初始密码即可登录 root 用户
+
 	使用修改密码的命令改密: 改密方式各种, 自行百度
 	ALTER USER "root"@"localhost" IDENTIFIED  BY "你的新密码";
 	注: 如果改密不成功, 推荐使用 mysql 官方的 workbench 登录(该软件在登录 mysql 时, 会自动提示修改系统生成的初始化密码)
@@ -20,3 +21,31 @@ sqlyog 注册码：
     8d8120df-a5c3-4989-8f47-5afc79c56e7c
     59adfdfe-bcb0-4762-8267-d7fccf16beda
     ec38d297-0543-4679-b098-4baadf91f983
+
+
+
+远程连接MYSQL提示Host is not allowed to connect to this MySQL server
+
+
+如果你想连接你的mysql的时候发生这个错误：
+
+ERROR 1130: Host ‘192.168.1.3’ is not allowed to connect to this MySQL server
+
+1。 改表法。可能是你的帐号不允许从远程登陆，只能在localhost。这个时候只要在localhost的那台电脑，登入mysql后，更改 “mysql” 数据库里的 “user” 表里的 “host” 项，从"localhost"改称"%"
+
+mysql -u root -p
+
+mysql>use mysql;
+mysql>update user set host = ‘%’ where user = ‘root’;
+mysql>select host, user from user;
+
+2. 授权法。例如，你想myuser使用mypassword从任何主机连接到mysql服务器的话。
+
+GRANT ALL PRIVILEGES ON *.* TO’myuser’@'%'IDENTIFIED BY ‘mypassword’ WITH GRANT OPTION;
+如果你想允许用户myuser从ip为192.168.1.3的主机连接到mysql服务器，并使用mypassword作为密码
+
+GRANT ALL PRIVILEGES ON *.* TO’root’@'192.168.1.3’IDENTIFIED BY ‘mypassword’ WITH GRANT OPTION;
+
+GRANT ALL PRIVILEGES ON *.* TO’root’@'192.168.1.3’IDENTIFIED BY ‘1235’ WITH GRANT OPTION;
+
+mysql>flush privileges; 这句一定要加上！！！

@@ -1,0 +1,50 @@
+gcc: https://mirrors.tuna.tsinghua.edu.cn/gnu/gcc/
+https://blog.csdn.net/weixin_44572623/article/details/128397574
+
+
+https://blog.csdn.net/l1028386804/article/details/126222536
+https://blog.csdn.net/weixin_45408791/article/details/128246886
+https://blog.csdn.net/l1028386804/article/details/126222536
+安装mysql
+卸载 mariadb
+$ rpm -qa | grep mariadb
+$ rpm -e --nodeps mariadb-libs
+
+1. 下载 bundle.tar
+2. 解压
+  安装: rpm -ivh xx.rpm
+3. 安装 common
+4. 安装 client-plugins
+5. 安装 libs
+6. 安装 client
+7. icu-data-files
+8. server(可能缺失某些依赖: net-tools等,需要单独安装)
+---
+9. init
+  mysqld --initialize --console --lower-case-table-names=1
+  修改所有
+  chown -R mysql:mysql /var/lib/mysql/
+  启动
+  systemctl start mysqld
+  密码
+  cat /var/log/mysqld.log | grep localhost
+ALTER USER "root"@"localhost" IDENTIFIED  BY "你的新密码";
+
+端口开放:
+查询
+ firewall-cmd --zone=public --list-ports
+开放
+ firewall-cmd --zone=public --add-port=3306/tcp --permanent
+关闭
+ firewall-cmd --zone=public --remove-port=3306/tcp --permanent
+重启防火墙
+ firewall-cmd --reload
+
+
+ mysql8-linux 表明大小写问题
+ https://iask.sina.com.cn/b/new59xGn5nVbD3.html
+ 删除数据(rm -rf /var/lib/mysql), 还原 mysql 初始状态
+ 修改 /etc/my.cnf
+ 在 [msyqld] 追加
+ lower_case_table_names=1
+ 重启 mysql 服务

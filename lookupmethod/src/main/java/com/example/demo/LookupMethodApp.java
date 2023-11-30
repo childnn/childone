@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.config.ProtoFactory;
 import com.example.demo.service.ServicePrototype;
 import com.example.demo.service.ServicePrototype0;
+import com.example.demo.service.ServiceReplace;
 import com.example.demo.service.ServiceSingleton;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +30,11 @@ public class LookupMethodApp {
         ServicePrototype bean1 = ctx.getBean(ServicePrototype.class);
         ServicePrototype bean2 = ctx.getBean(ServicePrototype.class);
         System.out.println(bean1 == bean2);
+
+
+        // replace method
+        ServiceReplace serviceReplace = ctx.getBean(ServiceReplace.class);
+        serviceReplace.original("我是参数");
 
     }
 
