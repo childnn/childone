@@ -10,16 +10,16 @@ package org.anonymous.concurrencyinpractice;
  * 因为锁已经被占用,导致线程会永久的延迟,等待着一个永远无法获得的锁.
  * 重入 避免了这种死锁.
  */
-public class ReentrantLock {
+public class ReentrantLock1 {
     public synchronized void doSomething() {
 
     }
 }
 
-class LoggingWidget extends ReentrantLock {
+class LoggingWidget extends ReentrantLock1 {
     @Override
     public synchronized void doSomething() {
-        System.out.println(toString() + ": calling doSomething");
+        System.out.println(this + ": calling doSomething");
         super.doSomething();
     }
 }

@@ -12,6 +12,13 @@ import java.util.stream.Stream;
  *
  * @author MiaoOne
  * @since 2020/9/24 21:17
+ * @see java.util.concurrent.Future
+ * 使用Future获得异步执行结果时，要么调用阻塞方法get()，要么轮询看isDone()是否为true，这两种方法都不是很好，因为主线程也会被迫等待。
+ * 从Java 8开始引入了CompletableFuture，它针对Future做了改进，可以传入回调对象，当异步任务完成或者发生异常时，自动调用回调对象的回调方法。
+ * @see CompletableFuture
+ * 如果只是实现了异步回调机制，我们还看不出CompletableFuture相比Future的优势。
+ * CompletableFuture更强大的功能是，多个CompletableFuture可以串行执行
+ *
  */
 public class CompletableFutureTest {
     private static String get() {

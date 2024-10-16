@@ -10,8 +10,8 @@ package org.anonymous.thread.join;
 public class JoinTest {
 
     // join 可以指定等待时间.
-    // "子线程" 与 "被 join 的线程" 执行顺序不一定,
-    // 但是 "被 join 的线程 99" 输出一定在 "main 20" 之前,
+    // "子线程" 与 "join 线程" 执行顺序不一定,
+    // 但是 "join 的线程 99" 输出一定在 "main 20" 之前,
     // 即必须等 join 线程执行完毕, 才能执行当前线程.
     public static void main(String[] args) throws InterruptedException {
         Runnable task = () -> {
@@ -23,15 +23,18 @@ public class JoinTest {
 
         for (int i = 0; i < 100; i++) {
             if (20 == i) {
-                final Thread join = new Thread(task, "被 join 的线程");
+                final Thread join = new Thread(task, "join 线程");
                 join.start();
 
+                // 注释这一行代码, 看效果
                 // main 线程调用 子线程 join 方法, main 线程
                 // 必须等待 子线程执行结束才会向下执行.
                 join.join();
             }
             System.out.println(Thread.currentThread().getName() + " " + i);
         }
+
+        System.out.println("我是主线程...");
     }
 
 }

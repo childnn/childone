@@ -1,4 +1,4 @@
-package org.anonymous.thread;
+package org.anonymous.thread.daemon;
 
 /**
  * ~~ Talk is cheap. Show me the code. ~~ :-)

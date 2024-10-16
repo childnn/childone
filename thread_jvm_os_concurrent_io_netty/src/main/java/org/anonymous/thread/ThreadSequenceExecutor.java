@@ -12,11 +12,12 @@ import java.util.concurrent.Executors;
 public class ThreadSequenceExecutor {
 
     public static void main(String[] args) {
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        es.submit(() -> System.err.println(Thread.currentThread().getName()));
-        es.submit(() -> System.err.println(Thread.currentThread().getName()));
-        es.submit(() -> System.err.println(Thread.currentThread().getName()));
-        es.shutdown();
+        try (ExecutorService es = Executors.newSingleThreadExecutor()) {
+            es.submit(() -> System.err.println(Thread.currentThread().getName()));
+            es.submit(() -> System.err.println(Thread.currentThread().getName()));
+            es.submit(() -> System.err.println(Thread.currentThread().getName()));
+            es.shutdown();
+        }
     }
 
 }

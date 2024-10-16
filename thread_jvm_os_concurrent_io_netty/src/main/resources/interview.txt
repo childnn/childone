@@ -2301,7 +2301,7 @@ HashMap 对象的 key、value 值均可为 null。
 HahTable 对象的 key、value 值均不可为 null。 
 且两者的的 key 值均不能重复，若添加 key 相同的键值对，后面的 value 会自动覆盖前面的 value，但不会报错。
 测试代码如下： 
-1. public class Test {   
+1. public class org.example.aop.aspectj.Test {
 2.    
 3.	public static void main(String[] args) {   
 4.	Map<String, String> map = new HashMap<String, String>();//HashMap对象   
@@ -2847,7 +2847,7 @@ import java.util.concurrent.Executors;
   *  
 *	@author Administrator 2009-11-4 23:30:44  
   */   
-  public class Test {   
+  public class org.example.aop.aspectj.Test {
      public static void main(String[] args) {   
       //创建一个可重用固定线程数的线程池   
       ExecutorService pool = Executors.newFixedThreadPool(2);   
@@ -2907,7 +2907,7 @@ import java.util.concurrent.Executors;
   *  
 *	@author Administrator 2009-11-4 23:30:44  
   */   
-  public class Test {   
+  public class org.example.aop.aspectj.Test {
   public static void main(String[] args) {   
   //创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。   
   ScheduledExecutorService pool = Executors.newScheduledThreadPool(2);   
@@ -5529,7 +5529,7 @@ JDK1.5 下验证过没问题可以直接使用。代码如下：
 8．*/   
 
 9．@SuppressWarnings("unchecked")   
-10．public class Test {   
+10．public class org.example.aop.aspectj.Test {
 11．public static void main(String[] args) throws ExecutionException,   
 12．    InterruptedException {   
 13．   System.out.println("----程序开始运行----");   
@@ -6527,7 +6527,7 @@ Java 中一般认为有 23 种设计模式，我们不需要所有的都会，�
 5.	return new MailSender(); 
 6.	} 
 7.	} 
-8.	------------------------------------------------------------------------------------- 9. public class Test { 
+8.	------------------------------------------------------------------------------------- 9. public class org.example.aop.aspectj.Test {
 10.	public static void main(String[] args) { 
 11.	Provider provider = new SendMailFactory(); 
 12.	Sender sender = provider.produce(); 
@@ -6536,7 +6536,7 @@ Java 中一般认为有 23 种设计模式，我们不需要所有的都会，�
 15.	} 
 
 4. 建造者模式（Builder） 
-工厂类模式提供的是创建单个类的模式，而建造者模式则是将各种产品集中起来进行管理，用来创建复合对象，所谓复合对象就是指某个类具有不同的属性，其实建造者模式就是前面抽象工厂模式和最后的 Test 结合起来得到的。 
+工厂类模式提供的是创建单个类的模式，而建造者模式则是将各种产品集中起来进行管理，用来创建复合对象，所谓复合对象就是指某个类具有不同的属性，其实建造者模式就是前面抽象工厂模式和最后的 org.example.aop.aspectj.Test 结合起来得到的。
 1.	public class Builder { 
 2.	private List<Sender> list = new ArrayList<Sender>(); 
 3.  
@@ -8716,7 +8716,7 @@ Web 模块：提供了基础的 web 功能。例如多文件上传、集成 IoC 
 Web-Servlet 模块：提供了一个 Spring MVC Web 框架实现。Spring MVC 框架提供了基于注解的请求资源注
 入、更简单的数据绑定、数据验证等及一套非常易用的 JSP 标签，完全无缝与 Spring 其他技术协作。 
 Web-Struts 模块：提供了与 Struts 无缝集成，Struts1.x 和 Struts2.x 都支持 
-Test 模块： Spring 支持 Junit 和 TestNG 测试框架，而且还额外提供了一些基于 Spring 的测试功能，比如在测
+org.example.aop.aspectj.Test 模块： Spring 支持 Junit 和 TestNG 测试框架，而且还额外提供了一些基于 Spring 的测试功能，比如在测
 试 Web 框架时，模拟 Http 请求的功能。 
 6. Spring 能帮我们做什么？（2017-11-22-lyq） 
 	a.	Spring 能帮我们根据配置文件创建及组装对象之间的依赖关系。 
@@ -8964,7 +8964,7 @@ JdbcTemplate 类提供了很多便利的方法解决诸如把数据库数据转�
 2）	继承 HibernateDAOSupport 提供一个 AOP 拦截器。 
 32. Spring 支持的 ORM 框架有哪些？（2017-12-05-gxb） 
 Spring 支持以下 ORM： 
-Hibernate、iBatis、JPA (Java Persistence API)、TopLink、JDO (Java Data Objects)、OJB 
+Hibernate、iBatis、JPA (Java org.example.aop.aspectj.Persistence API)、TopLink、JDO (Java Data Objects)、OJB
 33. 简单解释一下 spring 的 AOP（2017-12-05-gxb） 
 AOP（Aspect Oriented Programming），即面向切面编程，可以说是 OOP（Object Oriented Programming，
 面向对象编程）的补充和完善。OOP 引入封装、继承、多态等概念来建立一种对象层次结构，用于模拟公共行为的一
@@ -9010,7 +9010,7 @@ Spring 切面可以应用五种类型的通知：
 1. 简单介绍一下 Shiro 框架（2017-11-23-gxb） 
 Apache Shiro 是 Java 的一个安全框架。使用 shiro 可以非常容易的开发出足够好的应用，其不仅可以用在 JavaSE
 环境，也可以用在 JavaEE 环境。Shiro 可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓存等。三个核心组件：Subject, SecurityManager 和 Realms. 
-Subject：即“当前操作用户”。但是，在 Shiro 中，Subject 这一概念并不仅仅指人，也可以是第三方进程、后台帐户（Daemon Account）或其他类似事物。它仅仅意味着“当前跟软件交互的东西”。但考虑到大多数目的和用途，你可以把它认为是 Shiro 的“用户”概念。 
+Subject：即“当前操作用户”。但是，在 Shiro 中，Subject 这一概念并不仅仅指人，也可以是第三方进程、后台帐户（Daemon org.example.aop.aspectj.Account）或其他类似事物。它仅仅意味着“当前跟软件交互的东西”。但考虑到大多数目的和用途，你可以把它认为是 Shiro 的“用户”概念。
     Subject 代表了当前用户的安全操作，SecurityManager 则管理所有用户的安全操作。 
     SecurityManager：它是 Shiro 框架的核心，典型的 Facade 模式，Shiro 通过 SecurityManager 来管理内部组
 件实例，并通过它来提供安全管理的各种服务。 
@@ -10203,7 +10203,7 @@ C.	代理模式 D. 观察者模式
 四、北京宝蓝德股份科技有限公司（2017-12-03-wmm） 
 1.选择题 
 1.1 下面代码的运行结果是（C） 
-public class Test{ public static void main (String[] args){ List<String> a = null; test(a); 
+public class org.example.aop.aspectj.Test{ public static void main (String[] args){ List<String> a = null; test(a);
 System.out.println(a.size()); 
 } public static void test(List<String> a){ 
 a=new arrayList<String>(); 
@@ -10286,7 +10286,7 @@ B	编译时正确，运行时将产生错误
 C	输出空 
 D	输出 0 
 1.4 执行以下程序后输出的结果是（D） 
-public class Test { 
+public class org.example.aop.aspectj.Test {
         public static void main(String[] args) { 
        StringBuffer a = new StringBuffer("A");        StringBuffer b = new StringBuffer("B");        operator(a,b); 
        System.out.println(a+","+b); 
@@ -10669,7 +10669,7 @@ O(len1*len2)，耗时很大。
 String[] arr1 = {"112","wqw","2121"}; 
          	String[] arr2 = {"112","aad","ewqw"};  	 	 
 打印出两个数组的交集，结果不能重复答案： 
-public class test {      @Test//测试程序     public void test() 
+public class test {      @org.example.aop.aspectj.Test//测试程序     public void test()
          String[] arr1 = {"112","wqw","2121"}; 
        String[] arr2 = {"112","aad","ewqw"}; 
         String[] result=StringIntersection(arr1,arr2);          for (String str:result){ 
@@ -11367,7 +11367,7 @@ EJB 是 sun 的服务器端组件模型，最大的用处是部署分布式应�
 3、请简述什么是集群？---了解就可以 
 （服务器集群就是指将很多服务器集中起来一起进行同一种服务，在客户端看来就象是只有一个服务器。集群可以利用多个计算机进行并行计算从而获得很高的计算速度，也可以用多个计算机做备份，从而使得任何一个机器坏了整个系统还是能正常运行。一旦在服务器上安装并运行了群集服务，该服务器即可加入群集。群集化操作可以减少单点故障数量，并且实现了群集化资源的高可用性。下述各节简要介绍了群集创建和群集操作中的节点行为。）九、科大讯飞（2017-12-11-lyq） 
 1. 字符串中有重复的内容去重    例如：abbccccaaddaggb-->abvadagb 
-1.	public class Test { 
+1.	public class org.example.aop.aspectj.Test {
 2.	public static void main(String[] args) { 
 3.	List<String> list = new ArrayList<String>(); 
 4.	list.add("测试1"); 
@@ -11532,7 +11532,7 @@ d) 对象属性
 	 	答案：详细内容：见本文第二章内容：JavaSE 基础，第三节： Java 中的多态。 
 1.5、说出一些常用的类，包，接口，请各举 5 个。 
     	答案：包：lang，util，awt，swing，io 
-	 	 	  类：System, Math,Date,RunTime,Test 
+	 	 	  类：System, Math,Date,RunTime,org.example.aop.aspectj.Test
 
 2. 上机题 
 2.1 题目：雇员查询系统 
@@ -11760,7 +11760,7 @@ Java 接口和 Java 抽象类的存在就是为了用于具体类的实现和继
 	b）	当你想用套接字在网络上传送对象的时候； 
 	c）	当你想通过 RMI 传输对象的时候；  
 对象要实现序列化，是非常简单的，只需要实现 Serializable 接口就可以了。 
-public class Test implements Serializable 
+public class org.example.aop.aspectj.Test implements Serializable
 13. JavaScript 有哪些优缺点？ 
 (1).javascript 的优点： 
 javascript 减少网络传输。 

@@ -65,7 +65,7 @@ synchronized
         至多只有一个线程可以拥有锁,当线程 A 尝试请求一个被线程 B 占有的锁时,线程 A 必须等待或者阻塞,直到 B 释放它.
         如果 B 永远不释放锁,A 将永远等下去.
         synchronized 锁也称 内部锁(intrinsic locks)或 监视器锁(monitor locks)
-    可重入(reentrancy): 请求计数. org.anonymous.concurrencyinpractice.ReentrantLock
+    可重入(reentrancy): 请求计数. org.anonymous.concurrencyinpractice.ReentrantLock1
         线程试图获得它自己占有的锁时,请求会成功.重入 意味着锁的请求是基于 “per-thread”,而不是基于 “per-invocation”
         重入的实现是通过为每个锁关联一个请求计数(acquisition count)和一个占有它的线程.当计数为 0 时,认为锁是未被占用的.
         线程请求一个未被占有的锁时,JVM 将记录锁的占有者,并且将请求计数置为 1. 如果同一线程再次请求这个锁,计数将递增；
